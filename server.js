@@ -50,13 +50,17 @@ bot.on('callback_query', function onCallbackQuery(callbackQuery){
   const action = callbackQuery.data // This is responsible for checking the content of callback_data
   const msg = callbackQuery.message
 
-  if (action === 'service.start'){
-    workerHandler.start();
-  }
-  else if (action === 'service.stop'){
-    workerHandler.stop();
-  }
-  else if (action === 'service.restart'){
-    workerHandler.restart();
+  switch (action) {
+    case 'service.start':
+      workerHandler.start();
+      break;
+    case 'service.stop':
+      workerHandler.stop();
+      break;
+    case 'service.restart':
+      workerHandler.restart();
+      break;
+    default:
+      break;
   }
 });
