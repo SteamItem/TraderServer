@@ -27,5 +27,5 @@ exports.profile = async () => {
     }
   };
   var result = await axios.get('https://csgoempire.gg/api/v2/user', content);
-  res.send(result.data);
+  return result;
 };

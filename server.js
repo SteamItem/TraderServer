@@ -93,7 +93,7 @@ bot.onText(/\/profile/, (msg) => {
   });
 });
 
-bot.on('callback_query', function onCallbackQuery(callbackQuery){
+bot.on('callback_query', async function onCallbackQuery(callbackQuery){
   // console.log(callbackQuery)
   const action = callbackQuery.data // This is responsible for checking the content of callback_data
   // const msg = callbackQuery.message
@@ -124,11 +124,11 @@ bot.on('callback_query', function onCallbackQuery(callbackQuery){
       paramController.update(paramEnum.Period, 2000);
       break;
     case 'profile.steamName':
-      var profile = csgoController.profile();
+      var profile = await csgoController.profile();
       telegram.sendMessage(profile.steam_name);
       break;
     case 'profile.balance':
-      var profile = csgoController.profile();
+      var profile = await csgoController.profile();
       telegram.sendMessage(profile.balance);
       break;
     default:
