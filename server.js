@@ -32,12 +32,12 @@ console.log(`Server is listening on port ${PORT}`);
 
 var bot = telegram.getBot();
 bot.onText(/\/help/, (msg) => {
-  var lines = ['/service: Handle service', '/period: Wait period', '/profile: Profile Operations', '/wishlist: Manage your wishlist'];
+  var lines = ['/service: Manage service', '/period: Wait period', '/profile: Profile operations', '/wishlist: Wishlist manager'];
   var message = lines.join('\n');
   bot.sendMessage(msg.chat.id, message);
 });
 bot.onText(/\/service/, (msg) => {
-  bot.sendMessage(msg.chat.id, 'What do you want to do with service?', {
+  bot.sendMessage(msg.chat.id, 'Manage service', {
     reply_markup: {
       inline_keyboard: [[
         {
@@ -55,7 +55,7 @@ bot.onText(/\/service/, (msg) => {
   });
 });
 bot.onText(/\/period/, (msg) => {
-  bot.sendMessage(msg.chat.id, 'Wait time between iterations?', {
+  bot.sendMessage(msg.chat.id, 'Wait time between iterations', {
     reply_markup: {
       inline_keyboard: [[
         {
@@ -79,13 +79,13 @@ bot.onText(/\/period/, (msg) => {
   });
 });
 bot.onText(/\/profile/, (msg) => {
-  bot.sendMessage(msg.chat.id, 'Profile operations?', {
+  bot.sendMessage(msg.chat.id, 'Profile operations', {
     reply_markup: {
       inline_keyboard: [[
         {
           text: 'Steam Name',
           callback_data: 'profile.steamName'
-        }],[{
+        },{
           text: 'Balance',
           callback_data: 'profile.balance'
         }
@@ -94,7 +94,7 @@ bot.onText(/\/profile/, (msg) => {
   });
 });
 bot.onText(/\/wishlist/, (msg) => {
-  bot.sendMessage(msg.chat.id, 'Wishlist Manager', {
+  bot.sendMessage(msg.chat.id, 'Wishlist manager', {
     reply_markup: {
       inline_keyboard: [[
         {
