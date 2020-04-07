@@ -19,7 +19,6 @@ exports.getToken = async (req, res) => {
 
 exports.profile = async () => {
   var cookieParam = await Param.findOne({id: paramEnum.Cookie});
-
   let content = {
     headers: {
       'Content-Type': 'application/json',
@@ -28,5 +27,5 @@ exports.profile = async () => {
     }
   };
   var result = await axios.get('https://csgoempire.gg/api/v2/user', content);
-  return result;
+  return result.data;
 };
