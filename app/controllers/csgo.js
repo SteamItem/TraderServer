@@ -23,7 +23,8 @@ exports.profile = async () => {
   let content = {
     headers: {
       'Content-Type': 'application/json',
-      'Cookie': cookieParam.value
+      'Cookie': cookieParam.value,
+      'Host': 'csgoempire.gg'
     }
   };
   var result = await axios.get('https://csgoempire.gg/api/v2/user', content);
