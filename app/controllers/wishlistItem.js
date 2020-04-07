@@ -1,5 +1,4 @@
 const WishlistItem = require('../models/wishlistItem.js');
-const telegram = require('../helpers/telegram');
 
 exports.create = (req, res) => {
     if(!req.body.appid) {
@@ -35,7 +34,7 @@ exports.create = (req, res) => {
 
 exports.findAll = async () => {
     var wishlistItems = await WishlistItem.find();
-    telegram.sendMessage(JSON.stringify(wishlistItems));
+    return wishlistItems;
 };
 
 exports.findOne = (req, res) => {

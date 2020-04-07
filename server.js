@@ -108,6 +108,7 @@ bot.onText(/\/wishlist/, (msg) => {
 
 bot.on('callback_query', async function onCallbackQuery(callbackQuery){
   const action = callbackQuery.data // This is responsible for checking the content of callback_data
+  const chatId = callbackQuery.message.chat.id;
 
   var splittedActions = action.split('.');
   if (splittedActions.length !== 2) throw new Error("Unknown action");
@@ -116,78 +117,99 @@ bot.on('callback_query', async function onCallbackQuery(callbackQuery){
 
   switch (mainAction) {
     case 'service':
-      onServiceCallbackQuery(subAction);
+      onServiceCallbackQuery(chatId, subAction);
       break;
     case 'period':
-      onPeriodCallbackQuery(subAction);
+      onPeriodCallbackQuery(chatId, subAction);
       break;
     case 'profile':
-      onProfileCallbackQuery(subAction);
+      onProfileCallbackQuery(chatId, subAction);
       break;
     case 'wishlist':
-      onWishlistCallbackQuery(subAction);
+      onWishlistCallbackQuery(chatId, subAction);
       break;
     default:
       throw new Error('Unknown main action');
  }
 });
 
-async function onServiceCallbackQuery(subAction) {
+async function onServiceCallbackQuery(chatId, subAction) {
   switch (subAction) {
     case 'start':
-      workerHandlerController.start();
+      try {
+        workerHandlerController.start();
+        bot.sendMessage(chatId, "Started");
+      } catch (e) {
+        bot.sendMessage(chatId, e.message);
+      }
       break;
     case 'stop':
-      workerHandlerController.stop();
+      try {
+        workerHandlerController.stop();
+        bot.sendMessage(chatId, "Stopped");
+      } catch (e) {
+        bot.sendMessage(chatId, e.message);
+      }
       break;
     case 'restart':
-      workerHandlerController.restart();
+      try {
+        workerHandlerController.restart();
+        bot.sendMessage(chatId, "Restarted");
+      } catch (e) {
+        bot.sendMessage(chatId, e.message);
+      }
       break;
     default:
       throw new Error('Unknown sub action');
   }
 }
 
-async function onPeriodCallbackQuery(subAction) {
+async function onPeriodCallbackQuery(chatId, subAction) {
   switch (subAction) {
     case '1ms':
-      paramController.update(paramEnum.Period, 1);
+      await paramController.update(paramEnum.Period, 1);
+      bot.sendMessage(chatId, 'Updated to 1 mS');
       break;
     case '10mS':
-      paramController.update(paramEnum.Period, 10);
+      await paramController.update(paramEnum.Period, 10);
+      bot.sendMessage(chatId, 'Updated to 10 mS');
       break;
     case '100mS':
-      paramController.update(paramEnum.Period, 100);
+      await paramController.update(paramEnum.Period, 100);
+      bot.sendMessage(chatId, 'Updated to 100 mS');
       break;
     case '1s':
-      paramController.update(paramEnum.Period, 1000);
+      await paramController.update(paramEnum.Period, 1000);
+      bot.sendMessage(chatId, 'Updated to 1 Second');
       break;
     case '2s':
-      paramController.update(paramEnum.Period, 2000);
+      await paramController.update(paramEnum.Period, 2000);
+      bot.sendMessage(chatId, 'Updated to 2 Seconds');
       break;
     default:
       throw new Error('Unknown sub action');
   }
 }
 
-async function onProfileCallbackQuery(subAction) {
+async function onProfileCallbackQuery(chatId, subAction) {
   var profile = await csgoController.profile();
   switch (subAction) {
     case 'steamName':
-      telegram.sendMessage(profile.steam_name);
+      bot.sendMessage(chatId, `Steam Name: ${profile.steam_name}`);
       break;
     case 'balance':
-      telegram.sendMessage(profile.balance);
+      bot.sendMessage(chatId, `Balance: ${profile.balance}`);
       break;
     default:
       throw new Error('Unknown sub action');
   }
 }
 
-async function onWishlistCallbackQuery(subAction) {
+async function onWishlistCallbackQuery(chatId, subAction) {
   switch (subAction) {
     case 'list':
-      wishlistItemController.findAll();
+      var wishlistItems = await wishlistItemController.findAll();
+      bot.sendMessage(chatId, JSON.stringify(wishlistItems));
       break;
     default:
       throw new Error('Unknown sub action');
