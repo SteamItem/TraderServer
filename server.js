@@ -27,6 +27,11 @@ http.createServer(function (request, response) {
 console.log(`Server is listening on port ${PORT}`);
 
 var bot = telegram.getBot();
+bot.onText(/\/help/, (msg) => {
+  var lines = ['/service: Handle service'];
+  var message = lines.join('\n');
+  bot.sendMessage(msg.chat.id, message);
+});
 bot.onText(/\/service/, (msg) => {
   bot.sendMessage(msg.chat.id,'What do you want to do with service?', {
     reply_markup: {
