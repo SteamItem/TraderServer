@@ -31,7 +31,7 @@ console.log(`Server is listening on port ${PORT}`);
 
 var bot = telegram.getBot();
 bot.onText(/\/help/, (msg) => {
-  var lines = ['/service: Handle service', '/period: Wait period', '/profile: Profile Informations'];
+  var lines = ['/service: Handle service', '/period: Wait period', '/profile: Profile Operations'];
   var message = lines.join('\n');
   bot.sendMessage(msg.chat.id, message);
 });
@@ -59,19 +59,19 @@ bot.onText(/\/period/, (msg) => {
       inline_keyboard: [[
         {
           text: '1 mS',
-          callback_data: 'wait.1ms'
+          callback_data: 'period.1ms'
         },{
           text: '10 mS',
-          callback_data: 'wait.10mS'
+          callback_data: 'period.10mS'
         },{
           text: '100 mS',
-          callback_data: 'wait.100mS'
+          callback_data: 'period.100mS'
         }],[{
           text: '1 Second',
-          callback_data: 'wait.1s'
+          callback_data: 'period.1s'
         },{
           text: '2 Seconds',
-          callback_data: 'wait.2s'
+          callback_data: 'period.2s'
         }
       ]]
     }
@@ -98,40 +98,74 @@ bot.on('callback_query', async function onCallbackQuery(callbackQuery){
   const action = callbackQuery.data // This is responsible for checking the content of callback_data
   // const msg = callbackQuery.message
 
-  switch (action) {
-    case 'service.start':
+  var splittedActions = action.split('.');
+  if (splittedActions.length !== 2) throw new Error("Unknown action");
+  var mainAction = splittedActions[0];
+  var subAction = splittedActions[1];
+
+  switch (mainAction) {
+    case 'service':
+      onServiceCallbackQuery(subAction);
+      break;
+    case 'period':
+      onPeriodCallbackQuery(subAction);
+      break;
+    case 'profile':
+      onProfileCallbackQuery(subAction);
+      break;
+    default:
+      throw new Error('Unknown main action');
+ }
+});
+
+async function onServiceCallbackQuery(subAction) {
+  switch (subAction) {
+    case 'start':
       workerHandlerController.start();
       break;
-    case 'service.stop':
+    case 'stop':
       workerHandlerController.stop();
       break;
-    case 'service.restart':
+    case 'restart':
       workerHandlerController.restart();
       break;
-    case 'wait.1ms':
+    default:
+      throw new Error('Unknown sub action');
+  }
+}
+
+async function onPeriodCallbackQuery(subAction) {
+  switch (subAction) {
+    case '1ms':
       paramController.update(paramEnum.Period, 1);
       break;
-    case 'wait.10mS':
+    case '10mS':
       paramController.update(paramEnum.Period, 10);
       break;
-    case 'wait.100mS':
+    case '100mS':
       paramController.update(paramEnum.Period, 100);
       break;
-    case 'wait.1s':
+    case '1s':
       paramController.update(paramEnum.Period, 1000);
       break;
-    case 'wait.2s':
+    case '2s':
       paramController.update(paramEnum.Period, 2000);
       break;
-    case 'profile.steamName':
-      var profile = await csgoController.profile();
+    default:
+      throw new Error('Unknown sub action');
+  }
+}
+
+async function onProfileCallbackQuery(subAction) {
+  var profile = await csgoController.profile();
+  switch (subAction) {
+    case 'steamName':
       telegram.sendMessage(profile.steam_name);
       break;
-    case 'profile.balance':
-      var profile = await csgoController.profile();
+    case 'balance':
       telegram.sendMessage(profile.balance);
       break;
     default:
-      break;
+      throw new Error('Unknown sub action');
   }
-});
+}
