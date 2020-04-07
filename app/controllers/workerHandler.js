@@ -7,7 +7,7 @@ exports.start = () => {
       return telegram.sendMessage("Failed to start: " + err.message);
     }
     pm2.start({
-      script: '../../worker.js',
+      script: './worker.js',
     }, function(err, apps) {
       pm2.disconnect();
       if (err) throw err
