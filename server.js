@@ -64,7 +64,7 @@ bot.onText(/\/waitPeriod/, (msg) => {
         },{
           text: '100 mS',
           callback_data: 'wait.100mS'
-        },{
+        }],[{
           text: '1 Second',
           callback_data: 'wait.1s'
         },{
