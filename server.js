@@ -3,6 +3,7 @@ var http = require("http");
 const config = require('./config');
 const workerHandler = require('./app/controllers/workerHandler');
 const telegram = require('./app/helpers/telegram');
+const PORT = process.env.PORT || 3000
 
 mongoose.Promise = global.Promise;
 
@@ -20,10 +21,10 @@ http.createServer(function (request, response) {
    response.writeHead(200, {'Content-Type': 'text/plain'});
    // Send the response body as "Hello World"
    response.end('Hello World\n');
-}).listen(3000);
+}).listen(PORT);
 
 // Console will print the message
-console.log('Server is listening on port 3000');
+console.log(`Server is listening on port ${PORT}`);
 
 var bot = telegram.getBot();
 bot.onText(/\/service/, (msg) => {
