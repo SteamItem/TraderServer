@@ -1,11 +1,10 @@
 var pm2 = require('pm2');
+const telegram = require('../helpers/telegram');
 
-exports.start = (req, res) => {
+exports.start = () => {
   pm2.connect(function(err) {
     if (err) {
-      return res.status(404).send({
-        message: "Failed to start: " + err.message
-      });
+      return telegram.sendMessage("Failed to start: " + err.message);
     }
     pm2.start({
       script: '../../worker.js',
@@ -13,36 +12,32 @@ exports.start = (req, res) => {
       pm2.disconnect();
       if (err) throw err
     });
-    res.send({message: "Started successfully!"});
+    telegram.sendMessage("Started");
   });
 }
 
-exports.stop = (req, res) => {
+exports.stop = () => {
   pm2.connect(function(err) {
     if (err) {
-      return res.status(404).send({
-        message: "Failed to stop: " + err.message
-      });
+      return telegram.sendMessage("Failed to stop: " + err.message);
     }
     pm2.stop('worker', function(err, apps) {
       pm2.disconnect();
       if (err) throw err
     });
-    res.send({message: "Stopped successfully!"});
+    telegram.sendMessage("Stopped");
   });
 }
 
-exports.restart = (req, res) => {
+exports.restart = () => {
   pm2.connect(function(err) {
     if (err) {
-      return res.status(404).send({
-        message: "Failed to restart: " + err.message
-      });
+      return telegram.sendMessage("Failed to restart: " + err.message);
     }
     pm2.restart('worker', function(err, apps) {
       pm2.disconnect();
       if (err) throw err
     });
-    res.send({message: "Restarted successfully!"});
+    telegram.sendMessage("Restarted");
   });
 }

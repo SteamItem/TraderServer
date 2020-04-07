@@ -1,4 +1,5 @@
 const WishlistItem = require('../models/wishlistItem.js');
+const telegram = require('../helpers/telegram');
 
 exports.create = (req, res) => {
     if(!req.body.appid) {
@@ -32,14 +33,9 @@ exports.create = (req, res) => {
     });
 };
 
-exports.findAll = (req, res) => {
-    WishlistItem.find().then(wishlistItems => {
-        res.send(wishlistItems);
-    }).catch(err => {
-        res.status(500).send({
-            message: err.message || "Some error occurred while retrieving wishlist items."
-        });
-    });
+exports.findAll = async () => {
+    var wishlistItems = await WishlistItem.find();
+    telegram.sendMessage(JSON.stringify(wishlistItems));
 };
 
 exports.findOne = (req, res) => {

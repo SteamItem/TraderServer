@@ -1,8 +1,8 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-// Configuring the database
-const config = require('./config');
 const mongoose = require('mongoose');
+var http = require("http");
+const config = require('./config');
+const workerHandler = require('./app/controllers/workerHandler');
+const telegram = require('./app/helpers/telegram');
 
 mongoose.Promise = global.Promise;
 
@@ -16,26 +16,47 @@ mongoose.connect(config.dbUrl, {
     process.exit();
 });
 
-// create express app
-const app = express();
+http.createServer(function (request, response) {
+   response.writeHead(200, {'Content-Type': 'text/plain'});
+   // Send the response body as "Hello World"
+   response.end('Hello World\n');
+}).listen(3000);
 
-// parse requests of content-type - application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({ extended: true }))
+// Console will print the message
+console.log('Server is listening on port 3000');
 
-// parse requests of content-type - application/json
-app.use(bodyParser.json())
-
-// define a simple route
-app.get('/', (req, res) => {
-    res.json({"message": "Welcome to EasyNotes application. Take notes quickly. Organize and keep track of all your notes."});
+var bot = telegram.getBot();
+bot.onText(/\/service/, (msg) => {
+  bot.sendMessage(msg.chat.id,'What do you want to do with service?', {
+    reply_markup: {
+      inline_keyboard: [[
+        {
+          text: 'Start',
+          callback_data: 'service.start'
+        },{
+          text: 'Stop',
+          callback_data: 'service.stop'
+        },{
+          text: 'Restart',
+          callback_data: 'service.restart'
+        }
+      ]]
+    }
+  });
 });
 
-require('./app/routes/note.js')(app);
-require('./app/routes/csgo.js')(app);
-require('./app/routes/wishlistItem.js')(app);
-require('./app/routes/worker.js')(app);
+bot.on('callback_query', function onCallbackQuery(callbackQuery){
+  console.log(callbackQuery)
+  const action = callbackQuery.data // This is responsible for checking the content of callback_data
+  const msg = callbackQuery.message
 
-// listen for requests
-app.listen(3000, () => {
-    console.log("Server is listening on port 3000");
+  if (action === 'service.start'){
+    workerHandler.start();
+  }
+  else if (action === 'service.stop'){
+    workerHandler.stop();
+  }
+  else if (action === 'service.restart'){
+    workerHandler.restart();
+  }
 });

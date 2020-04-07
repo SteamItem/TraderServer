@@ -1,6 +1,7 @@
 const axios = require('axios');
 const _ = require('lodash');
 const WishlistItem = require('../models/wishlistItem.js');
+const telegram = require('../helpers/telegram')
 
 function filter(wishlistItems, item) {
   var predicate = false;
@@ -22,7 +23,7 @@ exports.withdraw = async () => {
   var wishlistItems = promiseResults[1];
 
   var wantedItems = _.filter(items.data, item => filter(wishlistItems, item));
-  console.log(`${wantedItems.length} items found.`);
+  telegram.sendMessage(`${wantedItems.length} items found.`)
   await sleep(2000);
   this.withdraw();
 };
