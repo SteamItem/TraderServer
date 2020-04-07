@@ -3,8 +3,10 @@ var http = require("http");
 const config = require('./config');
 const workerHandlerController = require('./app/controllers/workerHandler');
 const paramController = require('./app/controllers/param');
+const csgoController = require('./app/controllers/csgo');
 const telegram = require('./app/helpers/telegram');
-const PORT = process.env.PORT || 3000
+const { paramEnum } = require('./app/helpers/common');
+const PORT = process.env.PORT || 3000;
 
 mongoose.Promise = global.Promise;
 
@@ -75,6 +77,21 @@ bot.onText(/\/period/, (msg) => {
     }
   });
 });
+bot.onText(/\/profile/, (msg) => {
+  bot.sendMessage(msg.chat.id, 'Profile operations?', {
+    reply_markup: {
+      inline_keyboard: [[
+        {
+          text: 'Steam Name',
+          callback_data: 'profile.steamName'
+        }],[{
+          text: 'Balance',
+          callback_data: 'profile.balance'
+        }
+      ]]
+    }
+  });
+});
 
 bot.on('callback_query', function onCallbackQuery(callbackQuery){
   // console.log(callbackQuery)
@@ -106,13 +123,15 @@ bot.on('callback_query', function onCallbackQuery(callbackQuery){
     case 'wait.2s':
       paramController.update(paramEnum.Period, 2000);
       break;
+    case 'profile.steamName':
+      var profile = csgoController.profile();
+      telegram.sendMessage(profile.steam_name);
+      break;
+    case 'profile.balance':
+      var profile = csgoController.profile();
+      telegram.sendMessage(profile.balance);
+      break;
     default:
       break;
   }
 });
-
-const paramEnum = {
-  Period: 1,
-  Code: 2,
-  Cookie: 3
-}
