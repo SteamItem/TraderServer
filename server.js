@@ -3,6 +3,7 @@ var http = require("http");
 const config = require('./config');
 const workerHandlerController = require('./app/controllers/workerHandler');
 const paramController = require('./app/controllers/param');
+const wishlistItemController = require('./app/controllers/wishlistItem');
 const csgoController = require('./app/controllers/csgo');
 const telegram = require('./app/helpers/telegram');
 const { paramEnum } = require('./app/helpers/common');
@@ -31,7 +32,7 @@ console.log(`Server is listening on port ${PORT}`);
 
 var bot = telegram.getBot();
 bot.onText(/\/help/, (msg) => {
-  var lines = ['/service: Handle service', '/period: Wait period', '/profile: Profile Operations'];
+  var lines = ['/service: Handle service', '/period: Wait period', '/profile: Profile Operations', '/wishlist: Manage your wishlist'];
   var message = lines.join('\n');
   bot.sendMessage(msg.chat.id, message);
 });
@@ -92,11 +93,21 @@ bot.onText(/\/profile/, (msg) => {
     }
   });
 });
+bot.onText(/\/wishlist/, (msg) => {
+  bot.sendMessage(msg.chat.id, 'Wishlist Manager', {
+    reply_markup: {
+      inline_keyboard: [[
+        {
+          text: 'List',
+          callback_data: 'wishlist.list'
+        }
+      ]]
+    }
+  });
+});
 
 bot.on('callback_query', async function onCallbackQuery(callbackQuery){
-  // console.log(callbackQuery)
   const action = callbackQuery.data // This is responsible for checking the content of callback_data
-  // const msg = callbackQuery.message
 
   var splittedActions = action.split('.');
   if (splittedActions.length !== 2) throw new Error("Unknown action");
@@ -112,6 +123,9 @@ bot.on('callback_query', async function onCallbackQuery(callbackQuery){
       break;
     case 'profile':
       onProfileCallbackQuery(subAction);
+      break;
+    case 'wishlist':
+      onWishlistCallbackQuery(subAction);
       break;
     default:
       throw new Error('Unknown main action');
@@ -164,6 +178,16 @@ async function onProfileCallbackQuery(subAction) {
       break;
     case 'balance':
       telegram.sendMessage(profile.balance);
+      break;
+    default:
+      throw new Error('Unknown sub action');
+  }
+}
+
+async function onWishlistCallbackQuery(subAction) {
+  switch (subAction) {
+    case 'list':
+      wishlistItemController.findAll();
       break;
     default:
       throw new Error('Unknown sub action');
