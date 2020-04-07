@@ -29,7 +29,7 @@ console.log(`Server is listening on port ${PORT}`);
 
 var bot = telegram.getBot();
 bot.onText(/\/help/, (msg) => {
-  var lines = ['/service: Handle service', '/waitPeriod: Wait period'];
+  var lines = ['/service: Handle service', '/period: Wait period'];
   var message = lines.join('\n');
   bot.sendMessage(msg.chat.id, message);
 });
@@ -51,8 +51,8 @@ bot.onText(/\/service/, (msg) => {
     }
   });
 });
-bot.onText(/\/waitPeriod/, (msg) => {
-  bot.sendMessage(msg.chat.id, 'Refresh period [mS]?', {
+bot.onText(/\/period/, (msg) => {
+  bot.sendMessage(msg.chat.id, 'Wait time between iterations?', {
     reply_markup: {
       inline_keyboard: [[
         {
@@ -68,7 +68,7 @@ bot.onText(/\/waitPeriod/, (msg) => {
           text: '1 Second',
           callback_data: 'wait.1s'
         },{
-          text: '2 Second',
+          text: '2 Seconds',
           callback_data: 'wait.2s'
         }
       ]]
