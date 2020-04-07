@@ -31,7 +31,7 @@ console.log(`Server is listening on port ${PORT}`);
 
 var bot = telegram.getBot();
 bot.onText(/\/help/, (msg) => {
-  var lines = ['/service: Handle service', '/period: Wait period'];
+  var lines = ['/service: Handle service', '/period: Wait period', '/profile: Profile Informations'];
   var message = lines.join('\n');
   bot.sendMessage(msg.chat.id, message);
 });
