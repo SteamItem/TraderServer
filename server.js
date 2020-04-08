@@ -32,7 +32,7 @@ console.log(`Server is listening on port ${PORT}`);
 
 var bot = telegram.getBot();
 bot.onText(/\/help/, (msg) => {
-  var lines = ['/service: Manage service', '/period: Wait period', '/profile: Profile operations', '/wishlist: Wishlist manager', '/pinShow: Show pin code', '/pinUpdate [PIN]: Update pin code'];
+  var lines = ['/service: Manage service', '/period: Wait period', '/profile: Profile operations', '/wishlist: Wishlist manager', '/pinUpdate [PIN]: Update pin code'];
   var message = lines.join('\n');
   bot.sendMessage(msg.chat.id, message);
 });
@@ -94,9 +94,12 @@ bot.onText(/\/profile/, (msg) => {
         {
           text: 'Steam Name',
           callback_data: 'profile.steamName'
-        },{
+        }],[{
           text: 'Balance',
           callback_data: 'profile.balance'
+        }],[{
+          text: 'Pin',
+          callback_data: 'profile.pin'
         }
       ]]
     }
@@ -130,9 +133,6 @@ bot.on('callback_query', async function onCallbackQuery(callbackQuery){
       break;
     case 'period':
       onPeriodCallbackQuery(chatId, subAction);
-      break;
-    case 'pin':
-      onPinCallbackQuery(chatId, subAction);
       break;
     case 'profile':
       onProfileCallbackQuery(chatId, subAction);
@@ -203,41 +203,19 @@ async function onPeriodCallbackQuery(chatId, subAction) {
   }
 }
 
-async function onPinCallbackQuery(chatId, subAction) {
-  switch (subAction) {
-    case '1ms':
-      await paramController.update(paramEnum.Period, 1);
-      bot.sendMessage(chatId, 'Updated to 1 mS');
-      break;
-    case '10mS':
-      await paramController.update(paramEnum.Period, 10);
-      bot.sendMessage(chatId, 'Updated to 10 mS');
-      break;
-    case '100mS':
-      await paramController.update(paramEnum.Period, 100);
-      bot.sendMessage(chatId, 'Updated to 100 mS');
-      break;
-    case '1s':
-      await paramController.update(paramEnum.Period, 1000);
-      bot.sendMessage(chatId, 'Updated to 1 Second');
-      break;
-    case '2s':
-      await paramController.update(paramEnum.Period, 2000);
-      bot.sendMessage(chatId, 'Updated to 2 Seconds');
-      break;
-    default:
-      throw new Error('Unknown sub action');
-  }
-}
-
 async function onProfileCallbackQuery(chatId, subAction) {
-  var profile = await csgoController.profile();
   switch (subAction) {
     case 'steamName':
+      var profile = await csgoController.profile();
       bot.sendMessage(chatId, `Steam Name: ${profile.steam_name}`);
       break;
     case 'balance':
+      var profile = await csgoController.profile();
       bot.sendMessage(chatId, `Balance: ${profile.balance}`);
+      break;
+    case 'pin':
+      var pinParam = await paramController.findOne(paramEnum.Code);
+      bot.sendMessage(chatId, `Pin code: ${pinParam.value}`);
       break;
     default:
       throw new Error('Unknown sub action');
