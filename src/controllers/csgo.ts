@@ -9,7 +9,8 @@ async function getToken() {
   var cookieParam = promiseResults[1];
 
   let data = JSON.stringify({
-    "code": codeParam.value
+    "code": codeParam.value,
+    "uuid": "1"
   });
 
   let content = {

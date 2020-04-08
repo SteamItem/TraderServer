@@ -1,10 +1,10 @@
-var pm2 = require('pm2');
+import pm2 = require('pm2');
 
 function start() {
   pm2.connect(function(err) {
     if (err) throw err;
     pm2.start({
-      script: './worker.js',
+      script: './dist/worker.js',
     }, function(err, apps) {
       pm2.disconnect();
       if (err) throw err;

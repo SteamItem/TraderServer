@@ -2,14 +2,9 @@ import axios from 'axios';
 import _ = require('lodash');
 import wishlistItemController = require('./wishlistItem');
 import paramController = require('./param');
-
-function filter(wishlistItems, item) {
-  var predicate = false;
-  wishlistItems.forEach(wishlistItem => {
-    predicate = predicate || (item.appid == wishlistItem.appid && item.market_name == wishlistItem.name && item.market_value <= wishlistItem.max_price);
-  });
-  return predicate;
-}
+import csgoController = require('./csgo');
+import config = require('../config');
+import telegram = require('../helpers/telegram');
 
 function sleep(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -17,13 +12,16 @@ function sleep(ms: number) {
 
 async function withdraw() {
   try {
+    var bot = telegram.getBot();
     var cookieParamPromise = paramController.getCookie();
     var periodParamPromise = paramController.getPeriod();
     var wishlistItemsPromise = wishlistItemController.findAll();
-    var promiseResults = await Promise.all([cookieParamPromise, periodParamPromise, wishlistItemsPromise]);
+    var tokenPromise = csgoController.getToken();
+    var promiseResults = await Promise.all([cookieParamPromise, periodParamPromise, wishlistItemsPromise, tokenPromise]);
     var cookieParam = promiseResults[0];
     var periodParam = promiseResults[1];
     var wishlistItems = promiseResults[2];
+    var token = promiseResults[3];
 
     let content = {
       headers: {
@@ -32,34 +30,36 @@ async function withdraw() {
         'Host': 'csgoempire.gg'
       }
     };
-    // var items = await axios.get('https://csgoempire.gg/api/v2/p2p/inventory/instant', content);
-    var items = await axios.get('https://csgoempire.gg/api/v2/hermes/inventory/10', content);
+    var items = await axios.get('https://csgoempire.gg/api/v2/p2p/inventory/instant', content);
+    // var items = await axios.get('https://csgoempire.gg/api/v2/hermes/inventory/10', content);
+    wishlistItems.forEach(async wi => {
+      var filteredItems = _.filter(items.data, i => { return i.market_name === wi.name && i.appid == wi.appid && i.market_value <= wi.max_price; });
+      var sortedItems = _.sortBy(filteredItems, i => { return i.market_value; });
+      if (sortedItems.length > 0) {
+        var itemToBuy = sortedItems[0];
+        let data = JSON.stringify({
+          "security_token": token.token,
+          "bot_id": itemToBuy.bot_id,
+          "item_ids": [itemToBuy.id]
+        });
+        try {
+          await axios.post('https://csgoempire.gg/api/v2/trade/withdraw', data, content);
+          bot.sendMessage(config.telegramChatId, `${itemToBuy.market_name} bought for ${itemToBuy.market_value} which is below ${wi.max_price}`);
+          await wishlistItemController.remove(wi._id);
+        } catch (e) {
+          bot.sendMessage(config.telegramChatId, `Error: ${JSON.stringify(e.response.data)}`);
+          await sleep(5000);
+        }
+      }
+    });
 
-    var wantedItems = _.filter(items.data, item => filter(wishlistItems, item));
-    console.log(wantedItems);
-    // let wantedItems = [];
-    // wishlistItems.forEach(wishlistItem => {
-    //   var filteredItems = _.filter(items.data, i => { return i.market_name === wishlistItem.name && i.appid == wishlistItem.appid && i.market_value <= wishlistItem.max_price; });
-    //   var sortedItems = _.sortBy(filteredItems, i => { return i.market_value; });
-    //   if (sortedItems.length > 0) {
-    //     var wantedItem = _.head(sortedItems);
-    //     wantedItems.push[wantedItem];
-    //     console.log(wantedItems);
-    //   }
-    // });
-    // console.log(wantedItems.length);
-
-    if (wantedItems && wantedItems.length > 0) {
-      console.log(wantedItems.length);
-      // telegram.sendMessage(`${wantedItems.length} items found.`)
-    }
     await sleep(periodParam.value);
   } catch (e) {
-    console.log(e.message);
-    await sleep(5000);
+    console.log(e);
+    await sleep(1000);
     // telegram.sendMessage(`Error: ${e.message}`);
   } finally {
-    this.withdraw();
+    withdraw();
   }
 };
 
