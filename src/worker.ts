@@ -1,7 +1,6 @@
-// Configuring the database
-const config = require('./config');
-const mongoose = require('mongoose');
-const workerController = require('./app/controllers/worker');
+import mongoose = require('mongoose');
+import config = require('./config');
+import workerController = require('./controllers/worker');
 mongoose.Promise = global.Promise;
 
 // Connecting to the database

@@ -8,4 +8,4 @@ const ParamSchema = mongoose.Schema({
     timestamps: true
 });
 
-module.exports = mongoose.model('Param', ParamSchema);
+export = mongoose.model('Param', ParamSchema);

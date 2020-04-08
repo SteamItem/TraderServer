@@ -1,10 +1,10 @@
-const axios = require('axios');
-const paramController = require('./param');
-const { paramEnum } = require('../helpers/common');
+import axios from 'axios';
+import paramController = require('./param');
+import common = require('../helpers/common');
 
-exports.getToken = async () => {
-  var codeParamPromise = paramController.findOne(paramEnum.Code);
-  var cookieParamPromise = paramController.findOne(paramEnum.Cookie);
+async function getToken() {
+  var codeParamPromise = paramController.findOne(common.paramEnum.Code);
+  var cookieParamPromise = paramController.findOne(common.paramEnum.Cookie);
   var promiseResults = await Promise.all([codeParamPromise, cookieParamPromise]);
   var codeParam = promiseResults[0];
   var cookieParam = promiseResults[1];
@@ -24,8 +24,8 @@ exports.getToken = async () => {
   return result.data;
 }
 
-exports.profile = async () => {
-  var cookieParam = await paramController.findOne(paramEnum.Cookie);
+async function profile() {
+  var cookieParam = await paramController.findOne(common.paramEnum.Cookie);
   let content = {
     headers: {
       'Content-Type': 'application/json',
@@ -36,3 +36,8 @@ exports.profile = async () => {
   var result = await axios.get('https://csgoempire.gg/api/v2/user', content);
   return result.data;
 };
+
+export = {
+  getToken,
+  profile
+}

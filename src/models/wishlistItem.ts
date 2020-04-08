@@ -8,4 +8,4 @@ const WishlistItemSchema = mongoose.Schema({
     timestamps: true
 });
 
-module.exports = mongoose.model('WishlistItem', WishlistItemSchema);
+export = mongoose.model('WishlistItem', WishlistItemSchema);

@@ -2,14 +2,19 @@
   "name": "csgo-trader",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
   "scripts": {
-    "start": "nodemon server",
+    "build-ts": "tsc",
+    "watch-ts": "tsc -w",
+    "start": "tsc && nodemon dist/index",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@types/lodash": "^4.14.149",
+    "@types/mongoose": "^5.7.9",
+    "@types/node-telegram-bot-api": "^0.40.2",
+    "awesome-typescript-loader": "^5.2.1",
     "axios": "^0.19.2",
     "body-parser": "^1.19.0",
     "express": "^4.17.1",
@@ -17,6 +22,10 @@
     "mongoose": "^5.9.7",
     "node-telegram-bot-api": "^0.40.0",
     "nodemon": "^2.0.2",
-    "pm2": "^4.2.3"
+    "pm2": "^4.2.3",
+    "source-map-loader": "^0.2.4"
+  },
+  "devDependencies": {
+    "typescript": "^3.8.3"
   }
 }

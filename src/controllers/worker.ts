@@ -1,8 +1,8 @@
-const axios = require('axios');
-const _ = require('lodash');
-const WishlistItem = require('../models/wishlistItem');
-const paramController = require('./param');
-const { paramEnum } = require('../helpers/common');
+import axios from 'axios';
+import _ = require('lodash');
+import WishlistItem = require('../models/wishlistItem');
+import paramController = require('./param');
+import common = require('../helpers/common');
 
 function filter(wishlistItems, item) {
   var predicate = false;
@@ -16,9 +16,9 @@ function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-exports.withdraw = async () => {
+async function withdraw() {
   try {
-    var cookieParamPromise = paramController.findOne(paramEnum.Cookie);
+    var cookieParamPromise = paramController.findOne(common.paramEnum.Cookie);
     var wishlistItemsPromise = WishlistItem.find();
     var promiseResults = await Promise.all([cookieParamPromise, wishlistItemsPromise]);
     var cookieParam = promiseResults[0];
@@ -60,3 +60,7 @@ exports.withdraw = async () => {
     this.withdraw();
   }
 };
+
+export = {
+  withdraw
+}

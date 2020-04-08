@@ -1,11 +1,11 @@
-const WishlistItem = require('../models/wishlistItem');
+import WishlistItem = require('../models/wishlistItem');
 
-exports.findAll = async () => {
+async function findAll() {
     var wishlistItems = await WishlistItem.find();
     return wishlistItems;
 };
 
-exports.create = async (appid, name, max_price) => {
+async function create(appid, name, max_price) {
     if(!appid) {
         throw new Error("appid can not be empty");
     }
@@ -22,7 +22,7 @@ exports.create = async (appid, name, max_price) => {
     return data;
 };
 
-exports.update = async (itemId, appid, name, max_price) => {
+async function update(itemId, appid, name, max_price) {
     if(!itemId) {
         throw new Error("itemId can not be empty");
     }
@@ -39,7 +39,14 @@ exports.update = async (itemId, appid, name, max_price) => {
     return item;
 };
 
-exports.delete = async (itemId) => {
+async function remove(itemId) {
     var result = await WishlistItem.findByIdAndRemove(itemId);
     return result
 };
+
+export = {
+    findAll,
+    create,
+    update,
+    remove
+}

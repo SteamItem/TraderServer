@@ -1,12 +1,12 @@
-const mongoose = require('mongoose');
-var http = require("http");
-const config = require('./config');
-const workerHandlerController = require('./app/controllers/workerHandler');
-const paramController = require('./app/controllers/param');
-const wishlistItemController = require('./app/controllers/wishlistItem');
-const csgoController = require('./app/controllers/csgo');
-const telegram = require('./app/helpers/telegram');
-const { paramEnum } = require('./app/helpers/common');
+import mongoose = require('mongoose');
+import http = require("http");
+import config = require('./config');
+import workerHandlerController = require('./controllers/workerHandler');
+import paramController = require('./controllers/param');
+import wishlistItemController = require('./controllers/wishlistItem');
+import csgoController = require('./controllers/csgo');
+import telegram = require('./helpers/telegram');
+import common = require('./helpers/common');
 const PORT = process.env.PORT || 3000;
 
 mongoose.Promise = global.Promise;
@@ -79,12 +79,12 @@ bot.onText(/\/period/, (msg) => {
   });
 });
 bot.onText(/\/pinShow/, async (msg) => {
-  var pinParam = await paramController.findOne(paramEnum.Code);
+  var pinParam = await paramController.findOne(common.paramEnum.Code);
   bot.sendMessage(msg.chat.id, `Pin code: ${pinParam.value}`);
 });
 bot.onText(/\/pinUpdate (.+)/, async (msg, match) => {
   var newPin = match[1];
-  await paramController.update(paramEnum.Code, match[1]);
+  await paramController.update(common.paramEnum.Code, match[1]);
   bot.sendMessage(msg.chat.id, `New pin code: ${newPin}`);
 });
 bot.onText(/\/profile/, (msg) => {
@@ -179,23 +179,23 @@ async function onServiceCallbackQuery(chatId, subAction) {
 async function onPeriodCallbackQuery(chatId, subAction) {
   switch (subAction) {
     case '1ms':
-      await paramController.update(paramEnum.Period, 1);
+      await paramController.update(common.paramEnum.Period, 1);
       bot.sendMessage(chatId, 'Updated to 1 mS');
       break;
     case '10mS':
-      await paramController.update(paramEnum.Period, 10);
+      await paramController.update(common.paramEnum.Period, 10);
       bot.sendMessage(chatId, 'Updated to 10 mS');
       break;
     case '100mS':
-      await paramController.update(paramEnum.Period, 100);
+      await paramController.update(common.paramEnum.Period, 100);
       bot.sendMessage(chatId, 'Updated to 100 mS');
       break;
     case '1s':
-      await paramController.update(paramEnum.Period, 1000);
+      await paramController.update(common.paramEnum.Period, 1000);
       bot.sendMessage(chatId, 'Updated to 1 Second');
       break;
     case '2s':
-      await paramController.update(paramEnum.Period, 2000);
+      await paramController.update(common.paramEnum.Period, 2000);
       bot.sendMessage(chatId, 'Updated to 2 Seconds');
       break;
     default:
@@ -214,7 +214,7 @@ async function onProfileCallbackQuery(chatId, subAction) {
       bot.sendMessage(chatId, `Balance: ${profile.balance}`);
       break;
     case 'pin':
-      var pinParam = await paramController.findOne(paramEnum.Code);
+      var pinParam = await paramController.findOne(common.paramEnum.Code);
       bot.sendMessage(chatId, `Pin code: ${pinParam.value}`);
       break;
     default:

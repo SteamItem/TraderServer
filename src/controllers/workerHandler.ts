@@ -1,6 +1,6 @@
 var pm2 = require('pm2');
 
-exports.start = () => {
+function start() {
   pm2.connect(function(err) {
     if (err) throw err;
     pm2.start({
@@ -12,7 +12,7 @@ exports.start = () => {
   });
 }
 
-exports.stop = () => {
+function stop() {
   pm2.connect(function(err) {
     if (err) throw err;
     pm2.stop('worker', function(err, apps) {
@@ -22,7 +22,7 @@ exports.stop = () => {
   });
 }
 
-exports.restart = () => {
+function restart() {
   pm2.connect(function(err) {
     if (err) throw err;
     pm2.restart('worker', function(err, apps) {
@@ -30,4 +30,10 @@ exports.restart = () => {
     if (err) throw err;
     });
   });
+}
+
+export = {
+  start,
+  stop,
+  restart
 }
