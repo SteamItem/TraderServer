@@ -7,7 +7,6 @@ const wishlistItemController = require('./app/controllers/wishlistItem');
 const csgoController = require('./app/controllers/csgo');
 const telegram = require('./app/helpers/telegram');
 const { paramEnum } = require('./app/helpers/common');
-const Param = require('./app/models/param');
 const PORT = process.env.PORT || 3000;
 
 mongoose.Promise = global.Promise;
@@ -79,9 +78,8 @@ bot.onText(/\/period/, (msg) => {
     }
   });
 });
-bot.onText(/\/pinShow/, async (msg, match) => {
-  var pinParam = await Param.findOne({id: paramEnum.Code});
-  console.log(match);
+bot.onText(/\/pinShow/, async (msg) => {
+  var pinParam = await paramController.findOne(paramEnum.Code);
   bot.sendMessage(msg.chat.id, `Pin code: ${pinParam.value}`);
 });
 bot.onText(/\/pinUpdate (.+)/, async (msg, match) => {

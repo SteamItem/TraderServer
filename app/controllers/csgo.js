@@ -1,10 +1,10 @@
 const axios = require('axios');
-const Param = require('../models/param.js');
+const paramController = require('./param');
 const { paramEnum } = require('../helpers/common');
 
 exports.getToken = async () => {
-  var codeParamPromise = Param.findOne({id: paramEnum.Code});
-  var cookieParamPromise = Param.findOne({id: paramEnum.Cookie});
+  var codeParamPromise = paramController.findOne(paramEnum.Code);
+  var cookieParamPromise = paramController.findOne(paramEnum.Cookie);
   var promiseResults = await Promise.all([codeParamPromise, cookieParamPromise]);
   var codeParam = promiseResults[0];
   var cookieParam = promiseResults[1];
@@ -25,7 +25,7 @@ exports.getToken = async () => {
 }
 
 exports.profile = async () => {
-  var cookieParam = await Param.findOne({id: paramEnum.Cookie});
+  var cookieParam = await paramController.findOne(paramEnum.Cookie);
   let content = {
     headers: {
       'Content-Type': 'application/json',

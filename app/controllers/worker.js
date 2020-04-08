@@ -1,6 +1,6 @@
 const axios = require('axios');
 const _ = require('lodash');
-const WishlistItem = require('../models/wishlistItem.js');
+const WishlistItem = require('../models/wishlistItem');
 const telegram = require('../helpers/telegram')
 
 function filter(wishlistItems, item) {

@@ -1,4 +1,4 @@
-const WishlistItem = require('../models/wishlistItem.js');
+const WishlistItem = require('../models/wishlistItem');
 
 exports.findAll = async () => {
     var wishlistItems = await WishlistItem.find();
