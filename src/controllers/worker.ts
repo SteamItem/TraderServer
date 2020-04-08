@@ -2,7 +2,6 @@ import axios from 'axios';
 import _ = require('lodash');
 import WishlistItem = require('../models/wishlistItem');
 import paramController = require('./param');
-import common = require('../helpers/common');
 
 function filter(wishlistItems, item) {
   var predicate = false;
@@ -18,7 +17,7 @@ function sleep(ms) {
 
 async function withdraw() {
   try {
-    var cookieParamPromise = paramController.findOne(common.paramEnum.Cookie);
+    var cookieParamPromise = paramController.getCookie();
     var wishlistItemsPromise = WishlistItem.find();
     var promiseResults = await Promise.all([cookieParamPromise, wishlistItemsPromise]);
     var cookieParam = promiseResults[0];
