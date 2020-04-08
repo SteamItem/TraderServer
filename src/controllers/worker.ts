@@ -11,17 +11,19 @@ function filter(wishlistItems, item) {
   return predicate;
 }
 
-function sleep(ms) {
+function sleep(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 async function withdraw() {
   try {
     var cookieParamPromise = paramController.getCookie();
+    var periodParamPromise = paramController.getPeriod();
     var wishlistItemsPromise = WishlistItem.find();
-    var promiseResults = await Promise.all([cookieParamPromise, wishlistItemsPromise]);
+    var promiseResults = await Promise.all([cookieParamPromise, periodParamPromise, wishlistItemsPromise]);
     var cookieParam = promiseResults[0];
-    var wishlistItems = promiseResults[1];
+    var periodParam = promiseResults[1];
+    var wishlistItems = promiseResults[2];
 
     let content = {
       headers: {
@@ -51,11 +53,12 @@ async function withdraw() {
       console.log(wantedItems.length);
       // telegram.sendMessage(`${wantedItems.length} items found.`)
     }
+    await sleep(periodParam.value);
   } catch (e) {
     console.log(e.message);
+    await sleep(5000);
     // telegram.sendMessage(`Error: ${e.message}`);
   } finally {
-    await sleep(2000);
     this.withdraw();
   }
 };
