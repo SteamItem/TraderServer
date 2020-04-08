@@ -1,6 +1,6 @@
 import axios from 'axios';
 import _ = require('lodash');
-import WishlistItem = require('../models/wishlistItem');
+import wishlistItemController = require('./wishlistItem');
 import paramController = require('./param');
 
 function filter(wishlistItems, item) {
@@ -19,7 +19,7 @@ async function withdraw() {
   try {
     var cookieParamPromise = paramController.getCookie();
     var periodParamPromise = paramController.getPeriod();
-    var wishlistItemsPromise = WishlistItem.find();
+    var wishlistItemsPromise = wishlistItemController.findAll();
     var promiseResults = await Promise.all([cookieParamPromise, periodParamPromise, wishlistItemsPromise]);
     var cookieParam = promiseResults[0];
     var periodParam = promiseResults[1];
