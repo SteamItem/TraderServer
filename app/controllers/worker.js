@@ -1,7 +1,8 @@
 const axios = require('axios');
 const _ = require('lodash');
 const WishlistItem = require('../models/wishlistItem');
-const telegram = require('../helpers/telegram')
+const paramController = require('./param');
+const { paramEnum } = require('../helpers/common');
 
 function filter(wishlistItems, item) {
   var predicate = false;
@@ -16,14 +17,46 @@ function sleep(ms) {
 }
 
 exports.withdraw = async () => {
-  var itemsPromise = axios.get('https://csgoempire.gg/api/v2/hermes/inventory/10');
-  var wishlistItemsPromise = WishlistItem.find();
-  var promiseResults = await Promise.all([itemsPromise, wishlistItemsPromise]);
-  var items = promiseResults[0];
-  var wishlistItems = promiseResults[1];
+  try {
+    var cookieParamPromise = paramController.findOne(paramEnum.Cookie);
+    var wishlistItemsPromise = WishlistItem.find();
+    var promiseResults = await Promise.all([cookieParamPromise, wishlistItemsPromise]);
+    var cookieParam = promiseResults[0];
+    var wishlistItems = promiseResults[1];
 
-  var wantedItems = _.filter(items.data, item => filter(wishlistItems, item));
-  telegram.sendMessage(`${wantedItems.length} items found.`)
-  await sleep(2000);
-  this.withdraw();
+    let content = {
+      headers: {
+        'Content-Type': 'application/json',
+        'Cookie': cookieParam.value,
+        'Host': 'csgoempire.gg'
+      }
+    };
+    // var items = await axios.get('https://csgoempire.gg/api/v2/p2p/inventory/instant', content);
+    var items = await axios.get('https://csgoempire.gg/api/v2/hermes/inventory/10', content);
+
+    var wantedItems = _.filter(items.data, item => filter(wishlistItems, item));
+    console.log(wantedItems);
+    // let wantedItems = [];
+    // wishlistItems.forEach(wishlistItem => {
+    //   var filteredItems = _.filter(items.data, i => { return i.market_name === wishlistItem.name && i.appid == wishlistItem.appid && i.market_value <= wishlistItem.max_price; });
+    //   var sortedItems = _.sortBy(filteredItems, i => { return i.market_value; });
+    //   if (sortedItems.length > 0) {
+    //     var wantedItem = _.head(sortedItems);
+    //     wantedItems.push[wantedItem];
+    //     console.log(wantedItems);
+    //   }
+    // });
+    // console.log(wantedItems.length);
+
+    if (wantedItems && wantedItems.length > 0) {
+      console.log(wantedItems.length);
+      // telegram.sendMessage(`${wantedItems.length} items found.`)
+    }
+  } catch (e) {
+    console.log(e.message);
+    // telegram.sendMessage(`Error: ${e.message}`);
+  } finally {
+    await sleep(2000);
+    this.withdraw();
+  }
 };
