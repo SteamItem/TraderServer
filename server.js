@@ -7,6 +7,7 @@ const wishlistItemController = require('./app/controllers/wishlistItem');
 const csgoController = require('./app/controllers/csgo');
 const telegram = require('./app/helpers/telegram');
 const { paramEnum } = require('./app/helpers/common');
+const Param = require('./app/models/param');
 const PORT = process.env.PORT || 3000;
 
 mongoose.Promise = global.Promise;
@@ -32,7 +33,7 @@ console.log(`Server is listening on port ${PORT}`);
 
 var bot = telegram.getBot();
 bot.onText(/\/help/, (msg) => {
-  var lines = ['/service: Manage service', '/period: Wait period', '/profile: Profile operations', '/wishlist: Wishlist manager'];
+  var lines = ['/service: Manage service', '/period: Wait period', '/profile: Profile operations', '/wishlist: Wishlist manager', '/pinShow: Show pin code', '/pinUpdate [PIN]: Update pin code'];
   var message = lines.join('\n');
   bot.sendMessage(msg.chat.id, message);
 });
@@ -78,6 +79,16 @@ bot.onText(/\/period/, (msg) => {
     }
   });
 });
+bot.onText(/\/pinShow/, async (msg, match) => {
+  var pinParam = await Param.findOne({id: paramEnum.Code});
+  console.log(match);
+  bot.sendMessage(msg.chat.id, `Pin code: ${pinParam.value}`);
+});
+bot.onText(/\/pinUpdate (.+)/, async (msg, match) => {
+  var newPin = match[1];
+  await paramController.update(paramEnum.Code, match[1]);
+  bot.sendMessage(msg.chat.id, `New pin code: ${newPin}`);
+});
 bot.onText(/\/profile/, (msg) => {
   bot.sendMessage(msg.chat.id, 'Profile operations', {
     reply_markup: {
@@ -122,6 +133,9 @@ bot.on('callback_query', async function onCallbackQuery(callbackQuery){
     case 'period':
       onPeriodCallbackQuery(chatId, subAction);
       break;
+    case 'pin':
+      onPinCallbackQuery(chatId, subAction);
+      break;
     case 'profile':
       onProfileCallbackQuery(chatId, subAction);
       break;
@@ -165,6 +179,33 @@ async function onServiceCallbackQuery(chatId, subAction) {
 }
 
 async function onPeriodCallbackQuery(chatId, subAction) {
+  switch (subAction) {
+    case '1ms':
+      await paramController.update(paramEnum.Period, 1);
+      bot.sendMessage(chatId, 'Updated to 1 mS');
+      break;
+    case '10mS':
+      await paramController.update(paramEnum.Period, 10);
+      bot.sendMessage(chatId, 'Updated to 10 mS');
+      break;
+    case '100mS':
+      await paramController.update(paramEnum.Period, 100);
+      bot.sendMessage(chatId, 'Updated to 100 mS');
+      break;
+    case '1s':
+      await paramController.update(paramEnum.Period, 1000);
+      bot.sendMessage(chatId, 'Updated to 1 Second');
+      break;
+    case '2s':
+      await paramController.update(paramEnum.Period, 2000);
+      bot.sendMessage(chatId, 'Updated to 2 Seconds');
+      break;
+    default:
+      throw new Error('Unknown sub action');
+  }
+}
+
+async function onPinCallbackQuery(chatId, subAction) {
   switch (subAction) {
     case '1ms':
       await paramController.update(paramEnum.Period, 1);

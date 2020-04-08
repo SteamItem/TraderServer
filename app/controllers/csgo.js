@@ -2,19 +2,26 @@ const axios = require('axios');
 const Param = require('../models/param.js');
 const { paramEnum } = require('../helpers/common');
 
-exports.getToken = async (req, res) => {
+exports.getToken = async () => {
+  var codeParamPromise = Param.findOne({id: paramEnum.Code});
+  var cookieParamPromise = Param.findOne({id: paramEnum.Cookie});
+  var promiseResults = await Promise.all([codeParamPromise, cookieParamPromise]);
+  var codeParam = promiseResults[0];
+  var cookieParam = promiseResults[1];
+
   let data = JSON.stringify({
-    "code":"0000"
+    "code": codeParam.value
   });
 
   let content = {
     headers: {
       'Content-Type': 'application/json',
-      'Cookie': '__cfduid=d57b480340f47c7655d6b4397b7a87af81585764759; PHPSESSID=n1avmrlh8kpa6altjkua9tdl4f; do_not_share_this_with_anyone_not_even_staff=5668412_cAQ1q0rTnf7DVCRB0ljeSJ3r3JRptPr5wXb5y4Rb7fkePsBlkgrp1OQDwifO; AWSALB=2E9UgRkedNgfXgHXSgXJqf11DF0zROoKv8kyt45MFgVLD8orAHuX6bTBCrmU1F9l3qGbCDTWpvBntRMBNjtnet4XYzb0BkW2fHlv0qf76IghGX8bngvAOShTBc/+L8snUBf/2IaCj21SDDERmRVJcUvW1qvBdEFuF01Q0hW8vZYCMXWGF4ylthOanWAQgLKTpZOVzhSWbdcK7jasMU5CWxikCxD1HGSp9FosgSvDV1SWTbhw+qvrltcGd1csK30=; AWSALBCORS=2E9UgRkedNgfXgHXSgXJqf11DF0zROoKv8kyt45MFgVLD8orAHuX6bTBCrmU1F9l3qGbCDTWpvBntRMBNjtnet4XYzb0BkW2fHlv0qf76IghGX8bngvAOShTBc/+L8snUBf/2IaCj21SDDERmRVJcUvW1qvBdEFuF01Q0hW8vZYCMXWGF4ylthOanWAQgLKTpZOVzhSWbdcK7jasMU5CWxikCxD1HGSp9FosgSvDV1SWTbhw+qvrltcGd1csK30='
+      'Cookie': cookieParam.value,
+      'Host': 'csgoempire.gg'
     }
   };
   var result = await axios.post('https://csgoempire.gg/api/v2/user/security/token', data, content);
-  res.send(result.data);
+  return result.data;
 }
 
 exports.profile = async () => {
