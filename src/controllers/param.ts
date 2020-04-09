@@ -1,37 +1,33 @@
 import Param = require('../models/param');
 
-function findOne(id: number) {
-  return Param.findOne({ id });
-};
+async function findOne(id: number) {
+  return Param.default.findOne({ id });
+}
 
-function getPeriod() {
+async function getPeriod() {
   return findOne(paramEnum.Period);
 }
 
-function getCookie() {
+async function getCookie() {
   return findOne(paramEnum.Cookie);
 }
 
-function getCode() {
+async function getCode() {
   return findOne(paramEnum.Code);
 }
 
-function update(id: number, value) {
-  return Param.findOneAndUpdate({ id }, { value }, {new: true});
-};
-
-function updatePeriod(period: number) {
-  return update(paramEnum.Period, period);
+async function updatePeriod(period: number) {
+  return Param.default.findOneAndUpdate({ id: paramEnum.Period }, { period }, {new: true});
 }
 
-function updateCode(code: string) {
-  return update(paramEnum.Code, code);
+async function updateCode(code: string) {
+  return Param.default.findOneAndUpdate({ id: paramEnum.Code }, { code }, {new: true});
 }
 
-const paramEnum = {
-  Period: 1,
-  Cookie: 2,
-  Code: 3
+enum paramEnum {
+  Period = 1,
+  Cookie = 2,
+  Code = 3
 }
 
 export = {

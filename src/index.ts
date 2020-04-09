@@ -77,11 +77,8 @@ bot.onText(/\/period/, (msg) => {
     }
   });
 });
-bot.onText(/\/pinShow/, async (msg) => {
-  var pinParam = await paramController.getCode();
-  bot.sendMessage(msg.chat.id, `Pin code: ${pinParam.value}`);
-});
 bot.onText(/\/pinUpdate (.+)/, async (msg, match) => {
+  if (!match) return bot.sendMessage(msg.chat.id, 'Please provide a pin');
   var newPin = match[1];
   await paramController.updateCode(newPin);
   bot.sendMessage(msg.chat.id, `New pin code: ${newPin}`);
@@ -117,10 +114,12 @@ bot.onText(/\/wishlist/, (msg) => {
   });
 });
 
-bot.on('callback_query', async function onCallbackQuery(callbackQuery){
-  const action = callbackQuery.data // This is responsible for checking the content of callback_data
+bot.on('callback_query', async function onCallbackQuery(callbackQuery) {
+  if (!callbackQuery) return;
+  const action = callbackQuery.data;
+  if (!callbackQuery.message) return;
   const chatId = callbackQuery.message.chat.id;
-
+  if (!action) return;
   var splittedActions = action.split('.');
   if (splittedActions.length !== 2) throw new Error("Unknown action");
   var mainAction = splittedActions[0];
@@ -144,38 +143,26 @@ bot.on('callback_query', async function onCallbackQuery(callbackQuery){
  }
 });
 
-async function onServiceCallbackQuery(chatId, subAction) {
+async function onServiceCallbackQuery(chatId: number, subAction: string) {
   switch (subAction) {
     case 'start':
-      try {
-        workerHandlerController.start();
-        bot.sendMessage(chatId, "Started");
-      } catch (e) {
-        bot.sendMessage(chatId, e.message);
-      }
+      workerHandlerController.start();
+      bot.sendMessage(chatId, "Started");
       break;
     case 'stop':
-      try {
-        workerHandlerController.stop();
-        bot.sendMessage(chatId, "Stopped");
-      } catch (e) {
-        bot.sendMessage(chatId, e.message);
-      }
+      workerHandlerController.stop();
+      bot.sendMessage(chatId, "Stopped");
       break;
     case 'restart':
-      try {
-        workerHandlerController.restart();
-        bot.sendMessage(chatId, "Restarted");
-      } catch (e) {
-        bot.sendMessage(chatId, e.message);
-      }
+      workerHandlerController.restart();
+      bot.sendMessage(chatId, "Restarted");
       break;
     default:
       throw new Error('Unknown sub action');
   }
 }
 
-async function onPeriodCallbackQuery(chatId, subAction) {
+async function onPeriodCallbackQuery(chatId: number, subAction: string) {
   switch (subAction) {
     case '1ms':
       await paramController.updatePeriod(1);
@@ -202,7 +189,7 @@ async function onPeriodCallbackQuery(chatId, subAction) {
   }
 }
 
-async function onProfileCallbackQuery(chatId, subAction) {
+async function onProfileCallbackQuery(chatId: number, subAction: string) {
   switch (subAction) {
     case 'steamName':
       var profile = await csgoController.profile();
@@ -214,6 +201,7 @@ async function onProfileCallbackQuery(chatId, subAction) {
       break;
     case 'pin':
       var pinParam = await paramController.getCode();
+      if (!pinParam) return bot.sendMessage(chatId, 'Pin not found');
       bot.sendMessage(chatId, `Pin code: ${pinParam.value}`);
       break;
     default:
@@ -221,11 +209,15 @@ async function onProfileCallbackQuery(chatId, subAction) {
   }
 }
 
-async function onWishlistCallbackQuery(chatId, subAction) {
+async function onWishlistCallbackQuery(chatId: number, subAction: string) {
   switch (subAction) {
     case 'list':
       var wishlistItems = await wishlistItemController.findAll();
-      bot.sendMessage(chatId, JSON.stringify(wishlistItems));
+      var texts = wishlistItems.map(wi => {
+        return `${wi.name}: ${wi.max_price / 100}$`;
+      });
+      var text = texts.join('\n');
+      bot.sendMessage(chatId, text);
       break;
     default:
       throw new Error('Unknown sub action');

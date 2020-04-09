@@ -1,11 +1,15 @@
-const mongoose = require('mongoose');
+import * as mongoose from 'mongoose';
 
-const ParamSchema = mongoose.Schema({
-    id: Number,
-    name: String,
-    value: Object
-}, {
-    timestamps: true
+export interface IParam extends mongoose.Document {
+  id: number;
+  name: string;
+  value: Object;
+}
+
+const ParamSchema: mongoose.Schema = new mongoose.Schema({
+  id: { type: Number, required: true },
+  name: { type: String, required: true },
+  value: { type: Object, required: true }
 });
 
-export = mongoose.model('Param', ParamSchema);
+export default mongoose.model<IParam>('Param', ParamSchema);

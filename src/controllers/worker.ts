@@ -5,6 +5,8 @@ import paramController = require('./param');
 import csgoController = require('./csgo');
 import config = require('../config');
 import telegram = require('../helpers/telegram');
+import { IParam } from '../models/param';
+import { IWishlistItem } from '../models/wishlistItem';
 
 function sleep(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -18,10 +20,16 @@ async function withdraw() {
     var wishlistItemsPromise = wishlistItemController.findAll();
     var tokenPromise = csgoController.getToken();
     var promiseResults = await Promise.all([cookieParamPromise, periodParamPromise, wishlistItemsPromise, tokenPromise]);
-    var cookieParam = promiseResults[0];
-    var periodParam = promiseResults[1];
-    var wishlistItems = promiseResults[2];
+    var cookieParam: IParam | null = promiseResults[0];
+    var periodParam: IParam | null = promiseResults[1];
+    var wishlistItems: IWishlistItem[] = promiseResults[2];
     var token = promiseResults[3];
+
+    if (!cookieParam) throw new Error("Cookie not found");
+    if (!periodParam) throw new Error("Period not found");
+
+    var period = Number(periodParam.value);
+    if (!period) throw new Error("Period is invalid");
 
     let content = {
       headers: {
@@ -53,7 +61,7 @@ async function withdraw() {
       }
     });
 
-    await sleep(periodParam.value);
+    await sleep(period);
   } catch (e) {
     console.log(e);
     await sleep(1000);

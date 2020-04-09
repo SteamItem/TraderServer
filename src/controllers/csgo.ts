@@ -8,6 +8,9 @@ async function getToken() {
   var codeParam = promiseResults[0];
   var cookieParam = promiseResults[1];
 
+  if (!codeParam) throw new Error("Code not found.");
+  if (!cookieParam) throw new Error("Cookie not found.");
+
   let data = JSON.stringify({
     "code": codeParam.value,
     "uuid": "1"
@@ -26,6 +29,7 @@ async function getToken() {
 
 async function profile() {
   var cookieParam = await paramController.getCookie();
+  if (!cookieParam) throw new Error("Cookie not found.");
   let content = {
     headers: {
       'Content-Type': 'application/json',
@@ -35,7 +39,7 @@ async function profile() {
   };
   var result = await axios.get('https://csgoempire.gg/api/v2/user', content);
   return result.data;
-};
+}
 
 export = {
   getToken,
