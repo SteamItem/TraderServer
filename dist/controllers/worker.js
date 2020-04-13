@@ -141,7 +141,6 @@ var Worker = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        console.log("Started");
                         that = this;
                         _a.label = 1;
                     case 1:
@@ -150,7 +149,6 @@ var Worker = /** @class */ (function () {
                     case 2:
                         _a.sent();
                         if (!(this.workerStatus === true)) return [3 /*break*/, 6];
-                        console.log("Working");
                         return [4 /*yield*/, that.getItems()];
                     case 3:
                         _a.sent();
@@ -162,9 +160,7 @@ var Worker = /** @class */ (function () {
                     case 5:
                         _a.sent();
                         return [3 /*break*/, 8];
-                    case 6:
-                        console.log("Not Working");
-                        return [4 /*yield*/, helpers.sleep(1000)];
+                    case 6: return [4 /*yield*/, helpers.sleep(1000)];
                     case 7:
                         _a.sent();
                         _a.label = 8;
@@ -289,7 +285,6 @@ var Worker = /** @class */ (function () {
         this.log("Error: " + message);
     };
     Worker.prototype.log = function (message) {
-        console.log(message);
         return logController.create(message);
     };
     return Worker;
