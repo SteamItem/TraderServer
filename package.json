@@ -5,7 +5,7 @@
   "scripts": {
     "build-ts": "tsc",
     "watch-ts": "tsc -w",
-    "start": "tsc && pm2-runtime start ecosystem.config.js --env production",
+    "start": "pm2-runtime start ecosystem.config.js --env production",
     "dev": "tsc && pm2-dev start ecosystem.config.js --env development"
   },
   "author": "",
