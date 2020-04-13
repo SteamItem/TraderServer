@@ -1,7 +1,6 @@
 import mongoose = require('mongoose');
 import http = require("http");
 import config = require('./config');
-import workerHandlerController = require('./controllers/workerHandler');
 import paramController = require('./controllers/param');
 import wishlistItemController = require('./controllers/wishlistItem');
 import csgoController = require('./controllers/csgo');
@@ -11,7 +10,7 @@ const PORT = process.env.PORT || 3000;
 mongoose.Promise = global.Promise;
 
 // Connecting to the database
-mongoose.connect(config.dbUrl, {
+mongoose.connect(config.DB_URL, {
     useNewUrlParser: true
 }).then(() => {
     console.log("Successfully connected to the database");
@@ -46,8 +45,8 @@ bot.onText(/\/service/, (msg) => {
           text: 'Stop',
           callback_data: 'service.stop'
         },{
-          text: 'Restart',
-          callback_data: 'service.restart'
+          text: 'Status',
+          callback_data: 'service.status'
         }
       ]]
     }
@@ -78,7 +77,10 @@ bot.onText(/\/period/, (msg) => {
   });
 });
 bot.onText(/\/pinUpdate (.+)/, async (msg, match) => {
-  if (!match) return bot.sendMessage(msg.chat.id, 'Please provide a pin');
+  if (!match) {
+    bot.sendMessage(msg.chat.id, 'Please provide a pin');
+    return;
+  }
   var newPin = match[1];
   await paramController.updateCode(newPin);
   bot.sendMessage(msg.chat.id, `New pin code: ${newPin}`);
@@ -146,16 +148,22 @@ bot.on('callback_query', async function onCallbackQuery(callbackQuery) {
 async function onServiceCallbackQuery(chatId: number, subAction: string) {
   switch (subAction) {
     case 'start':
-      workerHandlerController.start();
-      bot.sendMessage(chatId, "Started");
+      await paramController.startWorker();
+      bot.sendMessage(chatId, 'Worker Started');
       break;
     case 'stop':
-      workerHandlerController.stop();
-      bot.sendMessage(chatId, "Stopped");
+      await paramController.stopWorker();
+      bot.sendMessage(chatId, "Worker Stopped");
       break;
-    case 'restart':
-      workerHandlerController.restart();
-      bot.sendMessage(chatId, "Restarted");
+    case 'status':
+      var status = await paramController.getWorkerStatus();
+      var message: string;
+      if (status && status.value === true) {
+        message = "It is working";
+      } else {
+        message = "Not working";
+      }
+      bot.sendMessage(chatId, message);
       break;
     default:
       throw new Error('Unknown sub action');
@@ -201,7 +209,10 @@ async function onProfileCallbackQuery(chatId: number, subAction: string) {
       break;
     case 'pin':
       var pinParam = await paramController.getCode();
-      if (!pinParam) return bot.sendMessage(chatId, 'Pin not found');
+      if (!pinParam) {
+        bot.sendMessage(chatId, 'Pin not found');
+        return;
+      }
       bot.sendMessage(chatId, `Pin code: ${pinParam.value}`);
       break;
     default:

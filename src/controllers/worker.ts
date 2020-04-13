@@ -3,74 +3,146 @@ import _ = require('lodash');
 import wishlistItemController = require('./wishlistItem');
 import paramController = require('./param');
 import csgoController = require('./csgo');
-import config = require('../config');
-import telegram = require('../helpers/telegram');
-import { IParam } from '../models/param';
+import withdrawController = require('./withdraw');
+import logController = require('./log');
+import helpers = require('../helpers');
 import { IWishlistItem } from '../models/wishlistItem';
+import { IInstantStoreItem } from '../interfaces/instantStoreItem';
+import { IItemToBuy } from '../interfaces/itemToBuy';
+import workerHelper = require('../helpers/worker');
 
-function sleep(ms: number) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
+export class Worker {
+  private storeItems: IInstantStoreItem[];
+  private itemsToBuy: IItemToBuy[] = [];
 
-async function withdraw() {
-  try {
-    var bot = telegram.getBot();
-    var cookieParamPromise = paramController.getCookie();
-    var periodParamPromise = paramController.getPeriod();
-    var wishlistItemsPromise = wishlistItemController.findAll();
-    var tokenPromise = csgoController.getToken();
-    var promiseResults = await Promise.all([cookieParamPromise, periodParamPromise, wishlistItemsPromise, tokenPromise]);
-    var cookieParam: IParam | null = promiseResults[0];
-    var periodParam: IParam | null = promiseResults[1];
-    var wishlistItems: IWishlistItem[] = promiseResults[2];
-    var token = promiseResults[3];
-
+  private cookie: string;
+  private async getCookie() {
+    var cookieParam = await paramController.getCookie();
     if (!cookieParam) throw new Error("Cookie not found");
-    if (!periodParam) throw new Error("Period not found");
+    return cookieParam.value.toString();
+  }
 
+  private period: number;
+  private async getPeriod() {
+    var periodParam = await paramController.getPeriod();
+    if (!periodParam) throw new Error("Period not found");
     var period = Number(periodParam.value);
     if (!period) throw new Error("Period is invalid");
+    return period;
+  }
 
-    let content = {
+  private workerStatus: boolean;
+  private async getWorkerStatus() {
+    var workerStatusParam = await paramController.getWorkerStatus();
+    if (!workerStatusParam) throw new Error("Worker status not found");
+    var workerStatus = Boolean(workerStatusParam.value);
+    return workerStatus;
+  }
+
+  private wishlistItems: IWishlistItem[];
+  private async getWishlistItems() {
+    return await wishlistItemController.findAll();
+  }
+
+  private token: string;
+  private async getToken() {
+    var token = await csgoController.getToken();
+    return token.token.toString();
+  }
+
+  private get requestConfig() {
+    return {
       headers: {
         'Content-Type': 'application/json',
-        'Cookie': cookieParam.value,
+        'Cookie': this.cookie,
         'Host': 'csgoempire.gg'
       }
     };
-    var items = await axios.get('https://csgoempire.gg/api/v2/p2p/inventory/instant', content);
-    // var items = await axios.get('https://csgoempire.gg/api/v2/hermes/inventory/10', content);
-    wishlistItems.forEach(async wi => {
-      var filteredItems = _.filter(items.data, i => { return i.market_name === wi.name && i.appid == wi.appid && i.market_value <= wi.max_price; });
-      var sortedItems = _.sortBy(filteredItems, i => { return i.market_value; });
-      if (sortedItems.length > 0) {
-        var itemToBuy = sortedItems[0];
-        let data = JSON.stringify({
-          "security_token": token.token,
-          "bot_id": itemToBuy.bot_id,
-          "item_ids": [itemToBuy.id]
-        });
-        try {
-          await axios.post('https://csgoempire.gg/api/v2/trade/withdraw', data, content);
-          bot.sendMessage(config.telegramChatId, `${itemToBuy.market_name} bought for ${itemToBuy.market_value} which is below ${wi.max_price}`);
-          await wishlistItemController.remove(wi._id);
-        } catch (e) {
-          bot.sendMessage(config.telegramChatId, `Error: ${JSON.stringify(e.response.data)}`);
-          await sleep(5000);
-        }
-      }
-    });
-
-    await sleep(period);
-  } catch (e) {
-    console.log(e);
-    await sleep(1000);
-    // telegram.sendMessage(`Error: ${e.message}`);
-  } finally {
-    withdraw();
   }
-};
 
-export = {
-  withdraw
+  /**
+   * work
+   */
+  public async work() {
+    var that = this;
+    try {
+      await that.prepare();
+      if (this.workerStatus === true) {
+        await that.getItems();
+        that.itemsToBuy = workerHelper.generateItemsToBuy(that.storeItems, that.wishlistItems);
+        await that.tryToWithdrawAll();
+        await helpers.sleep(that.period);
+      } else {
+        await helpers.sleep(1000);
+      }
+    } catch (e) {
+      that.handleError(e.message);
+      await helpers.sleep(1000);
+    } finally {
+      that.work();
+    }
+  }
+
+  private async prepare() {
+    var cookiePromise = this.getCookie();
+    var periodPromise = this.getPeriod();
+    var wishlistItemsPromise = this.getWishlistItems();
+    var tokenPromise = this.getToken();
+    var workerStatusPromise = this.getWorkerStatus();
+
+    var promiseResults = await Promise.all([cookiePromise, periodPromise, wishlistItemsPromise, tokenPromise, workerStatusPromise]);
+
+    this.cookie = promiseResults[0];
+    this.period = promiseResults[1];
+    this.wishlistItems = promiseResults[2];
+    this.token = promiseResults[3];
+    this.workerStatus = Boolean(promiseResults[4]);
+  }
+
+  private async getItems() {
+    var items = await axios.get('https://csgoempire.gg/api/v2/p2p/inventory/instant', this.requestConfig);
+    this.storeItems = items.data;
+  }
+
+  private async tryToWithdrawAll() {
+    var promises: Promise<boolean>[] = []
+    this.itemsToBuy.forEach(ib => promises.push(this.tryToWithdraw(ib)));
+    return await Promise.all(promises);
+  }
+
+  private async tryToWithdraw(ib: IItemToBuy) {
+    var that = this;
+    try {
+      await that.withdraw(ib.bot_id, ib.store_item_id);
+      that.handleSuccessWithdraw(ib);
+      return true;
+    } catch (e) {
+      that.handleError(JSON.stringify(e.response.data));
+      return false;
+    }
+  }
+
+  private async withdraw(bot_id: number, item_id: string) {
+    let data = JSON.stringify({
+      "security_token": this.token,
+      "bot_id": bot_id,
+      "item_ids": [item_id]
+    });
+    var result = await axios.post('https://csgoempire.gg/api/v2/trade/withdraw', data, this.requestConfig);
+    return result.data;
+  }
+
+  private handleSuccessWithdraw(ib: IItemToBuy) {
+    var message = `${ib.market_name} bought for ${ib.market_value / 100}$ which is below ${ib.max_price / 100}$`;
+    this.log(message);
+    return withdrawController.create(ib);
+  }
+
+  private handleError(message: string) {
+    this.log(`Error: ${message}`)
+  }
+
+  private log(message: string) {
+    return logController.create(message);
+  }
 }

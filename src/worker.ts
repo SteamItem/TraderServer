@@ -4,7 +4,7 @@ import workerController = require('./controllers/worker');
 mongoose.Promise = global.Promise;
 
 // Connecting to the database
-mongoose.connect(config.dbUrl, {
+mongoose.connect(config.DB_URL, {
     useNewUrlParser: true
 }).then(() => {
     console.log("Successfully connected to the database");
@@ -13,4 +13,5 @@ mongoose.connect(config.dbUrl, {
     process.exit();
 });
 
-workerController.withdraw();
+var worker = new workerController.Worker();
+worker.work();

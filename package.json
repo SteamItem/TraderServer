@@ -5,8 +5,8 @@
   "scripts": {
     "build-ts": "tsc",
     "watch-ts": "tsc -w",
-    "start": "tsc && nodemon dist/index",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "tsc && pm2-runtime start ecosystem.config.js --env production",
+    "dev": "tsc && pm2-dev start ecosystem.config.js --env development"
   },
   "author": "",
   "license": "ISC",
@@ -23,8 +23,9 @@
     "node-telegram-bot-api": "^0.40.0",
     "nodemon": "^2.0.2",
     "pm2": "^4.2.3",
-    "source-map-loader": "^0.2.4",
-    "ts-node": "^8.8.2",
+    "source-map-loader": "^0.2.4"
+  },
+  "devDependencies": {
     "typescript": "^3.8.3"
   }
 }

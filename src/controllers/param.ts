@@ -5,35 +5,51 @@ async function findOne(id: number) {
 }
 
 async function getPeriod() {
-  return findOne(paramEnum.Period);
+  return await findOne(paramEnum.Period);
 }
 
 async function getCookie() {
-  return findOne(paramEnum.Cookie);
+  return await findOne(paramEnum.Cookie);
 }
 
 async function getCode() {
-  return findOne(paramEnum.Code);
+  return await findOne(paramEnum.Code);
+}
+
+async function getWorkerStatus() {
+  return await findOne(paramEnum.WorkerStatus);
 }
 
 async function updatePeriod(period: number) {
-  return Param.default.findOneAndUpdate({ id: paramEnum.Period }, { period }, {new: true});
+  return Param.default.findOneAndUpdate({ id: paramEnum.Period }, { value: period }, {new: true});
 }
 
 async function updateCode(code: string) {
-  return Param.default.findOneAndUpdate({ id: paramEnum.Code }, { code }, {new: true});
+  return Param.default.findOneAndUpdate({ id: paramEnum.Code }, { value: code }, {new: true});
+}
+
+async function startWorker() {
+  return Param.default.findOneAndUpdate({ id: paramEnum.WorkerStatus }, { value: true }, {new: true});
+}
+
+async function stopWorker() {
+  return Param.default.findOneAndUpdate({ id: paramEnum.WorkerStatus }, { value: false }, {new: true});
 }
 
 enum paramEnum {
   Period = 1,
   Cookie = 2,
-  Code = 3
+  Code = 3,
+  WorkerStatus = 4
 }
 
 export = {
   getPeriod,
   getCookie,
   getCode,
+  getWorkerStatus,
   updatePeriod,
-  updateCode
+  updateCode,
+  startWorker,
+  stopWorker
 }

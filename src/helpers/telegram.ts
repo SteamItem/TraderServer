@@ -5,7 +5,7 @@ let bot: TelegramBot;
 
 function getBot() {
   if (bot) return bot;
-  bot = new TelegramBot(config.telegramToken, {polling: true});
+  bot = new TelegramBot(config.TELEGRAM_TOKEN, {polling: true});
   return bot;
 }
 
