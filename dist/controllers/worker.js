@@ -114,7 +114,8 @@ var Worker = /** @class */ (function () {
                     case 0: return [4 /*yield*/, csgoController.getToken()];
                     case 1:
                         token = _a.sent();
-                        return [2 /*return*/, token.token.toString()];
+                        this.token = token.token.toString();
+                        return [2 /*return*/];
                 }
             });
         });
@@ -137,7 +138,7 @@ var Worker = /** @class */ (function () {
      */
     Worker.prototype.work = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var that, e_1;
+            var that, tokenPromise, itemPromise, e_1;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -148,8 +149,10 @@ var Worker = /** @class */ (function () {
                         return [4 /*yield*/, that.prepare()];
                     case 2:
                         _a.sent();
-                        if (!(this.workerStatus === true)) return [3 /*break*/, 6];
-                        return [4 /*yield*/, that.getItems()];
+                        if (!(that.workerStatus === true)) return [3 /*break*/, 6];
+                        tokenPromise = that.getToken();
+                        itemPromise = that.getItems();
+                        return [4 /*yield*/, Promise.all([tokenPromise, itemPromise])];
                     case 3:
                         _a.sent();
                         that.itemsToBuy = workerHelper.generateItemsToBuy(that.storeItems, that.wishlistItems);
@@ -182,23 +185,21 @@ var Worker = /** @class */ (function () {
     };
     Worker.prototype.prepare = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var cookiePromise, periodPromise, wishlistItemsPromise, tokenPromise, workerStatusPromise, promiseResults;
+            var cookiePromise, periodPromise, wishlistItemsPromise, workerStatusPromise, promiseResults;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         cookiePromise = this.getCookie();
                         periodPromise = this.getPeriod();
                         wishlistItemsPromise = this.getWishlistItems();
-                        tokenPromise = this.getToken();
                         workerStatusPromise = this.getWorkerStatus();
-                        return [4 /*yield*/, Promise.all([cookiePromise, periodPromise, wishlistItemsPromise, tokenPromise, workerStatusPromise])];
+                        return [4 /*yield*/, Promise.all([cookiePromise, periodPromise, wishlistItemsPromise, workerStatusPromise])];
                     case 1:
                         promiseResults = _a.sent();
                         this.cookie = promiseResults[0];
                         this.period = promiseResults[1];
                         this.wishlistItems = promiseResults[2];
-                        this.token = promiseResults[3];
-                        this.workerStatus = Boolean(promiseResults[4]);
+                        this.workerStatus = Boolean(promiseResults[3]);
                         return [2 /*return*/];
                 }
             });
@@ -206,14 +207,24 @@ var Worker = /** @class */ (function () {
     };
     Worker.prototype.getItems = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var items;
+            var that, items, e_2;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, axios_1.default.get('https://csgoempire.gg/api/v2/p2p/inventory/instant', this.requestConfig)];
+                    case 0:
+                        that = this;
+                        _a.label = 1;
                     case 1:
+                        _a.trys.push([1, 3, , 4]);
+                        return [4 /*yield*/, axios_1.default.get('https://csgoempire.gg/api/v2/p2p/inventory/instant', this.requestConfig)];
+                    case 2:
                         items = _a.sent();
                         this.storeItems = items.data;
-                        return [2 /*return*/];
+                        return [3 /*break*/, 4];
+                    case 3:
+                        e_2 = _a.sent();
+                        that.handleError(JSON.stringify(e_2.response.data));
+                        return [2 /*return*/, false];
+                    case 4: return [2 /*return*/];
                 }
             });
         });
@@ -235,7 +246,7 @@ var Worker = /** @class */ (function () {
     };
     Worker.prototype.tryToWithdraw = function (ib) {
         return __awaiter(this, void 0, void 0, function () {
-            var that, e_2;
+            var that, e_3;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -249,8 +260,8 @@ var Worker = /** @class */ (function () {
                         that.handleSuccessWithdraw(ib);
                         return [2 /*return*/, true];
                     case 3:
-                        e_2 = _a.sent();
-                        that.handleError(JSON.stringify(e_2.response.data));
+                        e_3 = _a.sent();
+                        that.handleError(JSON.stringify(e_3.response.data));
                         return [2 /*return*/, false];
                     case 4: return [2 /*return*/];
                 }

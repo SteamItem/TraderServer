@@ -47,7 +47,7 @@ export class Worker {
   private token: string;
   private async getToken() {
     var token = await csgoController.getToken();
-    return token.token.toString();
+    this.token = token.token.toString();
   }
 
   private get requestConfig() {
@@ -67,8 +67,10 @@ export class Worker {
     var that = this;
     try {
       await that.prepare();
-      if (this.workerStatus === true) {
-        await that.getItems();
+      if (that.workerStatus === true) {
+        var tokenPromise = that.getToken();
+        var itemPromise = that.getItems();
+        await Promise.all([tokenPromise, itemPromise]);
         that.itemsToBuy = workerHelper.generateItemsToBuy(that.storeItems, that.wishlistItems);
         await that.tryToWithdrawAll();
         await helpers.sleep(that.period);
@@ -87,21 +89,25 @@ export class Worker {
     var cookiePromise = this.getCookie();
     var periodPromise = this.getPeriod();
     var wishlistItemsPromise = this.getWishlistItems();
-    var tokenPromise = this.getToken();
     var workerStatusPromise = this.getWorkerStatus();
 
-    var promiseResults = await Promise.all([cookiePromise, periodPromise, wishlistItemsPromise, tokenPromise, workerStatusPromise]);
+    var promiseResults = await Promise.all([cookiePromise, periodPromise, wishlistItemsPromise, workerStatusPromise]);
 
     this.cookie = promiseResults[0];
     this.period = promiseResults[1];
     this.wishlistItems = promiseResults[2];
-    this.token = promiseResults[3];
-    this.workerStatus = Boolean(promiseResults[4]);
+    this.workerStatus = Boolean(promiseResults[3]);
   }
 
   private async getItems() {
-    var items = await axios.get('https://csgoempire.gg/api/v2/p2p/inventory/instant', this.requestConfig);
-    this.storeItems = items.data;
+    var that = this;
+    try {
+      var items = await axios.get('https://csgoempire.gg/api/v2/p2p/inventory/instant', this.requestConfig);
+      this.storeItems = items.data;
+    } catch (e) {
+      that.handleError(JSON.stringify(e.response.data));
+      return false;
+    }
   }
 
   private async tryToWithdrawAll() {
