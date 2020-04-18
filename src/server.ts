@@ -4,6 +4,8 @@ import config = require('./config');
 import paramController = require('./controllers/param');
 import wishlistItemController = require('./controllers/wishlistItem');
 import csgoController = require('./controllers/csgo');
+import logController = require('./controllers/log');
+import withdrawController = require('./controllers/withdraw');
 import telegram = require('./helpers/telegram');
 const PORT = process.env.PORT || 3000;
 
@@ -30,7 +32,7 @@ console.log(`Server is listening on port ${PORT}`);
 
 var bot = telegram.getBot();
 bot.onText(/\/help/, (msg) => {
-  var lines = ['/service: Manage service', '/period: Wait period', '/profile: Profile operations', '/wishlist: Wishlist manager', '/pinUpdate [PIN]: Update pin code'];
+  var lines = ['/service: Manage service', '/period: Wait period', '/profile: Profile operations', '/wishlist: Wishlist manager', '/pinUpdate [PIN]: Update pin code', '/log: Read logs'];
   var message = lines.join('\n');
   bot.sendMessage(msg.chat.id, message);
 });
@@ -115,6 +117,21 @@ bot.onText(/\/wishlist/, (msg) => {
     }
   });
 });
+bot.onText(/\/log/, (msg) => {
+  bot.sendMessage(msg.chat.id, 'Get logs', {
+    reply_markup: {
+      inline_keyboard: [[
+        {
+          text: 'All',
+          callback_data: 'log.all'
+        }, {
+          text: 'Withdraw',
+          callback_data: 'log.withdraw'
+        }
+      ]]
+    }
+  });
+});
 
 bot.on('callback_query', async function onCallbackQuery(callbackQuery) {
   if (!callbackQuery) return;
@@ -139,6 +156,9 @@ bot.on('callback_query', async function onCallbackQuery(callbackQuery) {
       break;
     case 'wishlist':
       onWishlistCallbackQuery(chatId, subAction);
+      break;
+    case 'log':
+      onLogCallbackQuery(chatId, subAction);
       break;
     default:
       throw new Error('Unknown main action');
@@ -226,6 +246,31 @@ async function onWishlistCallbackQuery(chatId: number, subAction: string) {
       var wishlistItems = await wishlistItemController.findAll();
       var texts = wishlistItems.map(wi => {
         return `${wi.name}: ${wi.max_price / 100}$`;
+      });
+      var text = texts.join('\n');
+      bot.sendMessage(chatId, text);
+      break;
+    default:
+      throw new Error('Unknown sub action');
+  }
+}
+
+async function onLogCallbackQuery(chatId: number, subAction: string) {
+  switch (subAction) {
+    case 'all':
+      var logs = await logController.findLastTen();
+      var texts = ['Last 10 logs:'];
+      logs.forEach(l => {
+        texts.push(`${l.created_at}: ${l.message}`);
+      });
+      var text = texts.join('\n');
+      bot.sendMessage(chatId, text);
+      break;
+    case 'withdraw':
+      var withdraws = await withdrawController.findLastTen();
+      var texts = ['Last 10 withdraws:'];
+      withdraws.forEach(wd => {
+        texts.push(`${wd.created_at}: ${wd.market_name} bought for ${wd.market_value / 100}$ which is below ${wd.max_price / 100}$`);
       });
       var text = texts.join('\n');
       bot.sendMessage(chatId, text);

@@ -8,6 +8,7 @@ export interface IWithdraw extends mongoose.Document {
   max_price: number;
   store_item_id: string;
   wishlist_item_id: string;
+  created_at: Date;
 }
 
 const WithdrawSchema: mongoose.Schema = new mongoose.Schema({

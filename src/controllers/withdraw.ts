@@ -13,6 +13,11 @@ function create(ib: IItemToBuy) {
     return withdraw.save();
 }
 
+async function findLastTen() {
+    return Withdraw.default.find().sort({_id:-1}).limit(10);
+}
+
 export = {
-    create
+    create,
+    findLastTen
 }

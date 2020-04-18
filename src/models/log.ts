@@ -2,7 +2,8 @@
 import * as mongoose from 'mongoose';
 
 export interface ILog extends mongoose.Document {
-  message: String;
+  message: string;
+  created_at: Date
 }
 
 const LogSchema: mongoose.Schema = new mongoose.Schema({

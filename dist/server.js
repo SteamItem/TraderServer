@@ -42,6 +42,8 @@ var config = require("./config");
 var paramController = require("./controllers/param");
 var wishlistItemController = require("./controllers/wishlistItem");
 var csgoController = require("./controllers/csgo");
+var logController = require("./controllers/log");
+var withdrawController = require("./controllers/withdraw");
 var telegram = require("./helpers/telegram");
 var PORT = process.env.PORT || 3000;
 mongoose.Promise = global.Promise;
@@ -63,7 +65,7 @@ http.createServer(function (request, response) {
 console.log("Server is listening on port " + PORT);
 var bot = telegram.getBot();
 bot.onText(/\/help/, function (msg) {
-    var lines = ['/service: Manage service', '/period: Wait period', '/profile: Profile operations', '/wishlist: Wishlist manager', '/pinUpdate [PIN]: Update pin code'];
+    var lines = ['/service: Manage service', '/period: Wait period', '/profile: Profile operations', '/wishlist: Wishlist manager', '/pinUpdate [PIN]: Update pin code', '/log: Read logs'];
     var message = lines.join('\n');
     bot.sendMessage(msg.chat.id, message);
 });
@@ -159,6 +161,21 @@ bot.onText(/\/wishlist/, function (msg) {
         }
     });
 });
+bot.onText(/\/log/, function (msg) {
+    bot.sendMessage(msg.chat.id, 'Get logs', {
+        reply_markup: {
+            inline_keyboard: [[
+                    {
+                        text: 'All',
+                        callback_data: 'log.all'
+                    }, {
+                        text: 'Withdraw',
+                        callback_data: 'log.withdraw'
+                    }
+                ]]
+        }
+    });
+});
 bot.on('callback_query', function onCallbackQuery(callbackQuery) {
     return __awaiter(this, void 0, void 0, function () {
         var action, chatId, splittedActions, mainAction, subAction;
@@ -188,6 +205,9 @@ bot.on('callback_query', function onCallbackQuery(callbackQuery) {
                     break;
                 case 'wishlist':
                     onWishlistCallbackQuery(chatId, subAction);
+                    break;
+                case 'log':
+                    onLogCallbackQuery(chatId, subAction);
                     break;
                 default:
                     throw new Error('Unknown main action');
@@ -342,6 +362,44 @@ function onWishlistCallbackQuery(chatId, subAction) {
                     return [3 /*break*/, 4];
                 case 3: throw new Error('Unknown sub action');
                 case 4: return [2 /*return*/];
+            }
+        });
+    });
+}
+function onLogCallbackQuery(chatId, subAction) {
+    return __awaiter(this, void 0, void 0, function () {
+        var _a, logs, texts, text, withdraws, texts, text;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    _a = subAction;
+                    switch (_a) {
+                        case 'all': return [3 /*break*/, 1];
+                        case 'withdraw': return [3 /*break*/, 3];
+                    }
+                    return [3 /*break*/, 5];
+                case 1: return [4 /*yield*/, logController.findLastTen()];
+                case 2:
+                    logs = _b.sent();
+                    texts = ['Last 10 logs:'];
+                    logs.forEach(function (l) {
+                        texts.push(l.created_at + ": " + l.message);
+                    });
+                    text = texts.join('\n');
+                    bot.sendMessage(chatId, text);
+                    return [3 /*break*/, 6];
+                case 3: return [4 /*yield*/, withdrawController.findLastTen()];
+                case 4:
+                    withdraws = _b.sent();
+                    texts = ['Last 10 withdraws:'];
+                    withdraws.forEach(function (wd) {
+                        texts.push(wd.created_at + ": " + wd.market_name + " bought for " + wd.market_value / 100 + "$ which is below " + wd.max_price / 100 + "$");
+                    });
+                    text = texts.join('\n');
+                    bot.sendMessage(chatId, text);
+                    return [3 /*break*/, 6];
+                case 5: throw new Error('Unknown sub action');
+                case 6: return [2 /*return*/];
             }
         });
     });
