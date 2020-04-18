@@ -11,7 +11,7 @@ module.exports = {
     },
     env_production: {
       NODE_ENV: "production",
-      DB_URL: "mongodb://admin:1234qwer@ds161148.mlab.com:61148/dota",
+      DB_URL: "mongodb://admin:1234qwer@ds159963.mlab.com:59963/csgobot-prod",
       TELEGRAM_TOKEN: "1274822023:AAHdhNgE194hHQJRaqw-EIIf-fn4VB1ZN4E",
       TELEGRAM_CHAT_ID: "-479108586"
     }
@@ -27,7 +27,7 @@ module.exports = {
     },
     env_production: {
       NODE_ENV: "production",
-      DB_URL: "mongodb://admin:1234qwer@ds161148.mlab.com:61148/dota",
+      DB_URL: "mongodb://admin:1234qwer@ds159963.mlab.com:59963/csgobot-prod",
       TELEGRAM_TOKEN: "1274822023:AAHdhNgE194hHQJRaqw-EIIf-fn4VB1ZN4E",
       TELEGRAM_CHAT_ID: "-479108586"
     }
