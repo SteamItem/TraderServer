@@ -225,7 +225,7 @@ async function onProfileCallbackQuery(chatId: number, subAction: string) {
       break;
     case 'balance':
       var profile = await csgoController.profile();
-      bot.sendMessage(chatId, `Balance: ${profile.balance}`);
+      bot.sendMessage(chatId, `Balance: ${profile.balance / 100}$`);
       break;
     case 'pin':
       var pinParam = await paramController.getCode();

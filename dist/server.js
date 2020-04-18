@@ -323,7 +323,7 @@ function onProfileCallbackQuery(chatId, subAction) {
                 case 3: return [4 /*yield*/, csgoController.profile()];
                 case 4:
                     profile = _b.sent();
-                    bot.sendMessage(chatId, "Balance: " + profile.balance);
+                    bot.sendMessage(chatId, "Balance: " + profile.balance / 100 + "$");
                     return [3 /*break*/, 8];
                 case 5: return [4 /*yield*/, paramController.getCode()];
                 case 6:
