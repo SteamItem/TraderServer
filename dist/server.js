@@ -67,10 +67,10 @@ var bot = telegram.getBot();
 bot.onText(/\/help/, function (msg) {
     var lines = ['/service: Manage service', '/period: Wait period', '/profile: Profile operations', '/wishlist: Wishlist manager', '/pinUpdate [PIN]: Update pin code', '/log: Read logs'];
     var message = lines.join('\n');
-    bot.sendMessage(msg.chat.id, message);
+    sendValidatedMessage(msg.chat.id, message);
 });
 bot.onText(/\/service/, function (msg) {
-    bot.sendMessage(msg.chat.id, 'Manage service', {
+    sendValidatedMessage(msg.chat.id, 'Manage service', {
         reply_markup: {
             inline_keyboard: [[
                     {
@@ -88,7 +88,7 @@ bot.onText(/\/service/, function (msg) {
     });
 });
 bot.onText(/\/period/, function (msg) {
-    bot.sendMessage(msg.chat.id, 'Wait time between iterations', {
+    sendValidatedMessage(msg.chat.id, 'Wait time between iterations', {
         reply_markup: {
             inline_keyboard: [[
                     {
@@ -118,20 +118,20 @@ bot.onText(/\/pinUpdate (.+)/, function (msg, match) { return __awaiter(_this, v
         switch (_a.label) {
             case 0:
                 if (!match) {
-                    bot.sendMessage(msg.chat.id, 'Please provide a pin');
+                    sendValidatedMessage(msg.chat.id, 'Please provide a pin');
                     return [2 /*return*/];
                 }
                 newPin = match[1];
                 return [4 /*yield*/, paramController.updateCode(newPin)];
             case 1:
                 _a.sent();
-                bot.sendMessage(msg.chat.id, "New pin code: " + newPin);
+                sendValidatedMessage(msg.chat.id, "New pin code: " + newPin);
                 return [2 /*return*/];
         }
     });
 }); });
 bot.onText(/\/profile/, function (msg) {
-    bot.sendMessage(msg.chat.id, 'Profile operations', {
+    sendValidatedMessage(msg.chat.id, 'Profile operations', {
         reply_markup: {
             inline_keyboard: [[
                     {
@@ -150,7 +150,7 @@ bot.onText(/\/profile/, function (msg) {
     });
 });
 bot.onText(/\/wishlist/, function (msg) {
-    bot.sendMessage(msg.chat.id, 'Wishlist manager', {
+    sendValidatedMessage(msg.chat.id, 'Wishlist manager', {
         reply_markup: {
             inline_keyboard: [[
                     {
@@ -162,7 +162,7 @@ bot.onText(/\/wishlist/, function (msg) {
     });
 });
 bot.onText(/\/log/, function (msg) {
-    bot.sendMessage(msg.chat.id, 'Get logs', {
+    sendValidatedMessage(msg.chat.id, 'Get logs', {
         reply_markup: {
             inline_keyboard: [[
                     {
@@ -216,6 +216,14 @@ bot.on('callback_query', function onCallbackQuery(callbackQuery) {
         });
     });
 });
+function sendValidatedMessage(chatId, text, options) {
+    if (chatId == config.TELEGRAM_CHAT_ID) {
+        return bot.sendMessage(chatId, text, options);
+    }
+    else {
+        return bot.sendMessage(chatId, "This is not allowed area.");
+    }
+}
 function onServiceCallbackQuery(chatId, subAction) {
     return __awaiter(this, void 0, void 0, function () {
         var _a, status, message;
@@ -232,12 +240,12 @@ function onServiceCallbackQuery(chatId, subAction) {
                 case 1: return [4 /*yield*/, paramController.startWorker()];
                 case 2:
                     _b.sent();
-                    bot.sendMessage(chatId, 'Worker Started');
+                    sendValidatedMessage(chatId, 'Worker Started');
                     return [3 /*break*/, 8];
                 case 3: return [4 /*yield*/, paramController.stopWorker()];
                 case 4:
                     _b.sent();
-                    bot.sendMessage(chatId, "Worker Stopped");
+                    sendValidatedMessage(chatId, "Worker Stopped");
                     return [3 /*break*/, 8];
                 case 5: return [4 /*yield*/, paramController.getWorkerStatus()];
                 case 6:
@@ -248,7 +256,7 @@ function onServiceCallbackQuery(chatId, subAction) {
                     else {
                         message = "Not working";
                     }
-                    bot.sendMessage(chatId, message);
+                    sendValidatedMessage(chatId, message);
                     return [3 /*break*/, 8];
                 case 7: throw new Error('Unknown sub action');
                 case 8: return [2 /*return*/];
@@ -274,27 +282,27 @@ function onPeriodCallbackQuery(chatId, subAction) {
                 case 1: return [4 /*yield*/, paramController.updatePeriod(1)];
                 case 2:
                     _b.sent();
-                    bot.sendMessage(chatId, 'Updated to 1 mS');
+                    sendValidatedMessage(chatId, 'Updated to 1 mS');
                     return [3 /*break*/, 12];
                 case 3: return [4 /*yield*/, paramController.updatePeriod(10)];
                 case 4:
                     _b.sent();
-                    bot.sendMessage(chatId, 'Updated to 10 mS');
+                    sendValidatedMessage(chatId, 'Updated to 10 mS');
                     return [3 /*break*/, 12];
                 case 5: return [4 /*yield*/, paramController.updatePeriod(100)];
                 case 6:
                     _b.sent();
-                    bot.sendMessage(chatId, 'Updated to 100 mS');
+                    sendValidatedMessage(chatId, 'Updated to 100 mS');
                     return [3 /*break*/, 12];
                 case 7: return [4 /*yield*/, paramController.updatePeriod(1000)];
                 case 8:
                     _b.sent();
-                    bot.sendMessage(chatId, 'Updated to 1 Second');
+                    sendValidatedMessage(chatId, 'Updated to 1 Second');
                     return [3 /*break*/, 12];
                 case 9: return [4 /*yield*/, paramController.updatePeriod(2000)];
                 case 10:
                     _b.sent();
-                    bot.sendMessage(chatId, 'Updated to 2 Seconds');
+                    sendValidatedMessage(chatId, 'Updated to 2 Seconds');
                     return [3 /*break*/, 12];
                 case 11: throw new Error('Unknown sub action');
                 case 12: return [2 /*return*/];
@@ -318,21 +326,21 @@ function onProfileCallbackQuery(chatId, subAction) {
                 case 1: return [4 /*yield*/, csgoController.profile()];
                 case 2:
                     profile = _b.sent();
-                    bot.sendMessage(chatId, "Steam Name: " + profile.steam_name);
+                    sendValidatedMessage(chatId, "Steam Name: " + profile.steam_name);
                     return [3 /*break*/, 8];
                 case 3: return [4 /*yield*/, csgoController.profile()];
                 case 4:
                     profile = _b.sent();
-                    bot.sendMessage(chatId, "Balance: " + profile.balance / 100 + "$");
+                    sendValidatedMessage(chatId, "Balance: " + profile.balance / 100 + "$");
                     return [3 /*break*/, 8];
                 case 5: return [4 /*yield*/, paramController.getCode()];
                 case 6:
                     pinParam = _b.sent();
                     if (!pinParam) {
-                        bot.sendMessage(chatId, 'Pin not found');
+                        sendValidatedMessage(chatId, 'Pin not found');
                         return [2 /*return*/];
                     }
-                    bot.sendMessage(chatId, "Pin code: " + pinParam.value);
+                    sendValidatedMessage(chatId, "Pin code: " + pinParam.value);
                     return [3 /*break*/, 8];
                 case 7: throw new Error('Unknown sub action');
                 case 8: return [2 /*return*/];
@@ -358,7 +366,7 @@ function onWishlistCallbackQuery(chatId, subAction) {
                         return wi.name + ": " + wi.max_price / 100 + "$";
                     });
                     text = texts.join('\n');
-                    bot.sendMessage(chatId, text);
+                    sendValidatedMessage(chatId, text);
                     return [3 /*break*/, 4];
                 case 3: throw new Error('Unknown sub action');
                 case 4: return [2 /*return*/];
@@ -386,7 +394,7 @@ function onLogCallbackQuery(chatId, subAction) {
                         texts.push(l.created_at + ": " + l.message);
                     });
                     text = texts.join('\n');
-                    bot.sendMessage(chatId, text);
+                    sendValidatedMessage(chatId, text);
                     return [3 /*break*/, 6];
                 case 3: return [4 /*yield*/, withdrawController.findLastTen()];
                 case 4:
@@ -396,7 +404,7 @@ function onLogCallbackQuery(chatId, subAction) {
                         texts.push(wd.created_at + ": " + wd.market_name + " bought for " + wd.market_value / 100 + "$ which is below " + wd.max_price / 100 + "$");
                     });
                     text = texts.join('\n');
-                    bot.sendMessage(chatId, text);
+                    sendValidatedMessage(chatId, text);
                     return [3 /*break*/, 6];
                 case 5: throw new Error('Unknown sub action');
                 case 6: return [2 /*return*/];

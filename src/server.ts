@@ -7,6 +7,7 @@ import csgoController = require('./controllers/csgo');
 import logController = require('./controllers/log');
 import withdrawController = require('./controllers/withdraw');
 import telegram = require('./helpers/telegram');
+import TelegramBot = require('node-telegram-bot-api');
 const PORT = process.env.PORT || 3000;
 
 mongoose.Promise = global.Promise;
@@ -34,10 +35,10 @@ var bot = telegram.getBot();
 bot.onText(/\/help/, (msg) => {
   var lines = ['/service: Manage service', '/period: Wait period', '/profile: Profile operations', '/wishlist: Wishlist manager', '/pinUpdate [PIN]: Update pin code', '/log: Read logs'];
   var message = lines.join('\n');
-  bot.sendMessage(msg.chat.id, message);
+  sendValidatedMessage(msg.chat.id, message);
 });
 bot.onText(/\/service/, (msg) => {
-  bot.sendMessage(msg.chat.id, 'Manage service', {
+  sendValidatedMessage(msg.chat.id, 'Manage service', {
     reply_markup: {
       inline_keyboard: [[
         {
@@ -55,7 +56,7 @@ bot.onText(/\/service/, (msg) => {
   });
 });
 bot.onText(/\/period/, (msg) => {
-  bot.sendMessage(msg.chat.id, 'Wait time between iterations', {
+  sendValidatedMessage(msg.chat.id, 'Wait time between iterations', {
     reply_markup: {
       inline_keyboard: [[
         {
@@ -80,15 +81,15 @@ bot.onText(/\/period/, (msg) => {
 });
 bot.onText(/\/pinUpdate (.+)/, async (msg, match) => {
   if (!match) {
-    bot.sendMessage(msg.chat.id, 'Please provide a pin');
+    sendValidatedMessage(msg.chat.id, 'Please provide a pin');
     return;
   }
   var newPin = match[1];
   await paramController.updateCode(newPin);
-  bot.sendMessage(msg.chat.id, `New pin code: ${newPin}`);
+  sendValidatedMessage(msg.chat.id, `New pin code: ${newPin}`);
 });
 bot.onText(/\/profile/, (msg) => {
-  bot.sendMessage(msg.chat.id, 'Profile operations', {
+  sendValidatedMessage(msg.chat.id, 'Profile operations', {
     reply_markup: {
       inline_keyboard: [[
         {
@@ -106,7 +107,7 @@ bot.onText(/\/profile/, (msg) => {
   });
 });
 bot.onText(/\/wishlist/, (msg) => {
-  bot.sendMessage(msg.chat.id, 'Wishlist manager', {
+  sendValidatedMessage(msg.chat.id, 'Wishlist manager', {
     reply_markup: {
       inline_keyboard: [[
         {
@@ -118,7 +119,7 @@ bot.onText(/\/wishlist/, (msg) => {
   });
 });
 bot.onText(/\/log/, (msg) => {
-  bot.sendMessage(msg.chat.id, 'Get logs', {
+  sendValidatedMessage(msg.chat.id, 'Get logs', {
     reply_markup: {
       inline_keyboard: [[
         {
@@ -165,15 +166,23 @@ bot.on('callback_query', async function onCallbackQuery(callbackQuery) {
  }
 });
 
+function sendValidatedMessage(chatId: number | string, text: string, options?: TelegramBot.SendMessageOptions): Promise<TelegramBot.Message> {
+  if (chatId == config.TELEGRAM_CHAT_ID) {
+    return bot.sendMessage(chatId, text, options);
+  } else {
+    return bot.sendMessage(chatId, "This is not allowed area.");
+  }
+}
+
 async function onServiceCallbackQuery(chatId: number, subAction: string) {
   switch (subAction) {
     case 'start':
       await paramController.startWorker();
-      bot.sendMessage(chatId, 'Worker Started');
+      sendValidatedMessage(chatId, 'Worker Started');
       break;
     case 'stop':
       await paramController.stopWorker();
-      bot.sendMessage(chatId, "Worker Stopped");
+      sendValidatedMessage(chatId, "Worker Stopped");
       break;
     case 'status':
       var status = await paramController.getWorkerStatus();
@@ -183,7 +192,7 @@ async function onServiceCallbackQuery(chatId: number, subAction: string) {
       } else {
         message = "Not working";
       }
-      bot.sendMessage(chatId, message);
+      sendValidatedMessage(chatId, message);
       break;
     default:
       throw new Error('Unknown sub action');
@@ -194,23 +203,23 @@ async function onPeriodCallbackQuery(chatId: number, subAction: string) {
   switch (subAction) {
     case '1ms':
       await paramController.updatePeriod(1);
-      bot.sendMessage(chatId, 'Updated to 1 mS');
+      sendValidatedMessage(chatId, 'Updated to 1 mS');
       break;
     case '10mS':
       await paramController.updatePeriod(10);
-      bot.sendMessage(chatId, 'Updated to 10 mS');
+      sendValidatedMessage(chatId, 'Updated to 10 mS');
       break;
     case '100mS':
       await paramController.updatePeriod(100);
-      bot.sendMessage(chatId, 'Updated to 100 mS');
+      sendValidatedMessage(chatId, 'Updated to 100 mS');
       break;
     case '1s':
       await paramController.updatePeriod(1000);
-      bot.sendMessage(chatId, 'Updated to 1 Second');
+      sendValidatedMessage(chatId, 'Updated to 1 Second');
       break;
     case '2s':
       await paramController.updatePeriod(2000);
-      bot.sendMessage(chatId, 'Updated to 2 Seconds');
+      sendValidatedMessage(chatId, 'Updated to 2 Seconds');
       break;
     default:
       throw new Error('Unknown sub action');
@@ -221,19 +230,19 @@ async function onProfileCallbackQuery(chatId: number, subAction: string) {
   switch (subAction) {
     case 'steamName':
       var profile = await csgoController.profile();
-      bot.sendMessage(chatId, `Steam Name: ${profile.steam_name}`);
+      sendValidatedMessage(chatId, `Steam Name: ${profile.steam_name}`);
       break;
     case 'balance':
       var profile = await csgoController.profile();
-      bot.sendMessage(chatId, `Balance: ${profile.balance / 100}$`);
+      sendValidatedMessage(chatId, `Balance: ${profile.balance / 100}$`);
       break;
     case 'pin':
       var pinParam = await paramController.getCode();
       if (!pinParam) {
-        bot.sendMessage(chatId, 'Pin not found');
+        sendValidatedMessage(chatId, 'Pin not found');
         return;
       }
-      bot.sendMessage(chatId, `Pin code: ${pinParam.value}`);
+      sendValidatedMessage(chatId, `Pin code: ${pinParam.value}`);
       break;
     default:
       throw new Error('Unknown sub action');
@@ -248,7 +257,7 @@ async function onWishlistCallbackQuery(chatId: number, subAction: string) {
         return `${wi.name}: ${wi.max_price / 100}$`;
       });
       var text = texts.join('\n');
-      bot.sendMessage(chatId, text);
+      sendValidatedMessage(chatId, text);
       break;
     default:
       throw new Error('Unknown sub action');
@@ -264,7 +273,7 @@ async function onLogCallbackQuery(chatId: number, subAction: string) {
         texts.push(`${l.created_at}: ${l.message}`);
       });
       var text = texts.join('\n');
-      bot.sendMessage(chatId, text);
+      sendValidatedMessage(chatId, text);
       break;
     case 'withdraw':
       var withdraws = await withdrawController.findLastTen();
@@ -273,7 +282,7 @@ async function onLogCallbackQuery(chatId: number, subAction: string) {
         texts.push(`${wd.created_at}: ${wd.market_name} bought for ${wd.market_value / 100}$ which is below ${wd.max_price / 100}$`);
       });
       var text = texts.join('\n');
-      bot.sendMessage(chatId, text);
+      sendValidatedMessage(chatId, text);
       break;
     default:
       throw new Error('Unknown sub action');
