@@ -128,6 +128,9 @@ bot.onText(/\/log/, (msg) => {
         }, {
           text: 'Withdraw',
           callback_data: 'log.withdraw'
+        }, {
+          text: 'Delete',
+          callback_data: 'log.delete'
         }
       ]]
     }
@@ -283,6 +286,10 @@ async function onLogCallbackQuery(chatId: number, subAction: string) {
       });
       var text = texts.join('\n');
       sendValidatedMessage(chatId, text);
+      break;
+    case 'delete':
+      await logController.deleteAll();
+      sendValidatedMessage(chatId, "Logs deleted");
       break;
     default:
       throw new Error('Unknown sub action');

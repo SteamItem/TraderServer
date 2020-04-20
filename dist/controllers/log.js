@@ -46,7 +46,15 @@ function findLastTen() {
         });
     });
 }
+function deleteAll() {
+    return __awaiter(this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            return [2 /*return*/, Log.default.deleteMany({})];
+        });
+    });
+}
 module.exports = {
     create: create,
-    findLastTen: findLastTen
+    findLastTen: findLastTen,
+    deleteAll: deleteAll
 };

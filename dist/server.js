@@ -171,6 +171,9 @@ bot.onText(/\/log/, function (msg) {
                     }, {
                         text: 'Withdraw',
                         callback_data: 'log.withdraw'
+                    }, {
+                        text: 'Delete',
+                        callback_data: 'log.delete'
                     }
                 ]]
         }
@@ -384,8 +387,9 @@ function onLogCallbackQuery(chatId, subAction) {
                     switch (_a) {
                         case 'all': return [3 /*break*/, 1];
                         case 'withdraw': return [3 /*break*/, 3];
+                        case 'delete': return [3 /*break*/, 5];
                     }
-                    return [3 /*break*/, 5];
+                    return [3 /*break*/, 7];
                 case 1: return [4 /*yield*/, logController.findLastTen()];
                 case 2:
                     logs = _b.sent();
@@ -395,7 +399,7 @@ function onLogCallbackQuery(chatId, subAction) {
                     });
                     text = texts.join('\n');
                     sendValidatedMessage(chatId, text);
-                    return [3 /*break*/, 6];
+                    return [3 /*break*/, 8];
                 case 3: return [4 /*yield*/, withdrawController.findLastTen()];
                 case 4:
                     withdraws = _b.sent();
@@ -405,9 +409,14 @@ function onLogCallbackQuery(chatId, subAction) {
                     });
                     text = texts.join('\n');
                     sendValidatedMessage(chatId, text);
-                    return [3 /*break*/, 6];
-                case 5: throw new Error('Unknown sub action');
-                case 6: return [2 /*return*/];
+                    return [3 /*break*/, 8];
+                case 5: return [4 /*yield*/, logController.deleteAll()];
+                case 6:
+                    _b.sent();
+                    sendValidatedMessage(chatId, "Logs deleted");
+                    return [3 /*break*/, 8];
+                case 7: throw new Error('Unknown sub action');
+                case 8: return [2 /*return*/];
             }
         });
     });
