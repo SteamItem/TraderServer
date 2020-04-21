@@ -33,7 +33,7 @@ console.log(`Server is listening on port ${PORT}`);
 
 var bot = telegram.getBot();
 bot.onText(/\/help/, (msg) => {
-  var lines = ['/service: Manage service', '/period: Wait period', '/profile: Profile operations', '/wishlist: Wishlist manager', '/pinUpdate [PIN]: Update pin code', '/log: Read logs'];
+  var lines = ['/service: Manage service', '/period: Wait period', '/profile: Profile operations', '/wishlist: Wishlist manager', '/pinUpdate [PIN]: Update pin code', '/setCookie [cookie]: Update Cookie', '/log: Manage logs'];
   var message = lines.join('\n');
   sendValidatedMessage(msg.chat.id, message);
 });
@@ -87,6 +87,16 @@ bot.onText(/\/pinUpdate (.+)/, async (msg, match) => {
   var newPin = match[1];
   await paramController.updateCode(newPin);
   sendValidatedMessage(msg.chat.id, `New pin code: ${newPin}`);
+});
+bot.onText(/\/setCookie (.+)/, async (msg, match) => {
+  if (!match) {
+    sendValidatedMessage(msg.chat.id, 'Please provide cookie');
+    return;
+  }
+  var newCookie = match[1];
+  await paramController.updateCookie(newCookie);
+  var profile = await csgoController.profile();
+  sendValidatedMessage(msg.chat.id, `Cookie changed, Steam Name: ${profile.steam_name}`);
 });
 bot.onText(/\/profile/, (msg) => {
   sendValidatedMessage(msg.chat.id, 'Profile operations', {

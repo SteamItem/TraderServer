@@ -28,6 +28,10 @@ async function updateCode(code: string) {
   return Param.default.findOneAndUpdate({ id: paramEnum.Code }, { value: code }, {new: true});
 }
 
+async function updateCookie(cookie: string) {
+  return Param.default.findOneAndUpdate({ id: paramEnum.Cookie }, { value: cookie }, {new: true});
+}
+
 async function startWorker() {
   return Param.default.findOneAndUpdate({ id: paramEnum.WorkerStatus }, { value: true }, {new: true});
 }
@@ -50,6 +54,7 @@ export = {
   getWorkerStatus,
   updatePeriod,
   updateCode,
+  updateCookie,
   startWorker,
   stopWorker
 }
