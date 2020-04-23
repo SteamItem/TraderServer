@@ -35,69 +35,69 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var WishlistItem = require("../models/wishlistItem");
-function findOne(itemId) {
-    return __awaiter(this, void 0, void 0, function () {
+Object.defineProperty(exports, "__esModule", { value: true });
+var cors = require("cors");
+var corsHelper = require("../helpers/cors");
+var wishlistItemController = require("../controllers/wishlistItem");
+module.exports = function (app) {
+    var corsOptions = corsHelper.getCorsOptions();
+    app.post('/wishlistItems', cors(corsOptions), function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+        var items;
         return __generator(this, function (_a) {
-            return [2 /*return*/, WishlistItem.default.findById(itemId)];
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, wishlistItemController.create(req.body.appid, req.body.name, req.body.max_price)];
+                case 1:
+                    items = _a.sent();
+                    res.send(items);
+                    return [2 /*return*/];
+            }
         });
-    });
-}
-function findAll() {
-    return __awaiter(this, void 0, void 0, function () {
+    }); });
+    app.get('/wishlistItems', cors(corsOptions), function (_req, res) { return __awaiter(void 0, void 0, void 0, function () {
+        var items;
         return __generator(this, function (_a) {
-            return [2 /*return*/, WishlistItem.default.find()];
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, wishlistItemController.findAll()];
+                case 1:
+                    items = _a.sent();
+                    res.send(items);
+                    return [2 /*return*/];
+            }
         });
-    });
-}
-function create(appid, name, max_price) {
-    return __awaiter(this, void 0, void 0, function () {
-        var wishlistItem;
+    }); });
+    app.get('/wishlistItems/:_id', cors(corsOptions), function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+        var item;
         return __generator(this, function (_a) {
-            if (!appid) {
-                throw new Error("appid can not be empty");
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, wishlistItemController.findOne(req.params._id)];
+                case 1:
+                    item = _a.sent();
+                    res.send(item);
+                    return [2 /*return*/];
             }
-            if (!name) {
-                throw new Error("name can not be empty");
-            }
-            if (!max_price) {
-                throw new Error("max_price can not be empty");
-            }
-            wishlistItem = new WishlistItem.default({ appid: appid, name: name, max_price: max_price });
-            return [2 /*return*/, wishlistItem.save()];
         });
-    });
-}
-function update(itemId, appid, name, max_price) {
-    return __awaiter(this, void 0, void 0, function () {
+    }); });
+    app.put('/wishlistItems/:_id', cors(corsOptions), function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+        var item;
         return __generator(this, function (_a) {
-            if (!itemId) {
-                throw new Error("itemId can not be empty");
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, wishlistItemController.update(req.params._id, req.body.appid, req.body.name, req.body.max_price)];
+                case 1:
+                    item = _a.sent();
+                    res.send(item);
+                    return [2 /*return*/];
             }
-            if (!appid) {
-                throw new Error("appid can not be empty");
-            }
-            if (!name) {
-                throw new Error("name can not be empty");
-            }
-            if (!max_price) {
-                throw new Error("max_price can not be empty");
-            }
-            return [2 /*return*/, WishlistItem.default.findByIdAndUpdate(itemId, { appid: appid, name: name, max_price: max_price }, { new: true })];
         });
-    });
-}
-function remove(itemId) {
-    return __awaiter(this, void 0, void 0, function () {
+    }); });
+    app.delete('/wishlistItems/:_id', cors(corsOptions), function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
         return __generator(this, function (_a) {
-            return [2 /*return*/, WishlistItem.default.findByIdAndRemove(itemId)];
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, wishlistItemController.remove(req.params._id)];
+                case 1:
+                    _a.sent();
+                    res.send({ message: "Deleted successfully!" });
+                    return [2 /*return*/];
+            }
         });
-    });
-}
-module.exports = {
-    findOne: findOne,
-    findAll: findAll,
-    create: create,
-    update: update,
-    remove: remove
+    }); });
 };

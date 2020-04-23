@@ -1,5 +1,9 @@
 import WishlistItem = require('../models/wishlistItem');
 
+async function findOne(itemId: string) {
+    return WishlistItem.default.findById(itemId)
+}
+
 async function findAll() {
     return WishlistItem.default.find();
 }
@@ -41,6 +45,7 @@ async function remove(itemId: string) {
 }
 
 export = {
+    findOne,
     findAll,
     create,
     update,

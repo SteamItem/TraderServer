@@ -37,7 +37,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var mongoose = require("mongoose");
-var http = require("http");
+var express = require("express");
+var bodyParser = require("body-parser");
+var cors = require("cors");
 var config = require("./config");
 var paramController = require("./controllers/param");
 var wishlistItemController = require("./controllers/wishlistItem");
@@ -46,6 +48,11 @@ var logController = require("./controllers/log");
 var withdrawController = require("./controllers/withdraw");
 var telegram = require("./helpers/telegram");
 var PORT = process.env.PORT || 3000;
+// create express app
+var app = express();
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+app.use(cors());
 mongoose.Promise = global.Promise;
 // Connecting to the database
 mongoose.connect(config.DB_URL, {
@@ -56,13 +63,12 @@ mongoose.connect(config.DB_URL, {
     console.log('Could not connect to the database. Exiting now...', err);
     process.exit();
 });
-http.createServer(function (request, response) {
-    response.writeHead(200, { 'Content-Type': 'text/plain' });
-    // Send the response body as "Hello World"
-    response.end('Hello World\n');
-}).listen(PORT);
-// Console will print the message
-console.log("Server is listening on port " + PORT);
+require('./routes/index')(app);
+require('./routes/wishlistItem')(app);
+// listen for requests
+app.listen(PORT, function () {
+    console.log("Server is listening on port " + PORT);
+});
 var bot = telegram.getBot();
 bot.onText(/\/help/, function (msg) {
     var lines = ['/service: Manage service', '/period: Wait period', '/profile: Profile operations', '/wishlist: Wishlist manager', '/pinUpdate [PIN]: Update pin code', '/setCookie [cookie]: Update Cookie', '/log: Manage logs'];

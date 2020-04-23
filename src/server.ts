@@ -1,5 +1,8 @@
 import mongoose = require('mongoose');
-import http = require("http");
+import express = require('express');
+import bodyParser = require('body-parser');
+import cors = require('cors');
+import TelegramBot = require('node-telegram-bot-api');
 import config = require('./config');
 import paramController = require('./controllers/param');
 import wishlistItemController = require('./controllers/wishlistItem');
@@ -7,29 +10,34 @@ import csgoController = require('./controllers/csgo');
 import logController = require('./controllers/log');
 import withdrawController = require('./controllers/withdraw');
 import telegram = require('./helpers/telegram');
-import TelegramBot = require('node-telegram-bot-api');
 const PORT = process.env.PORT || 3000;
+
+// create express app
+const app = express();
+
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+app.use(cors());
 
 mongoose.Promise = global.Promise;
 
 // Connecting to the database
 mongoose.connect(config.DB_URL, {
-    useNewUrlParser: true
+  useNewUrlParser: true
 }).then(() => {
-    console.log("Successfully connected to the database");
+  console.log("Successfully connected to the database");
 }).catch(err => {
-    console.log('Could not connect to the database. Exiting now...', err);
-    process.exit();
+  console.log('Could not connect to the database. Exiting now...', err);
+  process.exit();
 });
 
-http.createServer(function (request, response) {
-   response.writeHead(200, {'Content-Type': 'text/plain'});
-   // Send the response body as "Hello World"
-   response.end('Hello World\n');
-}).listen(PORT);
+require('./routes/index')(app);
+require('./routes/wishlistItem')(app);
 
-// Console will print the message
-console.log(`Server is listening on port ${PORT}`);
+// listen for requests
+app.listen(PORT, () => {
+  console.log(`Server is listening on port ${PORT}`);
+});
 
 var bot = telegram.getBot();
 bot.onText(/\/help/, (msg) => {
