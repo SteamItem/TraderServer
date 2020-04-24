@@ -65,6 +65,7 @@ mongoose.connect(config.DB_URL, {
 });
 require('./routes/index')(app);
 require('./routes/wishlistItem')(app);
+require('./routes/param')(app);
 // listen for requests
 app.listen(PORT, function () {
     console.log("Server is listening on port " + PORT);
