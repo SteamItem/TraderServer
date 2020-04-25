@@ -1,4 +1,5 @@
 import Param = require('../models/param');
+import { paramEnum } from '../helpers/enum';
 
 async function findOne(id: number) {
   return Param.default.findOne({ id });
@@ -10,6 +11,10 @@ async function getPeriod() {
 
 async function getCookie() {
   return await findOne(paramEnum.Cookie);
+}
+
+async function getRollbitCookie() {
+  return await findOne(paramEnum.RollbitCookie);
 }
 
 async function getCode() {
@@ -40,16 +45,10 @@ async function stopWorker() {
   return Param.default.findOneAndUpdate({ id: paramEnum.WorkerStatus }, { value: false }, {new: true});
 }
 
-enum paramEnum {
-  Period = 1,
-  Cookie = 2,
-  Code = 3,
-  WorkerStatus = 4
-}
-
 export = {
   getPeriod,
   getCookie,
+  getRollbitCookie,
   getCode,
   getWorkerStatus,
   updatePeriod,

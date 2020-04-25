@@ -43,5 +43,17 @@ module.exports = {
       DB_URL: "mongodb://admin:1234qwer@ds159963.mlab.com:59963/csgobot-prod",
       WEB_URL: "https://csgo-trader-bot.herokuapp.com/"
     }
+  }, {
+    name: "Rollbit",
+    script: "./dist/rollbit.js",
+    time: true,
+    env: {
+      NODE_ENV: "development",
+      DB_URL: "mongodb://admin:1234qwer@ds161148.mlab.com:61148/dota"
+    },
+    env_production: {
+      NODE_ENV: "production",
+      DB_URL: "mongodb://admin:1234qwer@ds159963.mlab.com:59963/csgobot-prod"
+    }
   }]
 }

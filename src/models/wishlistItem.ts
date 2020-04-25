@@ -1,4 +1,3 @@
-
 import * as mongoose from 'mongoose';
 
 export interface IWishlistItem extends mongoose.Document {

@@ -10,6 +10,7 @@ import { IWishlistItem } from '../models/wishlistItem';
 import { IInstantStoreItem } from '../interfaces/instantStoreItem';
 import { IItemToBuy } from '../interfaces/itemToBuy';
 import workerHelper = require('../helpers/worker');
+import { siteEnum } from '../helpers/enum';
 
 export class Worker {
   private storeItems: IInstantStoreItem[];
@@ -149,6 +150,6 @@ export class Worker {
   }
 
   private log(message: string) {
-    return logController.create(message);
+    return logController.create(siteEnum.CsGoEmpire, message);
   }
 }

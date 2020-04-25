@@ -1,10 +1,9 @@
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
@@ -44,6 +43,7 @@ var withdrawController = require("./withdraw");
 var logController = require("./log");
 var helpers = require("../helpers");
 var workerHelper = require("../helpers/worker");
+var enum_1 = require("../helpers/enum");
 var Worker = /** @class */ (function () {
     function Worker() {
         this.itemsToBuy = [];
@@ -297,7 +297,7 @@ var Worker = /** @class */ (function () {
         this.log("Error: " + message);
     };
     Worker.prototype.log = function (message) {
-        return logController.create(message);
+        return logController.create(enum_1.siteEnum.CsGoEmpire, message);
     };
     return Worker;
 }());
