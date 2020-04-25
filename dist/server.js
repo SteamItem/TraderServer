@@ -47,6 +47,7 @@ var csgoController = require("./controllers/csgo");
 var logController = require("./controllers/log");
 var withdrawController = require("./controllers/withdraw");
 var telegram = require("./helpers/telegram");
+var enum_1 = require("./helpers/enum");
 var PORT = process.env.PORT || 3000;
 // create express app
 var app = express();
@@ -194,9 +195,13 @@ bot.onText(/\/log/, function (msg) {
         reply_markup: {
             inline_keyboard: [[
                     {
-                        text: 'All',
-                        callback_data: 'log.all'
+                        text: 'CsGoEmpire',
+                        callback_data: 'log.csgo'
                     }, {
+                        text: 'Rollbit',
+                        callback_data: 'log.rollbit'
+                    }
+                ], [{
                         text: 'Withdraw',
                         callback_data: 'log.withdraw'
                     }, {
@@ -407,18 +412,19 @@ function onWishlistCallbackQuery(chatId, subAction) {
 }
 function onLogCallbackQuery(chatId, subAction) {
     return __awaiter(this, void 0, void 0, function () {
-        var _a, logs, texts, text, withdraws, texts, text;
+        var _a, logs, texts, text, logs, texts, text, withdraws, texts, text;
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
                     _a = subAction;
                     switch (_a) {
-                        case 'all': return [3 /*break*/, 1];
-                        case 'withdraw': return [3 /*break*/, 3];
-                        case 'delete': return [3 /*break*/, 5];
+                        case 'csgo': return [3 /*break*/, 1];
+                        case 'rollbit': return [3 /*break*/, 3];
+                        case 'withdraw': return [3 /*break*/, 5];
+                        case 'delete': return [3 /*break*/, 7];
                     }
-                    return [3 /*break*/, 7];
-                case 1: return [4 /*yield*/, logController.findLastTen()];
+                    return [3 /*break*/, 9];
+                case 1: return [4 /*yield*/, logController.findLastTen(enum_1.siteEnum.CsGoEmpire)];
                 case 2:
                     logs = _b.sent();
                     texts = ['Last 10 logs:'];
@@ -427,9 +433,19 @@ function onLogCallbackQuery(chatId, subAction) {
                     });
                     text = texts.join('\n');
                     sendValidatedMessage(chatId, text);
-                    return [3 /*break*/, 8];
-                case 3: return [4 /*yield*/, withdrawController.findLastTen()];
+                    return [3 /*break*/, 10];
+                case 3: return [4 /*yield*/, logController.findLastTen(enum_1.siteEnum.Rollbit)];
                 case 4:
+                    logs = _b.sent();
+                    texts = ['Last 10 logs:'];
+                    logs.forEach(function (l) {
+                        texts.push(l.created_at + ": " + l.message);
+                    });
+                    text = texts.join('\n');
+                    sendValidatedMessage(chatId, text);
+                    return [3 /*break*/, 10];
+                case 5: return [4 /*yield*/, withdrawController.findLastTen()];
+                case 6:
                     withdraws = _b.sent();
                     texts = ['Last 10 withdraws:'];
                     withdraws.forEach(function (wd) {
@@ -437,14 +453,14 @@ function onLogCallbackQuery(chatId, subAction) {
                     });
                     text = texts.join('\n');
                     sendValidatedMessage(chatId, text);
-                    return [3 /*break*/, 8];
-                case 5: return [4 /*yield*/, logController.deleteAll()];
-                case 6:
+                    return [3 /*break*/, 10];
+                case 7: return [4 /*yield*/, logController.deleteAll()];
+                case 8:
                     _b.sent();
                     sendValidatedMessage(chatId, "Logs deleted");
-                    return [3 /*break*/, 8];
-                case 7: throw new Error('Unknown sub action');
-                case 8: return [2 /*return*/];
+                    return [3 /*break*/, 10];
+                case 9: throw new Error('Unknown sub action');
+                case 10: return [2 /*return*/];
             }
         });
     });

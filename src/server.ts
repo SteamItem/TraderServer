@@ -10,6 +10,7 @@ import csgoController = require('./controllers/csgo');
 import logController = require('./controllers/log');
 import withdrawController = require('./controllers/withdraw');
 import telegram = require('./helpers/telegram');
+import { siteEnum } from './helpers/enum';
 const PORT = process.env.PORT || 3000;
 
 // create express app
@@ -142,9 +143,12 @@ bot.onText(/\/log/, (msg) => {
     reply_markup: {
       inline_keyboard: [[
         {
-          text: 'All',
-          callback_data: 'log.all'
+          text: 'CsGoEmpire',
+          callback_data: 'log.csgo'
         }, {
+          text: 'Rollbit',
+          callback_data: 'log.rollbit'
+        }], [{
           text: 'Withdraw',
           callback_data: 'log.withdraw'
         }, {
@@ -288,8 +292,17 @@ async function onWishlistCallbackQuery(chatId: number, subAction: string) {
 
 async function onLogCallbackQuery(chatId: number, subAction: string) {
   switch (subAction) {
-    case 'all':
-      var logs = await logController.findLastTen();
+    case 'csgo':
+      var logs = await logController.findLastTen(siteEnum.CsGoEmpire);
+      var texts = ['Last 10 logs:'];
+      logs.forEach(l => {
+        texts.push(`${l.created_at}: ${l.message}`);
+      });
+      var text = texts.join('\n');
+      sendValidatedMessage(chatId, text);
+      break;
+    case 'rollbit':
+      var logs = await logController.findLastTen(siteEnum.Rollbit);
       var texts = ['Last 10 logs:'];
       logs.forEach(l => {
         texts.push(`${l.created_at}: ${l.message}`);
