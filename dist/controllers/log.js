@@ -39,10 +39,10 @@ function create(site, message) {
     var log = new Log.default({ site: site, message: message });
     return log.save();
 }
-function findLastTen(env) {
+function findLastTen(site) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
-            return [2 /*return*/, Log.default.find({ env: env }).sort({ _id: -1 }).limit(10)];
+            return [2 /*return*/, Log.default.find({ site: site }).sort({ _id: -1 }).limit(10)];
         });
     });
 }
