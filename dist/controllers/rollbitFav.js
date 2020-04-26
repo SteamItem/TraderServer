@@ -34,36 +34,41 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var RollbitHistory = require("../models/rollbitHistory");
 var RollbitFav = require("../models/rollbitFav");
 function findAll() {
     return __awaiter(this, void 0, void 0, function () {
-        var histories, favs, returnItems;
+        return __generator(this, function (_a) {
+            return [2 /*return*/, RollbitFav.default.find()];
+        });
+    });
+}
+function addToFavorites(name) {
+    return __awaiter(this, void 0, void 0, function () {
+        var fav;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, RollbitHistory.default.find()];
+                case 0: return [4 /*yield*/, removeFromFavorites(name)];
                 case 1:
-                    histories = _a.sent();
-                    return [4 /*yield*/, RollbitFav.default.find()];
-                case 2:
-                    favs = _a.sent();
-                    returnItems = [];
-                    histories.forEach(function (history) {
-                        var isFav = favs.filter(function (f) { return f.name === history.name; }).length > 0;
-                        returnItems.push({
-                            name: history.name,
-                            price: history.price,
-                            markup: history.markup,
-                            baseprice: history.baseprice,
-                            created_at: history.created_at,
-                            fav: isFav
-                        });
-                    });
-                    return [2 /*return*/, returnItems];
+                    _a.sent();
+                    fav = new RollbitFav.default({ name: name });
+                    return [4 /*yield*/, fav.save()];
+                case 2: return [2 /*return*/, _a.sent()];
+            }
+        });
+    });
+}
+function removeFromFavorites(name) {
+    return __awaiter(this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, RollbitFav.default.findOneAndRemove({ name: name })];
+                case 1: return [2 /*return*/, _a.sent()];
             }
         });
     });
 }
 module.exports = {
     findAll: findAll,
+    addToFavorites: addToFavorites,
+    removeFromFavorites: removeFromFavorites
 };

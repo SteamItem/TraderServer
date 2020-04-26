@@ -11,6 +11,7 @@ export interface IRollbitHistory {
   rarity: string;
   exterior: string;
   baseprice: number;
+  created_at?: Date;
 }
 
 export interface IRollbitHistoryDocument extends mongoose.Document, IRollbitHistory {

@@ -186,7 +186,7 @@ var RollbitLogger = /** @class */ (function () {
                 skin: i.items.map(function (ii) { return ii.skin; }).join("#"),
                 rarity: i.items.map(function (ii) { return ii.rarity; }).join("#"),
                 exterior: i.items.map(function (ii) { return ii.exterior; }).join("#"),
-                baseprice: _.sumBy(i.items, function (ii) { return ii.price; }),
+                baseprice: _.sumBy(i.items, function (ii) { return ii.price; })
             });
         });
         return normalizeItems;

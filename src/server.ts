@@ -26,7 +26,8 @@ require('./routes/index')(app);
 require('./routes/wishlistItem')(app);
 require('./routes/param')(app);
 require('./routes/proxy')(app);
-require('./routes/rollbit')(app);
+require('./routes/rollbitFav')(app);
+require('./routes/rollbitHistory')(app);
 
 // listen for requests
 app.listen(PORT, () => {

@@ -95,7 +95,7 @@ export class RollbitLogger {
         skin: i.items.map(ii => ii.skin).join("#"),
         rarity: i.items.map(ii => ii.rarity).join("#"),
         exterior: i.items.map(ii => ii.exterior).join("#"),
-        baseprice: _.sumBy(i.items, ii => ii.price),
+        baseprice: _.sumBy(i.items, ii => ii.price)
       });
     });
     return normalizeItems;
