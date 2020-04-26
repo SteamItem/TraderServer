@@ -11,17 +11,8 @@ import { IInstantStoreItem } from '../interfaces/instantStoreItem';
 import { IItemToBuy } from '../interfaces/itemToBuy';
 import workerHelper = require('../helpers/worker');
 import { siteEnum } from '../helpers/enum';
-import TelegramBot = require('node-telegram-bot-api');
-import telegram = require('../helpers/telegram');
-import config = require('../config');
 
 export class Worker {
-  constructor() {
-    this.bot = telegram.getBot();
-  }
-
-  private bot: TelegramBot;
-
   private storeItems: IInstantStoreItem[];
   private itemsToBuy: IItemToBuy[] = [];
 
@@ -159,7 +150,6 @@ export class Worker {
   }
 
   private log(message: string) {
-    this.bot.sendMessage(config.TELEGRAM_CHAT_ID, `CSGO: ${message}`);
     return logController.create(siteEnum.CsGoEmpire, message);
   }
 }
