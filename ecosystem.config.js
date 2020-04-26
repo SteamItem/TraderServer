@@ -50,10 +50,6 @@ module.exports = {
     env: {
       NODE_ENV: "development",
       DB_URL: "mongodb://admin:1234qwer@ds161148.mlab.com:61148/dota"
-    },
-    env_production: {
-      NODE_ENV: "production",
-      DB_URL: "mongodb://admin:1234qwer@ds159963.mlab.com:59963/csgobot-prod"
     }
   }]
 }
