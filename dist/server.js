@@ -1,9 +1,10 @@
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
@@ -34,9 +35,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var _this = this;
 Object.defineProperty(exports, "__esModule", { value: true });
-var mongoose = require("mongoose");
 var express = require("express");
 var bodyParser = require("body-parser");
 var cors = require("cors");
@@ -47,6 +46,7 @@ var csgoController = require("./controllers/csgo");
 var logController = require("./controllers/log");
 var withdrawController = require("./controllers/withdraw");
 var telegram = require("./helpers/telegram");
+var mongoHelper = require("./helpers/mongo");
 var enum_1 = require("./helpers/enum");
 var PORT = process.env.PORT || 3000;
 // create express app
@@ -54,19 +54,11 @@ var app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cors());
-mongoose.Promise = global.Promise;
-// Connecting to the database
-mongoose.connect(config.DB_URL, {
-    useNewUrlParser: true
-}).then(function () {
-    console.log("Successfully connected to the database");
-}).catch(function (err) {
-    console.log('Could not connect to the database. Exiting now...', err);
-    process.exit();
-});
+mongoHelper.connect();
 require('./routes/index')(app);
 require('./routes/wishlistItem')(app);
 require('./routes/param')(app);
+require('./routes/proxy')(app);
 // listen for requests
 app.listen(PORT, function () {
     console.log("Server is listening on port " + PORT);
@@ -120,7 +112,7 @@ bot.onText(/\/period/, function (msg) {
         }
     });
 });
-bot.onText(/\/pinUpdate (.+)/, function (msg, match) { return __awaiter(_this, void 0, void 0, function () {
+bot.onText(/\/pinUpdate (.+)/, function (msg, match) { return __awaiter(void 0, void 0, void 0, function () {
     var newPin;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -138,7 +130,7 @@ bot.onText(/\/pinUpdate (.+)/, function (msg, match) { return __awaiter(_this, v
         }
     });
 }); });
-bot.onText(/\/setCookie (.+)/, function (msg, match) { return __awaiter(_this, void 0, void 0, function () {
+bot.onText(/\/setCookie (.+)/, function (msg, match) { return __awaiter(void 0, void 0, void 0, function () {
     var newCookie, profile;
     return __generator(this, function (_a) {
         switch (_a.label) {

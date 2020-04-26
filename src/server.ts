@@ -1,4 +1,3 @@
-import mongoose = require('mongoose');
 import express = require('express');
 import bodyParser = require('body-parser');
 import cors = require('cors');
@@ -10,6 +9,7 @@ import csgoController = require('./controllers/csgo');
 import logController = require('./controllers/log');
 import withdrawController = require('./controllers/withdraw');
 import telegram = require('./helpers/telegram');
+import mongoHelper = require('./helpers/mongo');
 import { siteEnum } from './helpers/enum';
 const PORT = process.env.PORT || 3000;
 
@@ -20,21 +20,12 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cors());
 
-mongoose.Promise = global.Promise;
-
-// Connecting to the database
-mongoose.connect(config.DB_URL, {
-  useNewUrlParser: true
-}).then(() => {
-  console.log("Successfully connected to the database");
-}).catch(err => {
-  console.log('Could not connect to the database. Exiting now...', err);
-  process.exit();
-});
+mongoHelper.connect();
 
 require('./routes/index')(app);
 require('./routes/wishlistItem')(app);
 require('./routes/param')(app);
+require('./routes/proxy')(app);
 
 // listen for requests
 app.listen(PORT, () => {

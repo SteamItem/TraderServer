@@ -1,17 +1,7 @@
-import mongoose = require('mongoose');
-import config = require('./config');
 import workerController = require('./controllers/worker');
-mongoose.Promise = global.Promise;
+import mongoHelper = require('./helpers/mongo');
 
-// Connecting to the database
-mongoose.connect(config.DB_URL, {
-    useNewUrlParser: true
-}).then(() => {
-    console.log("Successfully connected to the database");
-}).catch(err => {
-    console.log('Could not connect to the database. Exiting now...', err);
-    process.exit();
-});
+mongoHelper.connect();
 
 var worker = new workerController.Worker();
 worker.work();
