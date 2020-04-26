@@ -1,4 +1,4 @@
-import rollbitController = require('./controllers/rollbit');
+import rollbitController = require('./controllers/rollbitLogger');
 import mongoHelper = require('./helpers/mongo');
 
 mongoHelper.connect();
