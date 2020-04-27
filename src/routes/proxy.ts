@@ -1,5 +1,5 @@
 import cors = require('cors');
-var cors_proxy = require('cors-anywhere');
+var cors_proxy = require('../lib/cors-anywhere');
 import express = require('express');
 import corsHelper = require('../helpers/cors');
 

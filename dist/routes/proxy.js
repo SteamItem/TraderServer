@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var cors = require("cors");
-var cors_proxy = require('cors-anywhere');
+var cors_proxy = require('../lib/cors-anywhere');
 var corsHelper = require("../helpers/cors");
 module.exports = function (app) {
     var corsOptions = corsHelper.getCorsOptions();
