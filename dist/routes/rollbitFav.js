@@ -41,6 +41,18 @@ var corsHelper = require("../helpers/cors");
 var rollbitFavController = require("../controllers/rollbitFav");
 module.exports = function (app) {
     var corsOptions = corsHelper.getCorsOptions();
+    app.get('/rollbitFav', cors(corsOptions), function (_req, res) { return __awaiter(_this, void 0, void 0, function () {
+        var items;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, rollbitFavController.findAll()];
+                case 1:
+                    items = _a.sent();
+                    res.send(items);
+                    return [2 /*return*/];
+            }
+        });
+    }); });
     app.post('/rollbitFav/add', cors(corsOptions), function (req, res) { return __awaiter(_this, void 0, void 0, function () {
         var items;
         return __generator(this, function (_a) {
