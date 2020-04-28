@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var cors = require("cors");
+var mung = require("express-mung");
 var cors_proxy = require('../lib/cors-anywhere');
 var corsHelper = require("../helpers/cors");
 module.exports = function (app) {
@@ -10,9 +11,10 @@ module.exports = function (app) {
         requireHeaders: [],
         removeHeaders: [] // Do not remove any headers.
     });
-    app.get('/proxy/:proxyUrl*', cors(corsOptions), function (req, res) {
+    app.use(mung.write(appendText)).get('/proxy/:proxyUrl*', cors(corsOptions), function (req, res) {
         req.url = req.url.replace('/proxy/', '/');
         proxy.emit('request', req, res);
+        return res;
         // responseInterceptor(req, res);
         // var send = res.send;
         // var body = res.send instanceof Buffer ? res.send.toString() : res.send;
@@ -27,6 +29,11 @@ module.exports = function (app) {
         // console.log("req: " + JSON.stringify(req));
         // console.log("res: " + JSON.stringify(res));
     });
+    function appendText(chunk, encoding, req, res) {
+        var stringifiedResult = chunk.toString(encoding);
+        console.log(stringifiedResult);
+        return (stringifiedResult + ' with more content');
+    }
     // function responseInterceptor(_req: any, res: any) {
     //   var originalSend = res.send;
     //   res.send = function(){

@@ -1,6 +1,7 @@
 import cors = require('cors');
-var cors_proxy = require('../lib/cors-anywhere');
 import express = require('express');
+import mung = require('express-mung');
+var cors_proxy = require('../lib/cors-anywhere');
 import corsHelper = require('../helpers/cors');
 
 module.exports = (app: express.Express) => {
@@ -12,9 +13,10 @@ module.exports = (app: express.Express) => {
     removeHeaders: [] // Do not remove any headers.
   });
 
-  app.get('/proxy/:proxyUrl*', cors(corsOptions), (req: express.Request, res: express.Response) => {
+  app.use(mung.write(appendText)).get('/proxy/:proxyUrl*', cors(corsOptions), (req: express.Request, res: express.Response) => {
     req.url = req.url.replace('/proxy/', '/');
     proxy.emit('request', req, res);
+    return res;
     // responseInterceptor(req, res);
 
     // var send = res.send;
@@ -31,6 +33,12 @@ module.exports = (app: express.Express) => {
     // console.log("req: " + JSON.stringify(req));
     // console.log("res: " + JSON.stringify(res));
   });
+
+  function appendText (chunk: any, encoding: any, req: any, res: any) {
+    var stringifiedResult = chunk.toString(encoding);
+    console.log(stringifiedResult);
+    return (stringifiedResult + ' with more content')
+  }
 
   // function responseInterceptor(_req: any, res: any) {
   //   var originalSend = res.send;
