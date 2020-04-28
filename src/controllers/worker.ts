@@ -1,53 +1,40 @@
 import axios from 'axios';
 import _ = require('lodash');
 import wishlistItemController = require('./wishlistItem');
-import paramController = require('./param');
+import paramController = require('./botParam');
 import csgoController = require('./csgo');
 import withdrawController = require('./withdraw');
 import logController = require('./log');
 import helpers = require('../helpers');
 import { IWishlistItem } from '../models/wishlistItem';
-import { IInstantStoreItem } from '../interfaces/instantStoreItem';
+import { IInstantStoreItem, ICsGoTraderStoreItem, IDotaStoreItem } from '../interfaces/instantStoreItem';
 import { IItemToBuy } from '../interfaces/itemToBuy';
 import workerHelper = require('../helpers/worker');
-import { siteEnum } from '../helpers/enum';
+import { siteEnum, botEnum } from '../helpers/enum';
+import { IBotParam } from '../models/botParam';
+import WishlistItem = require('../models/wishlistItem');
 
-export class Worker {
-  private storeItems: IInstantStoreItem[];
+abstract class CsGoTraderWorker<T extends ICsGoTraderStoreItem> {
+  abstract inventoryUrl: string;
+  abstract appid: number;
+  abstract botId: botEnum;
+
+  private storeItems: T[];
   private itemsToBuy: IItemToBuy[] = [];
 
-  private cookie: string;
-  private async getCookie() {
-    var cookieParam = await paramController.getCookie();
-    if (!cookieParam) throw new Error("Cookie not found");
-    return cookieParam.value.toString();
-  }
-
-  private period: number;
-  private async getPeriod() {
-    var periodParam = await paramController.getPeriod();
-    if (!periodParam) throw new Error("Period not found");
-    var period = Number(periodParam.value);
-    if (!period) throw new Error("Period is invalid");
-    return period;
-  }
-
-  private workerStatus: boolean;
-  private async getWorkerStatus() {
-    var workerStatusParam = await paramController.getWorkerStatus();
-    if (!workerStatusParam) throw new Error("Worker status not found");
-    var workerStatus = Boolean(workerStatusParam.value);
-    return workerStatus;
+  private botParam: IBotParam;
+  private async getBotParam() {
+    var botParam = await paramController.getBotParam(this.botId);
+    if (!botParam) throw new Error("Bot Param not found");
+    return botParam;
   }
 
   private wishlistItems: IWishlistItem[];
-  private async getWishlistItems() {
-    return await wishlistItemController.findAll();
-  }
+  abstract getWishlistItems(): Promise<IWishlistItem[]>;
 
   private token: string;
   private async getToken() {
-    var token = await csgoController.getToken();
+    var token = await csgoController.getToken(this.botId);
     this.token = token.token.toString();
   }
 
@@ -55,7 +42,7 @@ export class Worker {
     return {
       headers: {
         'Content-Type': 'application/json',
-        'Cookie': this.cookie,
+        'Cookie': this.botParam.cookie,
         'Host': 'csgoempire.gg'
       }
     };
@@ -68,13 +55,13 @@ export class Worker {
     var that = this;
     try {
       await that.prepare();
-      if (that.workerStatus === true) {
+      if (that.botParam.worker === true) {
         var tokenPromise = that.getToken();
         var itemPromise = that.getItems();
         await Promise.all([tokenPromise, itemPromise]);
         that.itemsToBuy = workerHelper.generateItemsToBuy(that.storeItems, that.wishlistItems);
         await that.tryToWithdrawAll();
-        await helpers.sleep(that.period);
+        await helpers.sleep(that.botParam.period);
       } else {
         await helpers.sleep(1000);
       }
@@ -87,23 +74,19 @@ export class Worker {
   }
 
   private async prepare() {
-    var cookiePromise = this.getCookie();
-    var periodPromise = this.getPeriod();
+    var botParamPromise = this.getBotParam();
     var wishlistItemsPromise = this.getWishlistItems();
-    var workerStatusPromise = this.getWorkerStatus();
 
-    var promiseResults = await Promise.all([cookiePromise, periodPromise, wishlistItemsPromise, workerStatusPromise]);
+    var promiseResults = await Promise.all([botParamPromise, wishlistItemsPromise]);
 
-    this.cookie = promiseResults[0];
-    this.period = promiseResults[1];
-    this.wishlistItems = promiseResults[2];
-    this.workerStatus = Boolean(promiseResults[3]);
+    this.botParam = promiseResults[0];
+    this.wishlistItems = promiseResults[1];
   }
 
   private async getItems() {
     var that = this;
     try {
-      var items = await axios.get('https://csgoempire.gg/api/v2/p2p/inventory/instant', this.requestConfig);
+      var items = await axios.get(that.inventoryUrl, this.requestConfig);
       this.storeItems = items.data;
     } catch (e) {
       that.handleError(JSON.stringify(e.response.data));
@@ -140,7 +123,12 @@ export class Worker {
   }
 
   private handleSuccessWithdraw(ib: IItemToBuy) {
-    var message = `${ib.market_name} bought for ${ib.market_value / 100}$ which is below ${ib.max_price / 100}$`;
+    var message: string;
+    if (ib.max_price) {
+      message = `${ib.name} bought for ${ib.market_value / 100} coins which is below ${ib.max_price / 100} coins`;
+    } else {
+      message = `${ib.name} bought for ${ib.market_value / 100} coins without any limit`;
+    }
     this.log(message);
     return withdrawController.create(ib);
   }
@@ -151,5 +139,25 @@ export class Worker {
 
   private log(message: string) {
     return logController.create(siteEnum.CsGoEmpire, message);
+  }
+}
+
+export class CsGoInstantWorker extends CsGoTraderWorker<IInstantStoreItem> {
+  inventoryUrl = "https://csgoempire.gg/api/v2/p2p/inventory/instant";
+  appid = 730;
+  botId = botEnum.CsGoInstant;
+
+  async getWishlistItems() {
+    return WishlistItem.default.find({appid: this.appid});
+  }
+}
+
+export class CsGoDotaWorker extends CsGoTraderWorker<IDotaStoreItem> {
+  inventoryUrl = "https://csgoempire.gg/api/v2/inventory/site/10";
+  appid = 570;
+  botId = botEnum.CsGoDota;
+
+  async getWishlistItems() {
+    return WishlistItem.default.find({appid: this.appid});
   }
 }

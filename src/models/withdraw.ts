@@ -2,7 +2,7 @@ import * as mongoose from 'mongoose';
 
 export interface IWithdraw extends mongoose.Document {
   bot_id: number;
-  market_name: string;
+  name: string;
   market_value: number;
   max_price: number;
   store_item_id: string;
@@ -12,7 +12,7 @@ export interface IWithdraw extends mongoose.Document {
 
 const WithdrawSchema: mongoose.Schema = new mongoose.Schema({
   bot_id: { type: Number },
-  market_name: { type: String },
+  name: { type: String },
   market_value: { type: Number },
   max_price: { type: Number },
   store_item_id: { type: String },

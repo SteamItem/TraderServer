@@ -1,16 +1,16 @@
 import axios from 'axios';
 import _ = require('lodash');
-import paramController = require('./param');
+import paramController = require('./botParam');
 import logController = require('./log');
 import RollbitHistory, { IRollbitHistory, IRollbitHistoryDocument } from '../models/rollbitHistory';
-import { siteEnum } from '../helpers/enum';
+import { siteEnum, botEnum } from '../helpers/enum';
 
 export class RollbitLogger {
   private cookie: string;
   private async getCookie() {
-    var cookieParam = await paramController.getRollbitCookie();
+    var cookieParam = await paramController.getCookie(botEnum.RollbitCsgo);
     if (!cookieParam) throw new Error("Cookie not found");
-    return cookieParam.value.toString();
+    return cookieParam;
   }
 
   private items: RollbitMarketItem[] = [];

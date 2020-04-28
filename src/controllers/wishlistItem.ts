@@ -5,7 +5,7 @@ async function findOne(itemId: string) {
 }
 
 async function findAll() {
-    return WishlistItem.default.find();
+    return WishlistItem.default.find({});
 }
 
 async function create(appid: number, name: string, max_price: number) {
@@ -15,12 +15,8 @@ async function create(appid: number, name: string, max_price: number) {
     if(!name) {
         throw new Error("name can not be empty");
     }
-    if(!max_price) {
-        throw new Error("max_price can not be empty");
-    }
 
     const wishlistItem = new WishlistItem.default( { appid, name, max_price });
-
     return wishlistItem.save();
 }
 
@@ -33,9 +29,6 @@ async function update(itemId: string, appid: number, name: string, max_price: nu
     }
     if(!name) {
         throw new Error("name can not be empty");
-    }
-    if(!max_price) {
-        throw new Error("max_price can not be empty");
     }
     return WishlistItem.default.findByIdAndUpdate(itemId, { appid, name, max_price }, {new: true});
 }

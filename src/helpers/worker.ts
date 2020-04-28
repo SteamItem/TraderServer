@@ -1,9 +1,9 @@
 import _ = require('lodash');
 import { IItemToBuy } from "../interfaces/itemToBuy";
 import { IWishlistItem } from '../models/wishlistItem';
-import { IInstantStoreItem } from "../interfaces/instantStoreItem";
+import { ICsGoTraderStoreItem } from "../interfaces/instantStoreItem";
 
-function generateItemsToBuy(storeItems: IInstantStoreItem[], wishlistItems: IWishlistItem[]) {
+function generateItemsToBuy(storeItems: ICsGoTraderStoreItem[], wishlistItems: IWishlistItem[]) {
   var itemsToBuy: IItemToBuy[] = [];
   wishlistItems.forEach(wi => {
     var filteredItems = filterForWishlistItem(storeItems, wi);
@@ -12,7 +12,7 @@ function generateItemsToBuy(storeItems: IInstantStoreItem[], wishlistItems: IWis
       var bestOffer = sortedItems[0];
       itemsToBuy.push({
         bot_id: bestOffer.bot_id,
-        market_name: bestOffer.market_name,
+        name: bestOffer.name,
         market_value: bestOffer.market_value,
         max_price: wi.max_price,
         store_item_id: bestOffer.id,
@@ -24,16 +24,28 @@ function generateItemsToBuy(storeItems: IInstantStoreItem[], wishlistItems: IWis
   return sortedItemsToBuy;
 }
 
-function filterForWishlistItem(storeItems: IInstantStoreItem[], wi: IWishlistItem) {
-  return _.filter(storeItems, i => { return i.market_name === wi.name && i.appid == wi.appid && i.market_value <= wi.max_price; });
+function filterForWishlistItem(storeItems: ICsGoTraderStoreItem[], wi: IWishlistItem) {
+  return _.filter(storeItems, i => {
+    var filterResult = i.name === wi.name && i.appid == wi.appid;
+    if (wi.max_price) {
+      filterResult = filterResult && i.market_value <= wi.max_price;
+    }
+    return filterResult;
+  });
 }
 
-function sortForCheapestItem(filteredItems: IInstantStoreItem[]) {
+function sortForCheapestItem(filteredItems: ICsGoTraderStoreItem[]) {
   return _.sortBy(filteredItems, i => { return i.market_value; });
 }
 
 function sortForMaxMargin(itemsToBuy: IItemToBuy[]) {
-  return _.sortBy(itemsToBuy, i => { return i.market_value - i.max_price; });
+  return _.sortBy(itemsToBuy, i => {
+    if (i.max_price) {
+      return i.market_value - i.max_price;
+    } else {
+      return 0;
+    }
+   });
 }
 
 export = {

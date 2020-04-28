@@ -1,24 +1,31 @@
-export interface IInstantStoreItem {
-  appid: number;
+export interface IInstantStoreItem extends ICsGoTraderStoreItem {
   assetid: string;
-  bot_id: number;
   bundle_id?: number;
   color: string;
   contextid: string;
   custom_name?: any;
-  icon_url: string;
-  id: string;
-  img: string;
   market_name: string;
-  market_value: number;
-  name: string;
   name_color: string;
   paint_index?: any;
   paint_seed?: any;
   stickers?: any;
   tradable: boolean;
-  tradelock: boolean;
   type: string;
-  wear?: any;
   custom_price?: number;
+}
+
+export interface IDotaStoreItem extends ICsGoTraderStoreItem {
+  created_at: number;
+}
+
+export interface ICsGoTraderStoreItem {
+  appid: number;
+  bot_id: number;
+  icon_url: string;
+  id: string;
+  img: string;
+  market_value: number;
+  name: string;
+  tradelock: boolean;
+  wear?: any;
 }

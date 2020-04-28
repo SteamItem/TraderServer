@@ -1,25 +1,20 @@
 import axios from 'axios';
-import paramController = require('./param');
+import paramController = require('./botParam');
+import { botEnum } from '../helpers/enum';
 
-async function getToken() {
-  var codeParamPromise = paramController.getCode();
-  var cookieParamPromise = paramController.getCookie();
-  var promiseResults = await Promise.all([codeParamPromise, cookieParamPromise]);
-  var codeParam = promiseResults[0];
-  var cookieParam = promiseResults[1];
-
-  if (!codeParam) throw new Error("Code not found.");
-  if (!cookieParam) throw new Error("Cookie not found.");
+async function getToken(id: botEnum) {
+  var botParam = await paramController.getBotParam(id);
+  if (!botParam) throw new Error("BotParam not found");
 
   let data = JSON.stringify({
-    "code": codeParam.value,
+    "code": botParam.code,
     "uuid": "1"
   });
 
   let content = {
     headers: {
       'Content-Type': 'application/json',
-      'Cookie': cookieParam.value,
+      'Cookie': botParam.cookie,
       'Host': 'csgoempire.gg'
     }
   };
@@ -27,13 +22,13 @@ async function getToken() {
   return result.data;
 }
 
-async function profile() {
-  var cookieParam = await paramController.getCookie();
-  if (!cookieParam) throw new Error("Cookie not found.");
+async function profile(id: botEnum) {
+  var cookie = await paramController.getCookie(id);
+  if (!cookie) throw new Error("Cookie not found.");
   let content = {
     headers: {
       'Content-Type': 'application/json',
-      'Cookie': cookieParam.value,
+      'Cookie': cookie,
       'Host': 'csgoempire.gg'
     }
   };
