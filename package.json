@@ -6,10 +6,13 @@
     "build-ts": "tsc",
     "watch-ts": "tsc -w",
     "start": "tsc && pm2-runtime start ecosystem.prod.config.js",
+    "start:server": "tsc && pm2 start ecosystem.prod.config.js --only server",
+    "start:instant": "tsc && pm2 start ecosystem.prod.config.js --only instant",
+    "start:dota": "tsc && pm2 start ecosystem.prod.config.js --only dota",
     "dev": "pm2-dev start ecosystem.dev.config.js",
     "dev:server": "pm2 start ecosystem.dev.config.js --only server",
-    "dev:instant": "pm2 start ecosystem.dev.config.js --only instant-worker",
-    "dev:dota": "pm2 start ecosystem.dev.config.js --only dota-worker"
+    "dev:instant": "pm2 start ecosystem.dev.config.js --only instant",
+    "dev:dota": "pm2 start ecosystem.dev.config.js --only dota"
   },
   "author": "suphero",
   "license": "ISC",
