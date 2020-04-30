@@ -11,7 +11,7 @@ module.exports = {
       TELEGRAM_CHAT_ID: "-479108586"
     }
   }, {
-    name: "CSGO Instant Worker",
+    name: "instant",
     script: "./dist/instantWorker.js",
     time: true,
     env: {
@@ -19,7 +19,7 @@ module.exports = {
       DB_URL: "mongodb://admin:1234qwer@ds159963.mlab.com:59963/csgobot-prod",
     }
   }, {
-    name: "CSGO Dota Worker",
+    name: "dota",
     script: "./dist/dotaWorker.js",
     time: true,
     env: {
