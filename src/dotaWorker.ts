@@ -3,5 +3,5 @@ import mongoHelper = require('./helpers/mongo');
 
 mongoHelper.connect();
 
-var worker = new workerController.CsGoDotaWorker();
+var worker = workerController.dotaWorker();
 worker.work();

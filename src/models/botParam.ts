@@ -15,7 +15,7 @@ const BotParamSchema: mongoose.Schema = new mongoose.Schema({
   period: { type: Number, required: true },
   worker: { type: Boolean, required: true },
   cookie: { type: String, required: true },
-  code: { type: Number, required: false }
+  code: { type: String, required: false }
 });
 
 export default mongoose.model<IBotParam>('BotParam', BotParamSchema);

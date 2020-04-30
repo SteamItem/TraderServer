@@ -1,7 +1,7 @@
 import Log = require('../models/log');
 
-function create(site: string, message: string) {
-    const log = new Log.default({ site, message });
+function create(site: string, bot: string, message: string) {
+    const log = new Log.default({ site, bot, message });
     return log.save();
 }
 

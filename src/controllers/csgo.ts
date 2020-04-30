@@ -2,19 +2,16 @@ import axios from 'axios';
 import paramController = require('./botParam');
 import { botEnum } from '../helpers/enum';
 
-async function getToken(id: botEnum) {
-  var botParam = await paramController.getBotParam(id);
-  if (!botParam) throw new Error("BotParam not found");
-
+async function getToken(code: string, cookie: string) {
   let data = JSON.stringify({
-    "code": botParam.code,
+    "code": code,
     "uuid": "1"
   });
 
   let content = {
     headers: {
       'Content-Type': 'application/json',
-      'Cookie': botParam.cookie,
+      'Cookie': cookie,
       'Host': 'csgoempire.gg'
     }
   };

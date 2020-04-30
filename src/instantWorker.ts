@@ -3,5 +3,5 @@ import mongoHelper = require('./helpers/mongo');
 
 mongoHelper.connect();
 
-var worker = new workerController.CsGoInstantWorker();
+var worker = workerController.instantWorker();
 worker.work();

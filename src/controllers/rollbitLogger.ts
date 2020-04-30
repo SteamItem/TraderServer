@@ -3,7 +3,7 @@ import _ = require('lodash');
 import paramController = require('./botParam');
 import logController = require('./log');
 import RollbitHistory, { IRollbitHistory, IRollbitHistoryDocument } from '../models/rollbitHistory';
-import { siteEnum, botEnum } from '../helpers/enum';
+import { siteEnum, botEnum, siteText, botText } from '../helpers/enum';
 
 export class RollbitLogger {
   private cookie: string;
@@ -133,7 +133,9 @@ export class RollbitLogger {
   }
 
   private log(message: string) {
-    return logController.create(siteEnum.Rollbit, message);
+    var siteName = siteText(siteEnum.Rollbit);
+    var botName = botText(botEnum.RollbitCsgo);
+    return logController.create(siteName, botName, message);
   }
 }
 
