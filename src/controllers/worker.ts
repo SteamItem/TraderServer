@@ -33,7 +33,6 @@ abstract class WorkerTask {
     this.logger = logger;
   }
 
-  public botParam: IBotParam;
   protected logger: LoggerBase;
   abstract taskName: string;
 
@@ -47,7 +46,16 @@ abstract class MongoSelectorTask extends WorkerTask {
     return paramController.getBotParam(this.botId);
   }
 
-  public wishlistItems: IWishlistItem[];
+  private $botParam: IBotParam;
+  public get botParam(): IBotParam {
+    return this.$botParam;
+  }
+
+  private $wishlistItems: IWishlistItem[];
+  public get wishlistItems(): IWishlistItem[] {
+    return this.$wishlistItems;
+  }
+
   abstract getWishlistItems(): Promise<IWishlistItem[]>;
 
   async work() {
@@ -56,33 +64,52 @@ abstract class MongoSelectorTask extends WorkerTask {
 
     var result = await Promise.all([botParamPromise, wishlistItemsPromise]);
 
-    this.botParam = result[0];
-    this.wishlistItems = result[1];
+    this.$botParam = result[0];
+    this.$wishlistItems = result[1];
   }
 }
 
 class TokenGetterTask extends WorkerTask {
+  constructor(botParam: IBotParam, logger: LoggerBase) {
+    super(logger);
+    this.botParam = botParam;
+  }
   taskName = "Token Getter";
+  private botParam: IBotParam;
 
   async work() {
     return await this.getToken();
   }
 
-  public token: string;
+  private $token: string;
+  public get token(): string {
+    return this.$token;
+  }
+
   private async getToken() {
     var code = this.botParam.code;
     if (!code) throw new Error("Code not found");
     var token = await csgoController.getToken(code, this.botParam.cookie);
-    this.token = token.token.toString();
+    this.$token = token.token.toString();
   }
 }
 
 abstract class InventoryGetterTask<T extends ICsGoTraderStoreItem> extends WorkerTask {
+  constructor(botParam: IBotParam, wishlistItems: IWishlistItem[], logger: LoggerBase) {
+    super(logger);
+    this.botParam = botParam;
+    this.wishlistItems = wishlistItems;
+  }
   abstract inventoryUrl: string;
-  public storeItems: T[];
-  public itemsToBuy: IItemToBuy[] = [];
-  public wishlistItems: IWishlistItem[];
+  private botParam: IBotParam;
+  private storeItems: T[];
+  private wishlistItems: IWishlistItem[];
   taskName = "Inventory Getter";
+
+  private $itemsToBuy: IItemToBuy[] = [];
+  public get itemsToBuy(): IItemToBuy[] {
+    return this.$itemsToBuy
+  }
 
   private get requestConfig() {
     return {
@@ -98,7 +125,7 @@ abstract class InventoryGetterTask<T extends ICsGoTraderStoreItem> extends Worke
     try {
       var items = await axios.get(this.inventoryUrl, this.requestConfig);
       this.storeItems = items.data;
-      this.itemsToBuy = workerHelper.generateItemsToBuy(this.storeItems, this.wishlistItems);
+      this.$itemsToBuy = workerHelper.generateItemsToBuy(this.storeItems, this.wishlistItems);
       this.logger.log(`${this.itemsToBuy.length} items found`);
     } catch(e) {
       this.logger.log(JSON.stringify(e.response.statusText));
@@ -115,8 +142,16 @@ class DotaInventoryGetterTask extends InventoryGetterTask<IDotaStoreItem> {
 }
 
 class WithdrawMakerTask extends WorkerTask {
-  public itemsToBuy: IItemToBuy[];
-  public token: string;
+  constructor(token: string, botParam: IBotParam, itemsToBuy: IItemToBuy[], logger: LoggerBase) {
+    super(logger);
+    this.token = token;
+    this.botParam = botParam;
+    this.itemsToBuy = itemsToBuy;
+  }
+
+  private itemsToBuy: IItemToBuy[];
+  private botParam: IBotParam;
+  private token: string;
   taskName = "Withdraw Maker"
 
   private get requestConfig() {
@@ -171,41 +206,40 @@ class WithdrawMakerTask extends WorkerTask {
 }
 
 abstract class Worker<T extends ICsGoTraderStoreItem> {
-  constructor(mongoSelector: MongoSelectorTask, tokenGetter: TokenGetterTask, inventoryGetter: InventoryGetterTask<T>, withdrawMaker: WithdrawMakerTask) {
-    this.mongoSelector = mongoSelector;
-    this.tokenGetter = tokenGetter;
-    this.inventoryGetter = inventoryGetter;
-    this.withdrawMaker = withdrawMaker
+  constructor(logger: LoggerBase) {
+    this.logger = logger;
   }
 
-  private mongoSelector: MongoSelectorTask;
-  private tokenGetter: TokenGetterTask;
-  private inventoryGetter: InventoryGetterTask<T>;
-  private withdrawMaker: WithdrawMakerTask;
+  protected logger: LoggerBase;
+  protected working = false;
+  protected botParam: IBotParam;
+  protected wishlistItems: IWishlistItem[];
+  protected token: string;
+  protected itemsToBuy: IItemToBuy[] = [];
+  protected apiInProgress = false;
 
-  private working = false;
-  private botParam: IBotParam;
-  private wishlistItems: IWishlistItem[];
-  private token: string;
-  private itemsToBuy: IItemToBuy[] = [];
-  private apiInProgress = false;
+  abstract getMongoSelector(): MongoSelectorTask;
+  abstract getTokenGetter(): TokenGetterTask;
+  abstract getInventoryGetter(): InventoryGetterTask<T>;
+  abstract getWithdrawMaker(): WithdrawMakerTask;
 
   /**
    * work
    */
   public work() {
     cron.schedule('* * * * * *', async () => {
-      await this.mongoSelector.work();
-      this.botParam = this.mongoSelector.botParam;
-      this.wishlistItems = this.mongoSelector.wishlistItems;
-      this.working = this.mongoSelector.botParam.worker;
+      var mongoSelector = this.getMongoSelector();
+      await mongoSelector.work();
+      this.botParam = mongoSelector.botParam;
+      this.wishlistItems = mongoSelector.wishlistItems;
+      this.working = mongoSelector.botParam.worker;
     });
 
     cron.schedule('* * * * * *', async () => {
       if (!this.working) return;
-      this.tokenGetter.botParam = this.botParam;
-      await this.tokenGetter.work();
-      this.token = this.tokenGetter.token;
+      var tokenGetter = this.getTokenGetter();
+      await tokenGetter.work();
+      this.token = tokenGetter.token;
     });
 
     cron.schedule('*/3 * * * * *', async () => {
@@ -214,15 +248,12 @@ abstract class Worker<T extends ICsGoTraderStoreItem> {
 
       this.apiInProgress = true;
 
-      this.inventoryGetter.botParam = this.botParam;
-      this.inventoryGetter.wishlistItems = this.wishlistItems;
-      await this.inventoryGetter.work();
-      this.itemsToBuy = this.inventoryGetter.itemsToBuy;
+      var inventoryGetter = this.getInventoryGetter();
+      await inventoryGetter.work();
+      this.itemsToBuy = inventoryGetter.itemsToBuy;
 
-      this.withdrawMaker.token = this.token;
-      this.withdrawMaker.botParam = this.botParam;
-      this.withdrawMaker.itemsToBuy = this.itemsToBuy;
-      await this.withdrawMaker.work();
+      var withdrawMaker = this.getWithdrawMaker();
+      await withdrawMaker.work();
 
       this.apiInProgress = false;
     });
@@ -230,9 +261,33 @@ abstract class Worker<T extends ICsGoTraderStoreItem> {
 }
 
 class InstantWorker extends Worker<IInstantStoreItem> {
+  getMongoSelector(): MongoSelectorTask {
+    return new InstantMongoSelector(this.logger);
+  }
+  getTokenGetter(): TokenGetterTask {
+    return new TokenGetterTask(this.botParam, this.logger);
+  }
+  getInventoryGetter(): InventoryGetterTask<IInstantStoreItem> {
+    return new InstantInventoryGetterTask(this.botParam, this.wishlistItems, this.logger);
+  }
+  getWithdrawMaker(): WithdrawMakerTask {
+    return new WithdrawMakerTask(this.token, this.botParam, this.itemsToBuy, this.logger);
+  }
 }
 
 class DotaWorker extends Worker<IDotaStoreItem> {
+  getMongoSelector(): MongoSelectorTask {
+    return new DotaMongoSelector(this.logger);
+  }
+  getTokenGetter(): TokenGetterTask {
+    return new TokenGetterTask(this.botParam, this.logger);
+  }
+  getInventoryGetter(): InventoryGetterTask<IDotaStoreItem> {
+    return new DotaInventoryGetterTask(this.botParam, this.wishlistItems, this.logger);
+  }
+  getWithdrawMaker(): WithdrawMakerTask {
+    return new WithdrawMakerTask(this.token, this.botParam, this.itemsToBuy, this.logger);
+  }
 }
 
 class ConsoleLogger extends LoggerBase {
@@ -261,20 +316,12 @@ export function instantWorker(): InstantWorker {
   var siteName = siteText(siteEnum.CsGoEmpire)
   var botName = botText(botEnum.CsGoInstant);
   var logger = new ConsoleLogger(siteName, botName);
-  var mongoSelector = new InstantMongoSelector(logger);
-  var tokenGetter = new TokenGetterTask(logger);
-  var inventoryGetter = new InstantInventoryGetterTask(logger);
-  var withdrawMaker = new WithdrawMakerTask(logger);
-  return new InstantWorker(mongoSelector, tokenGetter, inventoryGetter, withdrawMaker);
+  return new InstantWorker(logger);
 }
 
 export function dotaWorker(): DotaWorker {
   var siteName = siteText(siteEnum.CsGoEmpire)
   var botName = botText(botEnum.CsGoDota);
   var logger = new ConsoleLogger(siteName, botName);
-  var mongoSelector = new DotaMongoSelector(logger);
-  var tokenGetter = new TokenGetterTask(logger);
-  var inventoryGetter = new DotaInventoryGetterTask(logger);
-  var withdrawMaker = new WithdrawMakerTask(logger);
-  return new DotaWorker(mongoSelector, tokenGetter, inventoryGetter, withdrawMaker);
+  return new DotaWorker(logger);
 }
