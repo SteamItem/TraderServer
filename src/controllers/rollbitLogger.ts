@@ -76,7 +76,7 @@ export class RollbitLogger {
   }
 
   private async getExistingItems() {
-    return await RollbitHistory.find({});
+    return RollbitHistory.find({});
   }
 
   private async getItems(maxPrice: number) {

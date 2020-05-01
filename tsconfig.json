@@ -1,11 +1,8 @@
 {
-    "compilerOptions": {
-        "outDir": "./dist",
-        "allowJs": true,
-        "target": "es5",
-        "strict": true,
-        "strictPropertyInitialization": false,
-    },
-    "include": ["src"],
-    "exclude": ["node_modules", "**/__tests__/*"]
+  "compilerOptions": {
+    "outDir": "dist",
+    "target": "es5",
+    "module": "commonjs",
+    "sourceMap": true
+  }
 }
