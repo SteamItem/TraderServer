@@ -1,5 +1,5 @@
 import axios from 'axios';
-import _ = require('lodash');
+import cron = require('node-cron');
 import paramController = require('./botParam');
 import csgoController = require('./csgo');
 import withdrawController = require('./withdraw');
@@ -33,64 +33,46 @@ abstract class WorkerTask {
     this.logger = logger;
   }
 
+  public botParam: IBotParam;
   protected logger: LoggerBase;
   abstract taskName: string;
-  abstract taskWaitTime: number;
 
-  async start() {
-    try {
-      // var d1 = new Date();
-      await this.task();
-      // var d2 = new Date();
-      // console.log(`${this.taskName} task completed in ${d2.getTime()-d1.getTime()} ms`);
-    } catch (e) {
-      this.logger.log(`${this.taskName} has error: ${e.message}`);
-    } finally {
-      await helpers.sleep(this.taskWaitTime);
-      await this.start();
-    }
-  }
-
-  abstract task(): Promise<any>;
+  abstract async work(): Promise<any>;
 }
 
 abstract class MongoSelectorTask extends WorkerTask {
   abstract botId: botEnum;
-  public botParam: IBotParam;
   taskName = "Mongo Selector";
-  taskWaitTime = 1000;
-  private async getBotParam() {
-    var botParam = await paramController.getBotParam(this.botId);
-    this.botParam = botParam;
+  private getBotParam() {
+    return paramController.getBotParam(this.botId);
   }
 
   public wishlistItems: IWishlistItem[];
   abstract getWishlistItems(): Promise<IWishlistItem[]>;
 
-  task() {
+  async work() {
     var botParamPromise = this.getBotParam();
     var wishlistItemsPromise = this.getWishlistItems();
 
-    return Promise.all([botParamPromise, wishlistItemsPromise]);
+    var result = await Promise.all([botParamPromise, wishlistItemsPromise]);
+
+    this.botParam = result[0];
+    this.wishlistItems = result[1];
   }
 }
 
 class TokenGetterTask extends WorkerTask {
-  public botParam: IBotParam;
-  taskWaitTime = 1000;
   taskName = "Token Getter";
 
-  task(): Promise<void> {
-    return this.getToken();
+  async work() {
+    return await this.getToken();
   }
 
   public token: string;
   private async getToken() {
-    if (!this.botParam.worker) return;
     var code = this.botParam.code;
     if (!code) throw new Error("Code not found");
     var token = await csgoController.getToken(code, this.botParam.cookie);
-    console.log("token: " + token);
     this.token = token.token.toString();
   }
 }
@@ -98,12 +80,8 @@ class TokenGetterTask extends WorkerTask {
 abstract class InventoryGetterTask<T extends ICsGoTraderStoreItem> extends WorkerTask {
   abstract inventoryUrl: string;
   public storeItems: T[];
-  public botParam: IBotParam;
   public itemsToBuy: IItemToBuy[] = [];
   public wishlistItems: IWishlistItem[];
-  // TODO: Construct edilemediği için static verildi
-  taskWaitTime = 1000;
-  // taskWaitTime = this.botParam.period;
   taskName = "Inventory Getter";
 
   private get requestConfig() {
@@ -116,15 +94,15 @@ abstract class InventoryGetterTask<T extends ICsGoTraderStoreItem> extends Worke
     };
   }
 
-  async task() {
-    var that = this;
-    console.log("inventory getter status: " + that.botParam.worker);
-    if (!that.botParam.worker) return;
-    console.log("inventory url: " + that.inventoryUrl);
-    console.log("requestConfig: " + that.requestConfig);
-    var items = await axios.get(that.inventoryUrl, that.requestConfig);
-    that.storeItems = items.data;
-    that.itemsToBuy = workerHelper.generateItemsToBuy(that.storeItems, that.wishlistItems);
+  async work() {
+    try {
+      var items = await axios.get(this.inventoryUrl, this.requestConfig);
+      this.storeItems = items.data;
+      this.itemsToBuy = workerHelper.generateItemsToBuy(this.storeItems, this.wishlistItems);
+      this.logger.log(`${this.itemsToBuy.length} items found`);
+    } catch(e) {
+      this.logger.log(JSON.stringify(e.response.statusText));
+    }
   }
 }
 
@@ -139,10 +117,6 @@ class DotaInventoryGetterTask extends InventoryGetterTask<IDotaStoreItem> {
 class WithdrawMakerTask extends WorkerTask {
   public itemsToBuy: IItemToBuy[];
   public token: string;
-  public botParam: IBotParam;
-  // TODO: Construct edilemediği için static verildi
-  taskWaitTime = 1000;
-  // taskWaitTime = this.botParam.period;
   taskName = "Withdraw Maker"
 
   private get requestConfig() {
@@ -155,8 +129,9 @@ class WithdrawMakerTask extends WorkerTask {
     };
   }
 
-  async task() {
+  async work() {
     var promises: Promise<boolean>[] = []
+    if (!this.itemsToBuy) return Promise.resolve;
     this.itemsToBuy.forEach(ib => promises.push(this.tryToWithdraw(ib)));
     return await Promise.all(promises);
   }
@@ -168,7 +143,7 @@ class WithdrawMakerTask extends WorkerTask {
       that.handleSuccessWithdraw(ib);
       return true;
     } catch (e) {
-      that.logger.log(JSON.stringify(e.response.data));
+      that.logger.log(JSON.stringify(e.response.statusText));
       return false;
     }
   }
@@ -196,48 +171,61 @@ class WithdrawMakerTask extends WorkerTask {
 }
 
 abstract class Worker<T extends ICsGoTraderStoreItem> {
-  /**
-   *
-   */
-  constructor(logger: LoggerBase, mongoSelector: MongoSelectorTask, tokenGetter: TokenGetterTask, inventoryGetter: InventoryGetterTask<T>, withdrawMaker: WithdrawMakerTask) {
-    this.logger = logger;
+  constructor(mongoSelector: MongoSelectorTask, tokenGetter: TokenGetterTask, inventoryGetter: InventoryGetterTask<T>, withdrawMaker: WithdrawMakerTask) {
     this.mongoSelector = mongoSelector;
     this.tokenGetter = tokenGetter;
     this.inventoryGetter = inventoryGetter;
     this.withdrawMaker = withdrawMaker
   }
 
-  private logger: LoggerBase;
   private mongoSelector: MongoSelectorTask;
   private tokenGetter: TokenGetterTask;
   private inventoryGetter: InventoryGetterTask<T>;
   private withdrawMaker: WithdrawMakerTask;
 
+  private working = false;
+  private botParam: IBotParam;
+  private wishlistItems: IWishlistItem[];
+  private token: string;
+  private itemsToBuy: IItemToBuy[] = [];
+  private apiInProgress = false;
+
   /**
    * work
    */
   public work() {
-    this.mongoSelector.start();
-    this.tokenGetter.start();
-    this.inventoryGetter.start();
-    this.withdrawMaker.start();
+    cron.schedule('* * * * * *', async () => {
+      await this.mongoSelector.work();
+      this.botParam = this.mongoSelector.botParam;
+      this.wishlistItems = this.mongoSelector.wishlistItems;
+      this.working = this.mongoSelector.botParam.worker;
+    });
 
-    this.sync();
-  }
+    cron.schedule('* * * * * *', async () => {
+      if (!this.working) return;
+      this.tokenGetter.botParam = this.botParam;
+      await this.tokenGetter.work();
+      this.token = this.tokenGetter.token;
+    });
 
-  private sync() {
-    try {
-      this.tokenGetter.botParam = this.mongoSelector.botParam;
-      this.inventoryGetter.botParam = this.mongoSelector.botParam;
-      this.inventoryGetter.wishlistItems = this.mongoSelector.wishlistItems;
-      this.withdrawMaker.token = this.tokenGetter.token;
-      this.withdrawMaker.botParam = this.mongoSelector.botParam;
-      this.withdrawMaker.itemsToBuy = this.inventoryGetter.itemsToBuy;
-    } catch (e) {
-      this.logger.log(e.message);
-    } finally {
-      this.sync();
-    }
+    cron.schedule('*/3 * * * * *', async () => {
+      if (!this.working) return;
+      if (this.apiInProgress) return;
+
+      this.apiInProgress = true;
+
+      this.inventoryGetter.botParam = this.botParam;
+      this.inventoryGetter.wishlistItems = this.wishlistItems;
+      await this.inventoryGetter.work();
+      this.itemsToBuy = this.inventoryGetter.itemsToBuy;
+
+      this.withdrawMaker.token = this.token;
+      this.withdrawMaker.botParam = this.botParam;
+      this.withdrawMaker.itemsToBuy = this.itemsToBuy;
+      await this.withdrawMaker.work();
+
+      this.apiInProgress = false;
+    });
   }
 }
 
@@ -257,7 +245,7 @@ class InstantMongoSelector extends MongoSelectorTask {
   botId = botEnum.CsGoInstant;
 
   async getWishlistItems(): Promise<IWishlistItem[]> {
-    return WishlistItem.default.find({appid: 730});
+    return WishlistItem.default.find({appid: 730}).exec();
   }
 }
 
@@ -265,7 +253,7 @@ class DotaMongoSelector extends MongoSelectorTask {
   botId = botEnum.CsGoDota;
 
   async getWishlistItems(): Promise<IWishlistItem[]> {
-    return WishlistItem.default.find({appid: 570});
+    return WishlistItem.default.find({appid: 570}).exec();
   }
 }
 
@@ -277,7 +265,7 @@ export function instantWorker(): InstantWorker {
   var tokenGetter = new TokenGetterTask(logger);
   var inventoryGetter = new InstantInventoryGetterTask(logger);
   var withdrawMaker = new WithdrawMakerTask(logger);
-  return new InstantWorker(logger, mongoSelector, tokenGetter, inventoryGetter, withdrawMaker);
+  return new InstantWorker(mongoSelector, tokenGetter, inventoryGetter, withdrawMaker);
 }
 
 export function dotaWorker(): DotaWorker {
@@ -288,5 +276,5 @@ export function dotaWorker(): DotaWorker {
   var tokenGetter = new TokenGetterTask(logger);
   var inventoryGetter = new DotaInventoryGetterTask(logger);
   var withdrawMaker = new WithdrawMakerTask(logger);
-  return new DotaWorker(logger, mongoSelector, tokenGetter, inventoryGetter, withdrawMaker);
+  return new DotaWorker(mongoSelector, tokenGetter, inventoryGetter, withdrawMaker);
 }
