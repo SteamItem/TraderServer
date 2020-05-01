@@ -5,7 +5,8 @@
   "scripts": {
     "build-ts": "tsc",
     "watch-ts": "tsc -w",
-    "start": "tsc && pm2-runtime start ecosystem.prod.config.js"
+    "start": "tsc && pm2-runtime start ecosystem.config.js",
+    "dev": "tsc && pm2-runtime start ecosystem.dev.config.js"
   },
   "author": "suphero",
   "license": "ISC",

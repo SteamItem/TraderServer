@@ -7,6 +7,18 @@
     {
       "type": "node",
       "request": "launch",
+      "name": "Instant Worker",
+      "program": "${workspaceFolder}/src/instantWorker.ts",
+      "env": {
+        "DB_URL": "mongodb://admin:1234qwer@ds161148.mlab.com:61148/dota"
+      },
+      "outFiles": [
+        "${workspaceFolder}/dist/**/*.js"
+      ]
+    },
+    {
+      "type": "node",
+      "request": "launch",
       "name": "Dota Worker",
       "program": "${workspaceFolder}/src/dotaWorker.ts",
       "env": {
