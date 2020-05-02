@@ -7,7 +7,7 @@ import { EmpireDotaTokenGetterTask, EmpireTokenGetterTask } from "../TokenGetter
 import { DatabaseSelectorTask, EmpireDotaDatabaseSelector } from "../DatabaseSelector";
 export class EmpireDotaWorker extends Worker<IEmpireDotaInventoryItem> {
   inventoryOperationCronExpression = '*/3 * * * * *';
-  getMongoSelector(): DatabaseSelectorTask {
+  getDatabaseSelector(): DatabaseSelectorTask {
     return new EmpireDotaDatabaseSelector();
   }
   getTokenGetter(): EmpireTokenGetterTask {

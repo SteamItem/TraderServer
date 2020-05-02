@@ -7,7 +7,7 @@ import { EmpireInstantTokenGetterTask, EmpireTokenGetterTask } from "../TokenGet
 import { EmpireInstantDatabaseSelector } from "../DatabaseSelector";
 export class EmpireInstantWorker extends Worker<IEmpireInstantInventoryItem> {
   inventoryOperationCronExpression = '*/3 * * * * *';
-  getMongoSelector(): EmpireInstantDatabaseSelector {
+  getDatabaseSelector(): EmpireInstantDatabaseSelector {
     return new EmpireInstantDatabaseSelector();
   }
   getTokenGetter(): EmpireTokenGetterTask {

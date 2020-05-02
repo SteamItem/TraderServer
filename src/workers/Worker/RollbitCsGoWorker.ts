@@ -7,7 +7,7 @@ import { TokenGetterTask } from "../TokenGetter";
 import { DatabaseSelectorTask, RollbitCsGoDatabaseSelector } from "../DatabaseSelector";
 export class RollbitCsGoWorker extends Worker<IRollbitInventoryItem> {
   inventoryOperationCronExpression = '* * * * * *';
-  getMongoSelector(): DatabaseSelectorTask {
+  getDatabaseSelector(): DatabaseSelectorTask {
     return new RollbitCsGoDatabaseSelector();
   }
   getTokenGetter(): TokenGetterTask {

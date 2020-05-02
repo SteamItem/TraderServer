@@ -18,7 +18,7 @@ export abstract class Worker<II> {
   protected token: string;
   protected inventoryItems: II[] = [];
   protected itemsToBuy: II[] = [];
-  abstract getMongoSelector(): DatabaseSelectorTask;
+  abstract getDatabaseSelector(): DatabaseSelectorTask;
   abstract getTokenGetter(): TokenGetterTask;
   abstract getInventoryGetter(): InventoryGetterTask<II>;
   abstract getWithdrawMaker(): WithdrawMakerTask<II>;
@@ -26,18 +26,18 @@ export abstract class Worker<II> {
   abstract get inventoryOperationCronExpression(): string;
 
   public work() {
-    this.mongoScheduler();
+    this.databaseScheduler();
     this.tokenScheduler();
     this.inventoryScheduler();
   }
 
-  private mongoScheduler() {
+  private databaseScheduler() {
     return cron.schedule('* * * * * *', async () => {
-      var mongoSelector = this.getMongoSelector();
-      await mongoSelector.work();
-      this.botParam = mongoSelector.botParam;
-      this.wishlistItems = mongoSelector.wishlistItems;
-      this.working = mongoSelector.botParam.worker;
+      var databaseSelector = this.getDatabaseSelector();
+      await databaseSelector.work();
+      this.botParam = databaseSelector.botParam;
+      this.wishlistItems = databaseSelector.wishlistItems;
+      this.working = databaseSelector.botParam.worker;
     });
   }
 
