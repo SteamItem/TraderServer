@@ -10,13 +10,14 @@ export class RollbitCsGoInventoryGetterTask extends InventoryGetterTask<IRollbit
 
   private maxPrice = 500;
   private minPrice = 5;
-  private iterationLimit = 2;
+  private iterationLimit = 1;
   private get requestConfig() {
     return {
       headers: {
         'Content-Type': 'application/json',
         'Cookie': this.botParam.cookie,
-        'Host': 'csgoempire.gg'
+        'Host': 'api.rollbit.com',
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.122 Safari/537.36'
       }
     };
   }
@@ -34,8 +35,7 @@ export class RollbitCsGoInventoryGetterTask extends InventoryGetterTask<IRollbit
         var minItem = _.last(allItems);
         if (minItem) {
           maxPrice = minItem.price;
-        }
-        else {
+        } else {
           break;
         }
       }
@@ -43,7 +43,7 @@ export class RollbitCsGoInventoryGetterTask extends InventoryGetterTask<IRollbit
     return allItems;
   }
   private async getItems(maxPrice: number, minPrice: number) {
-    var result = await axios.get<IRollbitInventoryItems>(`https://api.rollbit.com/steam/market?query&order=1&showTradelocked=false&showCustomPriced=true&min=${minPrice}&max=${maxPrice}`, this.requestConfig);
+    var result = await axios.get<IRollbitInventoryItems>(`https://api.rollbit.com/steam/market?query&order=1&showTradelocked=false&showCustomPriced=false&min=${minPrice}&max=${maxPrice}`, this.requestConfig);
     return result.data;
   }
 }

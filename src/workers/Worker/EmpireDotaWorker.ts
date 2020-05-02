@@ -1,13 +1,10 @@
 import { IEmpireDotaInventoryItem } from '../../interfaces/storeItem';
-import { EmpireDotaWithdrawMakerTask } from "../WithdrawMaker/EmpireDotaWithdrawMakerTask";
+import { EmpireDotaWithdrawMakerTask } from "../WithdrawMaker";
 import { Worker } from "./Worker";
-import { EmpireDotaInventoryGetterTask } from "../InventoryGetter/EmpireDotaInventoryGetterTask";
-import { EmpireDotaFilterer } from "../Filterer/EmpireDotaFilterer";
-import { InventoryFilterer } from "../Filterer/InventoryFilterer";
-import { EmpireDotaTokenGetterTask } from "../TokenGetter/EmpireDotaTokenGetterTask";
-import { EmpireTokenGetterTask } from "../TokenGetter/EmpireTokenGetterTask";
-import { DatabaseSelectorTask } from "../DatabaseSelector/DatabaseSelectorTask";
-import { EmpireDotaDatabaseSelector } from "../DatabaseSelector/EmpireDotaDatabaseSelector";
+import { EmpireDotaInventoryGetterTask } from "../InventoryGetter";
+import { EmpireDotaFilterer, InventoryFilterer } from "../Filterer";
+import { EmpireDotaTokenGetterTask, EmpireTokenGetterTask } from "../TokenGetter";
+import { DatabaseSelectorTask, EmpireDotaDatabaseSelector } from "../DatabaseSelector";
 export class EmpireDotaWorker extends Worker<IEmpireDotaInventoryItem> {
   inventoryOperationCronExpression = '*/3 * * * * *';
   getMongoSelector(): DatabaseSelectorTask {

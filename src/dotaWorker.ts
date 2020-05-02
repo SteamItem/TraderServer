@@ -1,6 +1,6 @@
 import mongoHelper = require('./helpers/mongo');
-import { ConsoleLogger } from "./workers/Logger/ConsoleLogger";
-import { EmpireDotaWorker } from "./workers/Worker/EmpireDotaWorker";
+import { ConsoleLogger } from "./workers/Logger";
+import { EmpireDotaWorker } from "./workers/Worker";
 
 mongoHelper.connect();
 

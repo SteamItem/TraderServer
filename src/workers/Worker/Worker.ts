@@ -1,12 +1,12 @@
 import cron = require('node-cron');
 import { IWishlistItem } from '../../models/wishlistItem';
 import { IBotParam } from '../../models/botParam';
-import { LoggerBase } from '../Logger/LoggerBase';
-import { DatabaseSelectorTask } from '../DatabaseSelector/DatabaseSelectorTask';
-import { TokenGetterTask } from '../TokenGetter/TokenGetterTask';
-import { InventoryFilterer } from '../Filterer/InventoryFilterer';
-import { InventoryGetterTask } from '../InventoryGetter/InventoryGetterTask';
-import { WithdrawMakerTask } from '../WithdrawMaker/WithdrawMakerTask';
+import { LoggerBase } from '../Logger';
+import { DatabaseSelectorTask } from '../DatabaseSelector';
+import { TokenGetterTask } from '../TokenGetter';
+import { InventoryFilterer } from '../Filterer';
+import { InventoryGetterTask } from '../InventoryGetter';
+import { WithdrawMakerTask } from '../WithdrawMaker';
 export abstract class Worker<II> {
   constructor(logger: LoggerBase) {
     this.logger = logger;

@@ -1,12 +1,10 @@
 import { IEmpireInstantInventoryItem } from '../../interfaces/storeItem';
-import { EmpireInstantWithdrawMakerTask } from "../WithdrawMaker/EmpireInstantWithdrawMakerTask";
+import { EmpireInstantWithdrawMakerTask } from "../WithdrawMaker";
 import { Worker } from "./Worker";
-import { EmpireInstantInventoryGetterTask } from "../InventoryGetter/EmpireInstantInventoryGetterTask";
-import { EmpireInstantFilterer } from "../Filterer/EmpireInstantFilterer";
-import { InventoryFilterer } from "../Filterer/InventoryFilterer";
-import { EmpireInstantTokenGetterTask } from "../TokenGetter/EmpireInstantTokenGetterTask";
-import { EmpireTokenGetterTask } from "../TokenGetter/EmpireTokenGetterTask";
-import { EmpireInstantDatabaseSelector } from "../DatabaseSelector/EmpireInstantDatabaseSelector";
+import { EmpireInstantInventoryGetterTask } from "../InventoryGetter";
+import { EmpireInstantFilterer, InventoryFilterer } from "../Filterer";
+import { EmpireInstantTokenGetterTask, EmpireTokenGetterTask } from "../TokenGetter";
+import { EmpireInstantDatabaseSelector } from "../DatabaseSelector";
 export class EmpireInstantWorker extends Worker<IEmpireInstantInventoryItem> {
   inventoryOperationCronExpression = '*/3 * * * * *';
   getMongoSelector(): EmpireInstantDatabaseSelector {

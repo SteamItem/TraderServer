@@ -1,13 +1,10 @@
 import { IRollbitInventoryItem } from '../../interfaces/storeItem';
 import { Worker } from "./Worker";
-import { WithdrawMakerTask } from "../WithdrawMaker/WithdrawMakerTask";
-import { RollbitCsGoInventoryGetterTask } from "../InventoryGetter/RollbitCsGoInventoryGetterTask";
-import { InventoryGetterTask } from "../InventoryGetter/InventoryGetterTask";
-import { RollbitCsGoFilterer } from "../Filterer/RollbitCsGoFilterer";
-import { InventoryFilterer } from "../Filterer/InventoryFilterer";
-import { TokenGetterTask } from "../TokenGetter/TokenGetterTask";
-import { DatabaseSelectorTask } from "../DatabaseSelector/DatabaseSelectorTask";
-import { RollbitCsGoDatabaseSelector } from "../DatabaseSelector/RollbitCsGoDatabaseSelector";
+import { WithdrawMakerTask } from "../WithdrawMaker";
+import { RollbitCsGoInventoryGetterTask,  InventoryGetterTask } from "../InventoryGetter";
+import { RollbitCsGoFilterer, InventoryFilterer } from "../Filterer";
+import { TokenGetterTask } from "../TokenGetter";
+import { DatabaseSelectorTask, RollbitCsGoDatabaseSelector } from "../DatabaseSelector";
 export class RollbitCsGoWorker extends Worker<IRollbitInventoryItem> {
   inventoryOperationCronExpression = '* * * * * *';
   getMongoSelector(): DatabaseSelectorTask {
