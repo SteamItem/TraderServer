@@ -1,8 +1,17 @@
+import { EnumBot } from "../helpers/enum";
+
 export interface IItemToBuy {
-  bot_id: number;
+  botEnum: EnumBot;
   name: string;
-  market_value: number;
+  price: number;
   max_price?: number;
-  store_item_id: string;
   wishlist_item_id: string;
+}
+
+export interface IEmpireItemToBuy extends IItemToBuy {
+  bot_id: number;
+  store_item_id: string;
+}
+
+export interface IRollbitItemToBuy extends IItemToBuy {
 }

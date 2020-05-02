@@ -3,11 +3,10 @@ import { IItemToBuy } from '../interfaces/itemToBuy';
 
 function create(ib: IItemToBuy) {
     const withdraw = new Withdraw.default({
-        bot_id: ib.bot_id,
+        bot_id: ib.botEnum,
         name: ib.name,
-        market_value: ib.market_value,
+        price: ib.price,
         max_price: ib.max_price,
-        store_item_id: ib.store_item_id,
         wishlist_item_id: ib.wishlist_item_id
     });
     return withdraw.save();

@@ -3,17 +3,18 @@ import _ = require('lodash');
 import paramController = require('./botParam');
 import logController = require('./log');
 import RollbitHistory, { IRollbitHistory, IRollbitHistoryDocument } from '../models/rollbitHistory';
-import { siteEnum, botEnum, siteText, botText } from '../helpers/enum';
+import { EnumSite, EnumBot, siteText, botText } from '../helpers/enum';
+import { IRollbitInventoryItem, IRollbitInventoryItems } from '../interfaces/storeItem';
 
 export class RollbitLogger {
   private cookie: string;
   private async getCookie() {
-    var cookieParam = await paramController.getCookie(botEnum.RollbitCsgo);
+    var cookieParam = await paramController.getCookie(EnumBot.RollbitCsGo);
     if (!cookieParam) throw new Error("Cookie not found");
     return cookieParam;
   }
 
-  private items: RollbitMarketItem[] = [];
+  private items: IRollbitInventoryItem[] = [];
   private normalizedItems: IRollbitHistory[] = [];
   private existingItems: IRollbitHistoryDocument[] = [];
   private itemsToInsert: IRollbitHistoryDocument[] = [];
@@ -51,7 +52,7 @@ export class RollbitLogger {
   }
 
   private async getAllItems() {
-    var allItems: RollbitMarketItem[] = [];
+    var allItems: IRollbitInventoryItem[] = [];
     var newItemExist = true;
     var maxPrice = 500;
     var iterationLimit = 2;
@@ -80,7 +81,7 @@ export class RollbitLogger {
   }
 
   private async getItems(maxPrice: number) {
-    return (await axios.get<RollbitMarketItems>(`https://api.rollbit.com/steam/market?query&order=1&showTradelocked=false&showCustomPriced=true&min=5&max=${maxPrice}`, this.requestConfig)).data;
+    return (await axios.get<IRollbitInventoryItems>(`https://api.rollbit.com/steam/market?query&order=1&showTradelocked=false&showCustomPriced=true&min=5&max=${maxPrice}`, this.requestConfig)).data;
   }
 
   private normalizeItems(): IRollbitHistory[] {
@@ -133,32 +134,8 @@ export class RollbitLogger {
   }
 
   private log(message: string) {
-    var siteName = siteText(siteEnum.Rollbit);
-    var botName = botText(botEnum.RollbitCsgo);
+    var siteName = siteText(EnumSite.Rollbit);
+    var botName = botText(EnumBot.RollbitCsGo);
     return logController.create(siteName, botName, message);
   }
-}
-
-interface RollbitMarketItemDetail {
-  name: string;
-  image: string;
-  classid: any;
-  instanceid: number;
-  weapon: string;
-  skin: string;
-  rarity: string;
-  exterior: string;
-  price: number;
-  markup: number;
-}
-
-interface RollbitMarketItem {
-  ref: string;
-  price: number;
-  markup: number;
-  items: RollbitMarketItemDetail[];
-}
-
-interface RollbitMarketItems {
-  items: RollbitMarketItem[];
 }

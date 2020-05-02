@@ -1,6 +1,6 @@
 import axios from 'axios';
 import paramController = require('./botParam');
-import { botEnum } from '../helpers/enum';
+import { EnumBot } from '../helpers/enum';
 
 async function getToken(code: string, cookie: string) {
   let data = JSON.stringify({
@@ -19,7 +19,7 @@ async function getToken(code: string, cookie: string) {
   return result.data;
 }
 
-async function profile(id: botEnum) {
+async function profile(id: EnumBot) {
   var cookie = await paramController.getCookie(id);
   if (!cookie) throw new Error("Cookie not found.");
   let content = {

@@ -1,27 +1,32 @@
-export enum siteEnum {
+export enum EnumSite {
   CsGoEmpire = 1,
   Rollbit = 2
 }
 
-export function siteText(site: siteEnum): string {
+export function siteText(site: EnumSite): string {
   switch (site) {
-    case siteEnum.CsGoEmpire: return "CSGOEmpire";
-    case siteEnum.Rollbit: return "Rollbit";
+    case EnumSite.CsGoEmpire: return "CSGOEmpire";
+    case EnumSite.Rollbit: return "Rollbit";
     default: throw new Error("Site not found");
   }
 }
 
-export enum botEnum {
-  CsGoInstant = 1,
-  CsGoDota = 2,
-  RollbitCsgo = 3
+export enum EnumBot {
+  EmpireInstant = 1,
+  EmpireDota = 2,
+  RollbitCsGo = 3
 }
 
-export function botText(bot: botEnum): string {
+export function botText(bot: EnumBot): string {
   switch(bot) {
-    case botEnum.CsGoInstant: return "Instant";
-    case botEnum.CsGoDota: return "Dota";
-    case botEnum.RollbitCsgo: return "Rollbit";
+    case EnumBot.EmpireInstant: return "Instant";
+    case EnumBot.EmpireDota: return "Dota";
+    case EnumBot.RollbitCsGo: return "Rollbit";
     default: throw new Error("Bot not found");
   }
+}
+
+export enum EnumSteamApp {
+  CsGo = 730,
+  Dota = 570
 }
