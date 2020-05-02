@@ -6,11 +6,11 @@ import { EmpireInstantFilterer } from "../Filterer/EmpireInstantFilterer";
 import { InventoryFilterer } from "../Filterer/InventoryFilterer";
 import { EmpireInstantTokenGetterTask } from "../TokenGetter/EmpireInstantTokenGetterTask";
 import { EmpireTokenGetterTask } from "../TokenGetter/EmpireTokenGetterTask";
-import { EmpireInstantMongoSelector } from "../MongoSelector/EmpireInstantMongoSelector";
+import { EmpireInstantDatabaseSelector } from "../DatabaseSelector/EmpireInstantDatabaseSelector";
 export class EmpireInstantWorker extends Worker<IEmpireInstantInventoryItem> {
   inventoryOperationCronExpression = '*/3 * * * * *';
-  getMongoSelector(): EmpireInstantMongoSelector {
-    return new EmpireInstantMongoSelector(this.logger);
+  getMongoSelector(): EmpireInstantDatabaseSelector {
+    return new EmpireInstantDatabaseSelector(this.logger);
   }
   getTokenGetter(): EmpireTokenGetterTask {
     return new EmpireInstantTokenGetterTask(this.botParam, this.logger);

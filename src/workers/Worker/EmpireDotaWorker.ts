@@ -6,12 +6,12 @@ import { EmpireDotaFilterer } from "../Filterer/EmpireDotaFilterer";
 import { InventoryFilterer } from "../Filterer/InventoryFilterer";
 import { EmpireDotaTokenGetterTask } from "../TokenGetter/EmpireDotaTokenGetterTask";
 import { EmpireTokenGetterTask } from "../TokenGetter/EmpireTokenGetterTask";
-import { MongoSelectorTask } from "../MongoSelector/MongoSelectorTask";
-import { EmpireDotaMongoSelector } from "../MongoSelector/EmpireDotaMongoSelector";
+import { DatabaseSelectorTask } from "../DatabaseSelector/DatabaseSelectorTask";
+import { EmpireDotaDatabaseSelector } from "../DatabaseSelector/EmpireDotaDatabaseSelector";
 export class EmpireDotaWorker extends Worker<IEmpireDotaInventoryItem> {
   inventoryOperationCronExpression = '*/3 * * * * *';
-  getMongoSelector(): MongoSelectorTask {
-    return new EmpireDotaMongoSelector(this.logger);
+  getMongoSelector(): DatabaseSelectorTask {
+    return new EmpireDotaDatabaseSelector(this.logger);
   }
   getTokenGetter(): EmpireTokenGetterTask {
     return new EmpireDotaTokenGetterTask(this.botParam, this.logger);

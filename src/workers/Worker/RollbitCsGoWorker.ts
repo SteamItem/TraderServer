@@ -6,12 +6,12 @@ import { InventoryGetterTask } from "../InventoryGetter/InventoryGetterTask";
 import { RollbitCsGoFilterer } from "../Filterer/RollbitCsGoFilterer";
 import { InventoryFilterer } from "../Filterer/InventoryFilterer";
 import { TokenGetterTask } from "../TokenGetter/TokenGetterTask";
-import { MongoSelectorTask } from "../MongoSelector/MongoSelectorTask";
-import { RollbitCsGoMongoSelector } from "../MongoSelector/RollbitCsGoMongoSelector";
+import { DatabaseSelectorTask } from "../DatabaseSelector/DatabaseSelectorTask";
+import { RollbitCsGoDatabaseSelector } from "../DatabaseSelector/RollbitCsGoDatabaseSelector";
 export class RollbitCsGoWorker extends Worker<IRollbitInventoryItem> {
   inventoryOperationCronExpression = '* * * * * *';
-  getMongoSelector(): MongoSelectorTask {
-    return new RollbitCsGoMongoSelector(this.logger);
+  getMongoSelector(): DatabaseSelectorTask {
+    return new RollbitCsGoDatabaseSelector(this.logger);
   }
   getTokenGetter(): TokenGetterTask {
     // TODO: Method not implemented;

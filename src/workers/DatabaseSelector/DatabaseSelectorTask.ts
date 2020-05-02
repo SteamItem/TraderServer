@@ -2,7 +2,7 @@ import paramController = require('../../controllers/botParam');
 import { IWishlistItem } from '../../models/wishlistItem';
 import { IBotParam } from '../../models/botParam';
 import { WorkerTask } from '../Common/WorkerTask';
-export abstract class MongoSelectorTask extends WorkerTask {
+export abstract class DatabaseSelectorTask extends WorkerTask {
   private getBotParam() {
     return paramController.getBotParam(this.bot);
   }

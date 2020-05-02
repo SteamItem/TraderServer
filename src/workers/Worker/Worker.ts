@@ -2,7 +2,7 @@ import cron = require('node-cron');
 import { IWishlistItem } from '../../models/wishlistItem';
 import { IBotParam } from '../../models/botParam';
 import { LoggerBase } from '../Logger/LoggerBase';
-import { MongoSelectorTask } from '../MongoSelector/MongoSelectorTask';
+import { DatabaseSelectorTask } from '../DatabaseSelector/DatabaseSelectorTask';
 import { TokenGetterTask } from '../TokenGetter/TokenGetterTask';
 import { InventoryFilterer } from '../Filterer/InventoryFilterer';
 import { InventoryGetterTask } from '../InventoryGetter/InventoryGetterTask';
@@ -18,7 +18,7 @@ export abstract class Worker<II> {
   protected token: string;
   protected inventoryItems: II[] = [];
   protected itemsToBuy: II[] = [];
-  abstract getMongoSelector(): MongoSelectorTask;
+  abstract getMongoSelector(): DatabaseSelectorTask;
   abstract getTokenGetter(): TokenGetterTask;
   abstract getInventoryGetter(): InventoryGetterTask<II>;
   abstract getWithdrawMaker(): WithdrawMakerTask<II>;

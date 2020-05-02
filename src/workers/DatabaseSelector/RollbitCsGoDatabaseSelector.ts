@@ -1,8 +1,8 @@
 import { IWishlistItem } from '../../models/wishlistItem';
 import { EnumSite, EnumBot, EnumSteamApp } from '../../helpers/enum';
 import WishlistItem = require('../../models/wishlistItem');
-import { MongoSelectorTask } from "./MongoSelectorTask";
-export class RollbitCsGoMongoSelector extends MongoSelectorTask {
+import { DatabaseSelectorTask } from "./DatabaseSelectorTask";
+export class RollbitCsGoDatabaseSelector extends DatabaseSelectorTask {
   site = EnumSite.Rollbit;
   bot = EnumBot.RollbitCsGo;
   async getWishlistItems(): Promise<IWishlistItem[]> {

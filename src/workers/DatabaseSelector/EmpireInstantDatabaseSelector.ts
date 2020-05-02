@@ -1,11 +1,11 @@
 import { IWishlistItem } from '../../models/wishlistItem';
 import { EnumSite, EnumBot, EnumSteamApp } from '../../helpers/enum';
 import WishlistItem = require('../../models/wishlistItem');
-import { MongoSelectorTask } from "./MongoSelectorTask";
-export class EmpireDotaMongoSelector extends MongoSelectorTask {
+import { DatabaseSelectorTask } from "./DatabaseSelectorTask";
+export class EmpireInstantDatabaseSelector extends DatabaseSelectorTask {
   site = EnumSite.CsGoEmpire;
-  bot = EnumBot.EmpireDota;
+  bot = EnumBot.EmpireInstant;
   async getWishlistItems(): Promise<IWishlistItem[]> {
-    return WishlistItem.default.find({ site_id: this.site, appid: EnumSteamApp.Dota }).exec();
+    return WishlistItem.default.find({ site_id: this.site, appid: EnumSteamApp.CsGo }).exec();
   }
 }
