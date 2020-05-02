@@ -1,6 +1,6 @@
 import { IRollbitInventoryItem } from '../../interfaces/storeItem';
 import { Worker } from "./Worker";
-import { WithdrawMakerTask } from "../WithdrawMaker";
+import { WithdrawMakerTask, RollbitCsGoWithdrawMakerTask } from "../WithdrawMaker";
 import { RollbitCsGoInventoryGetterTask,  InventoryGetterTask } from "../InventoryGetter";
 import { RollbitCsGoFilterer, InventoryFilterer } from "../Filterer";
 import { TokenGetterTask } from "../TokenGetter";
@@ -11,7 +11,7 @@ export class RollbitCsGoWorker extends Worker<IRollbitInventoryItem> {
     return new RollbitCsGoDatabaseSelector();
   }
   getTokenGetter(): TokenGetterTask {
-    // TODO: Method not implemented;
+    // TODO: Silinmeli;
     throw new Error("Method not implemented.");
   }
   getInventoryGetter(): InventoryGetterTask<IRollbitInventoryItem> {
@@ -21,7 +21,6 @@ export class RollbitCsGoWorker extends Worker<IRollbitInventoryItem> {
     return new RollbitCsGoFilterer(this.inventoryItems, this.wishlistItems);
   }
   getWithdrawMaker(): WithdrawMakerTask<IRollbitInventoryItem> {
-    // TODO: Method not implemented;
-    throw new Error("Method not implemented.");
+    return new RollbitCsGoWithdrawMakerTask(this.botParam, this.itemsToBuy);
   }
 }
