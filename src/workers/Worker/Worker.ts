@@ -23,34 +23,48 @@ export abstract class Worker<II> {
   abstract getInventoryGetter(): InventoryGetterTask<II>;
   abstract getWithdrawMaker(): WithdrawMakerTask<II>;
   abstract getInventoryFilterer(): InventoryFilterer<II>;
-  abstract inventoryOperationCronExpression: string
-  /**
-   * work
-   */
+  abstract get inventoryOperationCronExpression(): string;
+
   public work() {
-    cron.schedule('* * * * * *', async () => {
+    this.mongoScheduler();
+    this.tokenScheduler();
+    this.inventoryScheduler();
+  }
+
+  private mongoScheduler() {
+    return cron.schedule('* * * * * *', async () => {
       var mongoSelector = this.getMongoSelector();
       await mongoSelector.work();
       this.botParam = mongoSelector.botParam;
       this.wishlistItems = mongoSelector.wishlistItems;
       this.working = mongoSelector.botParam.worker;
     });
-    cron.schedule('* * * * * *', async () => {
+  }
+
+  private tokenScheduler() {
+    return cron.schedule('* * * * * *', async () => {
       if (!this.working)
         return;
+
       var tokenGetter = this.getTokenGetter();
       await tokenGetter.work();
       this.token = tokenGetter.token;
     });
-    cron.schedule(this.inventoryOperationCronExpression, async () => {
+  }
+
+  private inventoryScheduler() {
+    return cron.schedule(this.inventoryOperationCronExpression, async () => {
       if (!this.working)
         return;
+
       var inventoryGetter = this.getInventoryGetter();
       await inventoryGetter.work();
       this.inventoryItems = inventoryGetter.inventoryItems;
+
       var inventoryFilterer = this.getInventoryFilterer();
       inventoryFilterer.filter();
       this.itemsToBuy = inventoryFilterer.itemsToBuy;
+
       var withdrawMaker = this.getWithdrawMaker();
       await withdrawMaker.work();
     });

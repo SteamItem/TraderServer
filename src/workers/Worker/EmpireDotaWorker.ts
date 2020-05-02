@@ -11,18 +11,18 @@ import { EmpireDotaDatabaseSelector } from "../DatabaseSelector/EmpireDotaDataba
 export class EmpireDotaWorker extends Worker<IEmpireDotaInventoryItem> {
   inventoryOperationCronExpression = '*/3 * * * * *';
   getMongoSelector(): DatabaseSelectorTask {
-    return new EmpireDotaDatabaseSelector(this.logger);
+    return new EmpireDotaDatabaseSelector();
   }
   getTokenGetter(): EmpireTokenGetterTask {
-    return new EmpireDotaTokenGetterTask(this.botParam, this.logger);
+    return new EmpireDotaTokenGetterTask(this.botParam);
   }
   getInventoryGetter(): EmpireDotaInventoryGetterTask {
-    return new EmpireDotaInventoryGetterTask(this.botParam, this.logger);
+    return new EmpireDotaInventoryGetterTask(this.botParam);
   }
   getInventoryFilterer(): InventoryFilterer<IEmpireDotaInventoryItem> {
     return new EmpireDotaFilterer(this.inventoryItems, this.wishlistItems);
   }
   getWithdrawMaker(): EmpireDotaWithdrawMakerTask {
-    return new EmpireDotaWithdrawMakerTask(this.token, this.botParam, this.itemsToBuy, this.logger);
+    return new EmpireDotaWithdrawMakerTask(this.token, this.botParam, this.itemsToBuy);
   }
 }

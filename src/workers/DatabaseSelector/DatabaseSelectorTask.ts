@@ -3,6 +3,7 @@ import { IWishlistItem } from '../../models/wishlistItem';
 import { IBotParam } from '../../models/botParam';
 import { WorkerTask } from '../Common/WorkerTask';
 export abstract class DatabaseSelectorTask extends WorkerTask {
+  workerJobName = "Database Selector";
   private getBotParam() {
     return paramController.getBotParam(this.bot);
   }

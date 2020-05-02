@@ -6,6 +6,8 @@ import { InventoryGetterTask } from './InventoryGetterTask';
 export class RollbitCsGoInventoryGetterTask extends InventoryGetterTask<IRollbitInventoryItem> {
   site = EnumSite.Rollbit;
   bot = EnumBot.RollbitCsGo;
+  workerJobName = "Inventory Getter";
+
   private maxPrice = 500;
   private minPrice = 5;
   private iterationLimit = 2;

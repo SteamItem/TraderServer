@@ -11,14 +11,14 @@ import { RollbitCsGoDatabaseSelector } from "../DatabaseSelector/RollbitCsGoData
 export class RollbitCsGoWorker extends Worker<IRollbitInventoryItem> {
   inventoryOperationCronExpression = '* * * * * *';
   getMongoSelector(): DatabaseSelectorTask {
-    return new RollbitCsGoDatabaseSelector(this.logger);
+    return new RollbitCsGoDatabaseSelector();
   }
   getTokenGetter(): TokenGetterTask {
     // TODO: Method not implemented;
     throw new Error("Method not implemented.");
   }
   getInventoryGetter(): InventoryGetterTask<IRollbitInventoryItem> {
-    return new RollbitCsGoInventoryGetterTask(this.botParam, this.logger);
+    return new RollbitCsGoInventoryGetterTask(this.botParam);
   }
   getInventoryFilterer(): InventoryFilterer<IRollbitInventoryItem> {
     return new RollbitCsGoFilterer(this.inventoryItems, this.wishlistItems);

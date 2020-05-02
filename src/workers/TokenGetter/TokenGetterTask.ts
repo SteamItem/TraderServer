@@ -1,9 +1,9 @@
 import { IBotParam } from '../../models/botParam';
-import { LoggerBase } from '../Logger/LoggerBase';
 import { WorkerTask } from '../Common/WorkerTask';
 export abstract class TokenGetterTask extends WorkerTask {
-  constructor(botParam: IBotParam, logger: LoggerBase) {
-    super(logger);
+  workerJobName = "Token Getter";
+  constructor(botParam: IBotParam) {
+    super();
     this.$botParam = botParam;
   }
   private $botParam: IBotParam;

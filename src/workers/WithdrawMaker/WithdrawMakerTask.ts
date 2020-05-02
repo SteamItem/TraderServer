@@ -1,8 +1,7 @@
-import { LoggerBase } from '../Logger/LoggerBase';
 import { WorkerTask } from '../Common/WorkerTask';
 export abstract class WithdrawMakerTask<II> extends WorkerTask {
-  constructor(inventoryItemsToBuy: II[], logger: LoggerBase) {
-    super(logger);
+  constructor(inventoryItemsToBuy: II[]) {
+    super();
     this.$inventoryItemsToBuy = inventoryItemsToBuy;
   }
   private $inventoryItemsToBuy: II[];

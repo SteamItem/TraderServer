@@ -10,18 +10,18 @@ import { EmpireInstantDatabaseSelector } from "../DatabaseSelector/EmpireInstant
 export class EmpireInstantWorker extends Worker<IEmpireInstantInventoryItem> {
   inventoryOperationCronExpression = '*/3 * * * * *';
   getMongoSelector(): EmpireInstantDatabaseSelector {
-    return new EmpireInstantDatabaseSelector(this.logger);
+    return new EmpireInstantDatabaseSelector();
   }
   getTokenGetter(): EmpireTokenGetterTask {
-    return new EmpireInstantTokenGetterTask(this.botParam, this.logger);
+    return new EmpireInstantTokenGetterTask(this.botParam);
   }
   getInventoryGetter(): EmpireInstantInventoryGetterTask {
-    return new EmpireInstantInventoryGetterTask(this.botParam, this.logger);
+    return new EmpireInstantInventoryGetterTask(this.botParam);
   }
   getInventoryFilterer(): InventoryFilterer<IEmpireInstantInventoryItem> {
     return new EmpireInstantFilterer(this.inventoryItems, this.wishlistItems);
   }
   getWithdrawMaker(): EmpireInstantWithdrawMakerTask {
-    return new EmpireInstantWithdrawMakerTask(this.token, this.botParam, this.itemsToBuy, this.logger);
+    return new EmpireInstantWithdrawMakerTask(this.token, this.botParam, this.itemsToBuy);
   }
 }

@@ -13,12 +13,7 @@ export abstract class EmpireInventoryGetterTask<SI extends IEmpireInventoryItem>
     };
   }
   async getStoreItems(): Promise<SI[]> {
-    try {
-      var items = await axios.get<SI[]>(this.inventoryUrl, this.requestConfig);
-      return items.data;
-    }
-    catch (e) {
-      this.logger.log(JSON.stringify(e.response.statusText));
-    }
+    var items = await axios.get<SI[]>(this.inventoryUrl, this.requestConfig);
+    return items.data;
   }
 }
