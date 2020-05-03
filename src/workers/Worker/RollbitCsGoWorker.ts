@@ -1,5 +1,5 @@
 import { DatabaseSelectorTask, RollbitCsGoDatabaseSelector } from '../DatabaseSelector';
-import { InventoryFilterer, RollbitInventoryFilterer } from '../Filterer';
+import { InventoryFiltererUnit, RollbitInventoryFilterer } from '../InventoryFilterer';
 import { InventoryGetterTask, RollbitCsGoInventoryGetterTask } from '../InventoryGetter';
 import { WithdrawMakerTask, RollbitCsGoWithdrawMakerTask } from '../WithdrawMaker';
 import { IRollbitInventoryItem } from '../../interfaces/storeItem';
@@ -18,7 +18,7 @@ export class RollbitCsGoWorker extends WorkerBase<IRollbitInventoryItem> {
   getInventoryGetter(): InventoryGetterTask<IRollbitInventoryItem> {
     return new RollbitCsGoInventoryGetterTask(this.botParam);
   }
-  getInventoryFilterer(): InventoryFilterer<IRollbitInventoryItem> {
+  getInventoryFilterer(): InventoryFiltererUnit<IRollbitInventoryItem> {
     return new RollbitInventoryFilterer(this.balance, this.inventoryItems, this.wishlistItems);
   }
   getWithdrawMaker(): WithdrawMakerTask<IRollbitInventoryItem> {

@@ -2,7 +2,7 @@ import cron = require('node-cron');
 import { IWishlistItem } from '../../models/wishlistItem';
 import { IBotParam } from '../../models/botParam';
 import { DatabaseSelectorTask } from '../DatabaseSelector';
-import { InventoryFilterer } from '../Filterer';
+import { InventoryFiltererUnit } from '../InventoryFilterer';
 import { InventoryGetterTask } from '../InventoryGetter';
 import { WithdrawMakerTask } from '../WithdrawMaker';
 import { BalanceCheckerTask } from '../BalanceChecker';
@@ -17,7 +17,7 @@ export abstract class WorkerBase<II> {
   abstract getDatabaseSelector(): DatabaseSelectorTask;
   abstract getBalanceChecker(): BalanceCheckerTask;
   abstract getInventoryGetter(): InventoryGetterTask<II>;
-  abstract getInventoryFilterer(): InventoryFilterer<II>;
+  abstract getInventoryFilterer(): InventoryFiltererUnit<II>;
   abstract getWithdrawMaker(): WithdrawMakerTask<II>;
   abstract get inventoryOperationCronExpression(): string;
   abstract schedule(): Promise<any>;

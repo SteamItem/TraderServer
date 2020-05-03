@@ -1,8 +1,8 @@
 import _ = require('lodash');
 import { IWishlistItem } from '../../models/wishlistItem';
 import { WorkerUnit } from '../Common/WorkerUnit';
-export abstract class InventoryFilterer<II> extends WorkerUnit {
-  workerJobName = "Filterer";
+export abstract class InventoryFiltererUnit<II> extends WorkerUnit {
+  workerJobName = "Inventory Filterer";
   constructor(balance: number, inventoryItems: II[], wishlistItems: IWishlistItem[]) {
     super();
     this.$balance = balance;

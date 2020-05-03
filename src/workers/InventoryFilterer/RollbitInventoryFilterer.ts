@@ -1,6 +1,6 @@
 import { IRollbitInventoryItem } from '../../interfaces/storeItem';
-import { InventoryFilterer } from './InventoryFilterer';
-export class RollbitInventoryFilterer extends InventoryFilterer<IRollbitInventoryItem> {
+import { InventoryFiltererUnit } from './InventoryFiltererUnit';
+export class RollbitInventoryFilterer extends InventoryFiltererUnit<IRollbitInventoryItem> {
   getItemName(inventoryItem: IRollbitInventoryItem) {
     return inventoryItem.items.map(ii => ii.name).join("#");
   }
