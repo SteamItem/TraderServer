@@ -5,18 +5,23 @@ import { DatabaseSelectorTask } from '../DatabaseSelector';
 import { InventoryFilterer } from '../Filterer';
 import { InventoryGetterTask } from '../InventoryGetter';
 import { WithdrawMakerTask } from '../WithdrawMaker';
+import { BalanceCheckerTask } from '../BalanceChecker';
 export abstract class WorkerBase<II> {
   protected botParam: IBotParam;
   protected wishlistItems: IWishlistItem[];
   protected inventoryItems: II[] = [];
+  protected balance: number;
   protected itemsToBuy: II[] = [];
   protected working: boolean = false;
+
   abstract getDatabaseSelector(): DatabaseSelectorTask;
+  abstract getBalanceChecker(): BalanceCheckerTask;
   abstract getInventoryGetter(): InventoryGetterTask<II>;
   abstract getInventoryFilterer(): InventoryFilterer<II>;
   abstract getWithdrawMaker(): WithdrawMakerTask<II>;
   abstract get inventoryOperationCronExpression(): string;
   abstract schedule(): Promise<any>;
+
   databaseScheduler() {
     return cron.schedule('* * * * * *', async () => {
       var databaseSelector = this.getDatabaseSelector();
@@ -26,6 +31,17 @@ export abstract class WorkerBase<II> {
       this.working = databaseSelector.botParam.worker;
     });
   }
+
+  balanceChecker() {
+    return cron.schedule('* * * * * *', async () => {
+      if (!this.working)
+        return;
+      var balanceChecker = this.getBalanceChecker();
+      await balanceChecker.work();
+      this.balance = balanceChecker.balance;
+    });
+  }
+
   inventoryScheduler() {
     return cron.schedule(this.inventoryOperationCronExpression, async () => {
       if (!this.working)

@@ -1,14 +1,18 @@
 import cron = require('node-cron');
 import { TokenGetterTask, EmpireTokenGetterTask } from '../TokenGetter';
-import { InventoryFilterer, EmpireFilterer } from '../Filterer';
+import { InventoryFilterer, EmpireInventoryFilterer } from '../Filterer';
 import { WithdrawMakerTask, EmpireWithdrawMakerTask } from '../WithdrawMaker';
 import { IEmpireInventoryItem } from '../../interfaces/storeItem';
 import { WorkerBase } from "./WorkerBase";
+import { BalanceCheckerTask, EmpireBalanceCheckerTask } from '../BalanceChecker';
 export abstract class EmpireWorkerBase<II extends IEmpireInventoryItem> extends WorkerBase<II> {
   protected token: string;
   inventoryOperationCronExpression = '*/3 * * * * *';
+  getBalanceChecker(): BalanceCheckerTask {
+    return new EmpireBalanceCheckerTask(this.botParam);
+  }
   getInventoryFilterer(): InventoryFilterer<II> {
-    return new EmpireFilterer(this.inventoryItems, this.wishlistItems);
+    return new EmpireInventoryFilterer(this.balance, this.inventoryItems, this.wishlistItems);
   }
   getTokenGetter(): TokenGetterTask {
     return new EmpireTokenGetterTask(this.botParam);
@@ -19,6 +23,7 @@ export abstract class EmpireWorkerBase<II extends IEmpireInventoryItem> extends 
   async schedule() {
     this.databaseScheduler();
     this.tokenScheduler();
+    this.balanceChecker();
     this.inventoryScheduler();
   }
   private tokenScheduler() {

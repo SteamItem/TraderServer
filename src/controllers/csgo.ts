@@ -1,6 +1,5 @@
 import axios from 'axios';
-import paramController = require('./botParam');
-import { EnumBot } from '../helpers/enum';
+import { IEmpireProfile } from '../interfaces/profile';
 
 async function getToken(code: string, cookie: string) {
   let data = JSON.stringify({
@@ -19,9 +18,7 @@ async function getToken(code: string, cookie: string) {
   return result.data;
 }
 
-async function profile(id: EnumBot) {
-  var cookie = await paramController.getCookie(id);
-  if (!cookie) throw new Error("Cookie not found.");
+async function profile(cookie: string) {
   let content = {
     headers: {
       'Content-Type': 'application/json',
@@ -29,7 +26,7 @@ async function profile(id: EnumBot) {
       'Host': 'csgoempire.gg'
     }
   };
-  var result = await axios.get('https://csgoempire.gg/api/v2/user', content);
+  var result = await axios.get<IEmpireProfile>('https://csgoempire.gg/api/v2/user', content);
   return result.data;
 }
 

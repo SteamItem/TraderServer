@@ -1,3 +1,3 @@
-export * from './EmpireFilterer';
+export * from './EmpireInventoryFilterer';
 export * from './InventoryFilterer';
-export * from './RollbitCsGoFilterer';
+export * from './RollbitInventoryFilterer';
