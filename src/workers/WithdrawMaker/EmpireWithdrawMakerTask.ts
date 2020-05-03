@@ -3,6 +3,7 @@ import { EnumSite } from '../../helpers/enum';
 import { IBotParam } from '../../models/botParam';
 import { IEmpireInventoryItem } from '../../interfaces/storeItem';
 import { WithdrawMakerTask } from './WithdrawMakerTask';
+import _ = require('lodash');
 export abstract class EmpireWithdrawMakerTask<II extends IEmpireInventoryItem> extends WithdrawMakerTask<II> {
   site = EnumSite.CsGoEmpire;
   constructor(token: string, botParam: IBotParam, itemsToBuy: II[]) {
@@ -24,15 +25,21 @@ export abstract class EmpireWithdrawMakerTask<II extends IEmpireInventoryItem> e
 
   async withdrawAll() {
     var promises: Promise<any>[] = [];
-    this.inventoryItemsToBuy.forEach(ib => promises.push(this.withdraw(ib.bot_id, ib.id)));
+    var groupedItems = _.groupBy(this.inventoryItemsToBuy, i => i.bot_id);
+
+    for (var key in groupedItems) {
+      var item_ids = _.map(groupedItems[key], i => i.id);
+      var promise = this.withdraw(key, item_ids);
+      promises.push(promise);
+    }
     return await Promise.all(promises);
   }
 
-  private async withdraw(bot_id: number, item_id: string) {
+  private async withdraw(bot_id: string, item_ids: string[]) {
     let data = JSON.stringify({
       "security_token": this.token,
       "bot_id": bot_id,
-      "item_ids": [item_id]
+      "item_ids": item_ids
     });
     var result = await axios.post('https://csgoempire.gg/api/v2/trade/withdraw', data, this.requestConfig);
     return result.data;

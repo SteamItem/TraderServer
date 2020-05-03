@@ -1,6 +1,6 @@
 import mongoHelper = require('./helpers/mongo');
 import { ConsoleLogger } from "./workers/Logger";
-import { EmpireInstantWorker } from "./workers/Worker";
+import { EmpireInstantWorker } from './workers/Worker/EmpireInstantWorker';
 
 mongoHelper.connect();
 

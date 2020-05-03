@@ -1,6 +1,6 @@
 import mongoHelper = require('./helpers/mongo');
 import { ConsoleLogger } from "./workers/Logger";
-import { RollbitCsGoWorker } from "./workers/Worker";
+import { RollbitCsGoWorker } from './workers/Worker/RollbitCsGoWorker';
 
 mongoHelper.connect();
 
