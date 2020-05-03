@@ -2,7 +2,6 @@ import axios from 'axios';
 import { IEmpireInventoryItem } from '../../interfaces/storeItem';
 import { InventoryGetterTask } from './InventoryGetterTask';
 export abstract class EmpireInventoryGetterTask<SI extends IEmpireInventoryItem> extends InventoryGetterTask<SI> {
-  abstract inventoryUrl: string;
   private get requestConfig() {
     return {
       headers: {

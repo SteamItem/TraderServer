@@ -26,5 +26,13 @@ module.exports = {
       NODE_ENV: "production",
       DB_URL: "mongodb://admin:1234qwer@ds159963.mlab.com:59963/csgobot-prod",
     }
+  }, {
+    name: "rollbit",
+    script: "./dist/rollbitWorker.js",
+    time: true,
+    env: {
+      NODE_ENV: "production",
+      DB_URL: "mongodb://admin:1234qwer@ds159963.mlab.com:59963/csgobot-prod",
+    }
   }]
 }

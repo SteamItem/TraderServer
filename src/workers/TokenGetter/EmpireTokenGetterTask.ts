@@ -1,8 +1,6 @@
 import csgoController = require('../../controllers/csgo');
-import { EnumSite } from '../../helpers/enum';
 import { TokenGetterTask } from './TokenGetterTask';
-export abstract class EmpireTokenGetterTask extends TokenGetterTask {
-  site = EnumSite.CsGoEmpire;
+export class EmpireTokenGetterTask extends TokenGetterTask {
   async getToken() {
     var code = this.botParam.code;
     if (!code)

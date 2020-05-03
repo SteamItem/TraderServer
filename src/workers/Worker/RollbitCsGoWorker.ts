@@ -1,18 +1,14 @@
+import { DatabaseSelectorTask, RollbitCsGoDatabaseSelector } from '../DatabaseSelector';
+import { InventoryFilterer, RollbitCsGoFilterer } from '../Filterer';
+import { InventoryGetterTask, RollbitCsGoInventoryGetterTask } from '../InventoryGetter';
+import { WithdrawMakerTask, RollbitCsGoWithdrawMakerTask } from '../WithdrawMaker';
 import { IRollbitInventoryItem } from '../../interfaces/storeItem';
-import { Worker } from "./Worker";
-import { WithdrawMakerTask, RollbitCsGoWithdrawMakerTask } from "../WithdrawMaker";
-import { RollbitCsGoInventoryGetterTask,  InventoryGetterTask } from "../InventoryGetter";
-import { RollbitCsGoFilterer, InventoryFilterer } from "../Filterer";
-import { TokenGetterTask } from "../TokenGetter";
-import { DatabaseSelectorTask, RollbitCsGoDatabaseSelector } from "../DatabaseSelector";
-export class RollbitCsGoWorker extends Worker<IRollbitInventoryItem> {
+import { EnumBot } from '../../helpers/enum';
+import { WorkerBase } from "./WorkerBase";
+export class RollbitCsGoWorker extends WorkerBase<IRollbitInventoryItem> {
   inventoryOperationCronExpression = '* * * * * *';
   getDatabaseSelector(): DatabaseSelectorTask {
-    return new RollbitCsGoDatabaseSelector();
-  }
-  getTokenGetter(): TokenGetterTask {
-    // TODO: Silinmeli;
-    throw new Error("Method not implemented.");
+    return new RollbitCsGoDatabaseSelector(EnumBot.RollbitCsGo);
   }
   getInventoryGetter(): InventoryGetterTask<IRollbitInventoryItem> {
     return new RollbitCsGoInventoryGetterTask(this.botParam);
@@ -22,5 +18,9 @@ export class RollbitCsGoWorker extends Worker<IRollbitInventoryItem> {
   }
   getWithdrawMaker(): WithdrawMakerTask<IRollbitInventoryItem> {
     return new RollbitCsGoWithdrawMakerTask(this.botParam, this.itemsToBuy);
+  }
+  async schedule() {
+    this.databaseScheduler();
+    this.inventoryScheduler();
   }
 }

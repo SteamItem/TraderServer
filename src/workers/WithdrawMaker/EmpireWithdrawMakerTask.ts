@@ -1,11 +1,9 @@
 import axios from 'axios';
-import { EnumSite } from '../../helpers/enum';
 import { IBotParam } from '../../models/botParam';
 import { IEmpireInventoryItem } from '../../interfaces/storeItem';
 import { WithdrawMakerTask } from './WithdrawMakerTask';
 import _ = require('lodash');
-export abstract class EmpireWithdrawMakerTask<II extends IEmpireInventoryItem> extends WithdrawMakerTask<II> {
-  site = EnumSite.CsGoEmpire;
+export class EmpireWithdrawMakerTask<II extends IEmpireInventoryItem> extends WithdrawMakerTask<II> {
   constructor(token: string, botParam: IBotParam, itemsToBuy: II[]) {
     super(itemsToBuy);
     this.token = token;

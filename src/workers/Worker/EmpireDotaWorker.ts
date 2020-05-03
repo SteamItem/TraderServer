@@ -1,25 +1,13 @@
+import { DatabaseSelectorTask, EmpireDotaDatabaseSelector } from '../DatabaseSelector';
+import { InventoryGetterTask, EmpireDotaInventoryGetterTask } from '../InventoryGetter';
 import { IEmpireDotaInventoryItem } from '../../interfaces/storeItem';
-import { EmpireDotaWithdrawMakerTask } from "../WithdrawMaker";
-import { Worker } from "./Worker";
-import { EmpireDotaInventoryGetterTask } from "../InventoryGetter";
-import { EmpireDotaFilterer, InventoryFilterer } from "../Filterer";
-import { EmpireDotaTokenGetterTask, EmpireTokenGetterTask } from "../TokenGetter";
-import { DatabaseSelectorTask, EmpireDotaDatabaseSelector } from "../DatabaseSelector";
-export class EmpireDotaWorker extends Worker<IEmpireDotaInventoryItem> {
-  inventoryOperationCronExpression = '*/3 * * * * *';
+import { EnumBot } from '../../helpers/enum';
+import { EmpireWorkerBase } from './EmpireWorkerBase';
+export class EmpireDotaWorker extends EmpireWorkerBase<IEmpireDotaInventoryItem> {
   getDatabaseSelector(): DatabaseSelectorTask {
-    return new EmpireDotaDatabaseSelector();
+    return new EmpireDotaDatabaseSelector(EnumBot.EmpireDota);
   }
-  getTokenGetter(): EmpireTokenGetterTask {
-    return new EmpireDotaTokenGetterTask(this.botParam);
-  }
-  getInventoryGetter(): EmpireDotaInventoryGetterTask {
+  getInventoryGetter(): InventoryGetterTask<IEmpireDotaInventoryItem> {
     return new EmpireDotaInventoryGetterTask(this.botParam);
-  }
-  getInventoryFilterer(): InventoryFilterer<IEmpireDotaInventoryItem> {
-    return new EmpireDotaFilterer(this.inventoryItems, this.wishlistItems);
-  }
-  getWithdrawMaker(): EmpireDotaWithdrawMakerTask {
-    return new EmpireDotaWithdrawMakerTask(this.token, this.botParam, this.itemsToBuy);
   }
 }

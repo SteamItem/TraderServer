@@ -1,11 +1,8 @@
 import axios from 'axios';
-import { EnumSite, EnumBot } from '../../helpers/enum';
 import { IBotParam } from '../../models/botParam';
 import { IRollbitInventoryItem } from '../../interfaces/storeItem';
 import { WithdrawMakerTask } from './WithdrawMakerTask';
 export class RollbitCsGoWithdrawMakerTask<II extends IRollbitInventoryItem> extends WithdrawMakerTask<II> {
-  site = EnumSite.CsGoEmpire;
-  bot = EnumBot.RollbitCsGo;
   constructor(botParam: IBotParam, itemsToBuy: II[]) {
     super(itemsToBuy);
     this.botParam = botParam;

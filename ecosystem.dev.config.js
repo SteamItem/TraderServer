@@ -26,5 +26,13 @@ module.exports = {
       NODE_ENV: "development",
       DB_URL: "mongodb://admin:1234qwer@ds161148.mlab.com:61148/dota"
     }
+  }, {
+    name: "rollbit",
+    script: "./src/rollbitWorker.ts",
+    time: true,
+    env: {
+      NODE_ENV: "development",
+      DB_URL: "mongodb://admin:1234qwer@ds161148.mlab.com:61148/dota"
+    }
   }]
 }
