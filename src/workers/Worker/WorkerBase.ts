@@ -1,11 +1,11 @@
 import cron = require('node-cron');
 import { IWishlistItem } from '../../models/wishlistItem';
 import { IBotParam } from '../../models/botParam';
-import { DatabaseSelectorTask } from '../DatabaseSelector';
-import { InventoryFiltererUnit } from '../InventoryFilterer';
-import { InventoryGetterTask } from '../InventoryGetter';
-import { WithdrawMakerTask } from '../WithdrawMaker';
-import { BalanceCheckerTask } from '../BalanceChecker';
+import { DatabaseSelectorTask } from '../DatabaseSelector/DatabaseSelectorTask';
+import { BalanceCheckerTask } from '../BalanceChecker/BalanceCheckerTask';
+import { InventoryGetterTask } from '../InventoryGetter/InventoryGetterTask';
+import { InventoryFiltererUnit } from '../InventoryFilterer/InventoryFiltererUnit';
+import { WithdrawMakerTask } from '../WithdrawMaker/WithdrawMakerTask';
 export abstract class WorkerBase<II> {
   protected botParam: IBotParam;
   protected wishlistItems: IWishlistItem[];

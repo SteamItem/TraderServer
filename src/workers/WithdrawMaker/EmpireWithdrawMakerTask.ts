@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosRequestConfig } from 'axios';
 import { IBotParam } from '../../models/botParam';
 import { IEmpireInventoryItem } from '../../interfaces/storeItem';
 import { WithdrawMakerTask } from './WithdrawMakerTask';
@@ -11,13 +11,28 @@ export class EmpireWithdrawMakerTask<II extends IEmpireInventoryItem> extends Wi
   }
   private botParam: IBotParam;
   private token: string;
-  private get requestConfig() {
+  private get requestConfig(): AxiosRequestConfig {
     return {
       headers: {
-        'Content-Type': 'application/json',
+        'Accept': 'application/json, text/plain, */*',
+        'Accept-Encoding': 'gzip, deflate, br',
+        'accept-language': 'en-US,en;q=0.9,tr;q=0.8',
+        'Cache-Control': 'no-cache',
+        'Connection': 'keep-alive',
+        'Content-Type': 'application/json;charset=UTF-8',
         'Cookie': this.botParam.cookie,
-        'Host': 'csgoempire.gg'
-      }
+        'Host': 'csgoempire.gg',
+        'Origin': 'https://csgoempire.gg',
+        'pragma': 'no-cache',
+        'referer': 'https://csgoempire.gg/withdraw',
+        'Sec-Fetch-Site': 'same-origin',
+        'Sec-Fetch-Mode': 'cors',
+        'Sec-Fetch-Dest': 'empty',
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.129 Safari/537.36'
+      },
+      withCredentials: true,
+      timeout: 20000,
+      maxRedirects: 4
     };
   }
 
@@ -27,13 +42,13 @@ export class EmpireWithdrawMakerTask<II extends IEmpireInventoryItem> extends Wi
 
     for (var key in groupedItems) {
       var item_ids = _.map(groupedItems[key], i => i.id);
-      var promise = this.withdraw(key, item_ids);
+      var promise = this.withdraw(parseInt(key), item_ids);
       promises.push(promise);
     }
     return await Promise.all(promises);
   }
 
-  private async withdraw(bot_id: string, item_ids: string[]) {
+  private async withdraw(bot_id: number, item_ids: string[]) {
     let data = JSON.stringify({
       "security_token": this.token,
       "bot_id": bot_id,

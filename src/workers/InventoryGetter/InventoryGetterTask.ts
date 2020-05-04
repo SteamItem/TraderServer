@@ -17,6 +17,8 @@ export abstract class InventoryGetterTask<SI> extends WorkerTask {
   }
   async work() {
     this.$storeItems = await this.getStoreItems();
+    // TODO: sil
+    console.log(`Inventory Count: ${this.$storeItems.length} at ${new Date()}`);
   }
   abstract getStoreItems(): Promise<SI[]>;
 }

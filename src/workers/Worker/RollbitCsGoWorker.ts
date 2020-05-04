@@ -1,11 +1,15 @@
-import { DatabaseSelectorTask, RollbitCsGoDatabaseSelector } from '../DatabaseSelector';
-import { InventoryFiltererUnit, RollbitInventoryFilterer } from '../InventoryFilterer';
-import { InventoryGetterTask, RollbitCsGoInventoryGetterTask } from '../InventoryGetter';
-import { WithdrawMakerTask, RollbitCsGoWithdrawMakerTask } from '../WithdrawMaker';
 import { IRollbitInventoryItem } from '../../interfaces/storeItem';
 import { EnumBot } from '../../helpers/enum';
 import { WorkerBase } from "./WorkerBase";
-import { BalanceCheckerTask } from '../BalanceChecker';
+import { DatabaseSelectorTask } from '../DatabaseSelector/DatabaseSelectorTask';
+import { RollbitCsGoDatabaseSelector } from '../DatabaseSelector/RollbitCsGoDatabaseSelector';
+import { BalanceCheckerTask } from '../BalanceChecker/BalanceCheckerTask';
+import { InventoryGetterTask } from '../InventoryGetter/InventoryGetterTask';
+import { RollbitCsGoInventoryGetterTask } from '../InventoryGetter/RollbitCsGoInventoryGetterTask';
+import { InventoryFiltererUnit } from '../InventoryFilterer/InventoryFiltererUnit';
+import { RollbitInventoryFilterer } from '../InventoryFilterer/RollbitInventoryFilterer';
+import { WithdrawMakerTask } from '../WithdrawMaker/WithdrawMakerTask';
+import { RollbitCsGoWithdrawMakerTask } from '../WithdrawMaker/RollbitCsGoWithdrawMakerTask';
 export class RollbitCsGoWorker extends WorkerBase<IRollbitInventoryItem> {
   inventoryOperationCronExpression = '* * * * * *';
   getDatabaseSelector(): DatabaseSelectorTask {

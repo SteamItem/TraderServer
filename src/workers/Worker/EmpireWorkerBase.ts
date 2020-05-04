@@ -1,10 +1,14 @@
 import cron = require('node-cron');
-import { TokenGetterTask, EmpireTokenGetterTask } from '../TokenGetter';
-import { InventoryFiltererUnit, EmpireInventoryFilterer } from '../InventoryFilterer';
-import { WithdrawMakerTask, EmpireWithdrawMakerTask } from '../WithdrawMaker';
+import { EmpireInventoryFilterer } from '../InventoryFilterer/EmpireInventoryFilterer';
 import { IEmpireInventoryItem } from '../../interfaces/storeItem';
 import { WorkerBase } from "./WorkerBase";
-import { BalanceCheckerTask, EmpireBalanceCheckerTask } from '../BalanceChecker';
+import { BalanceCheckerTask } from '../BalanceChecker/BalanceCheckerTask';
+import { EmpireBalanceCheckerTask } from '../BalanceChecker/EmpireBalanceCheckerTask';
+import { InventoryFiltererUnit } from '../InventoryFilterer/InventoryFiltererUnit';
+import { TokenGetterTask } from '../TokenGetter/TokenGetterTask';
+import { EmpireTokenGetterTask } from '../TokenGetter/EmpireTokenGetterTask';
+import { WithdrawMakerTask } from '../WithdrawMaker/WithdrawMakerTask';
+import { EmpireWithdrawMakerTask } from '../WithdrawMaker/EmpireWithdrawMakerTask';
 export abstract class EmpireWorkerBase<II extends IEmpireInventoryItem> extends WorkerBase<II> {
   protected token: string;
   inventoryOperationCronExpression = '*/3 * * * * *';

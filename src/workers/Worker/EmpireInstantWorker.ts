@@ -1,8 +1,10 @@
-import { DatabaseSelectorTask, EmpireInstantDatabaseSelector } from '../DatabaseSelector';
-import { InventoryGetterTask, EmpireInstantInventoryGetterTask } from '../InventoryGetter';
 import { IEmpireInstantInventoryItem } from '../../interfaces/storeItem';
 import { EnumBot } from '../../helpers/enum';
 import { EmpireWorkerBase } from './EmpireWorkerBase';
+import { DatabaseSelectorTask } from '../DatabaseSelector/DatabaseSelectorTask';
+import { EmpireInstantDatabaseSelector } from '../DatabaseSelector/EmpireInstantDatabaseSelector';
+import { InventoryGetterTask } from '../InventoryGetter/InventoryGetterTask';
+import { EmpireInstantInventoryGetterTask } from '../InventoryGetter/EmpireInstantInventoryGetterTask';
 export class EmpireInstantWorker extends EmpireWorkerBase<IEmpireInstantInventoryItem> {
   getDatabaseSelector(): DatabaseSelectorTask {
     return new EmpireInstantDatabaseSelector(EnumBot.EmpireInstant);
