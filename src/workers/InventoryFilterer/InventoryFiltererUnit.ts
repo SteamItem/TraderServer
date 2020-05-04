@@ -41,9 +41,12 @@ export abstract class InventoryFiltererUnit<II> extends WorkerUnit {
     inventoryItems.forEach(ii => {
       var itemPrice = this.getItemPrice(ii);
       if (itemPrice <= currentBalance) {
-        itemsToBuy.push(ii);
-        currentBalance -= itemPrice;
-        selectedBalance += itemPrice;
+        var suitableFilter = this.isNewItemSuitable(ii, itemsToBuy);
+        if (suitableFilter) {
+          itemsToBuy.push(ii);
+          currentBalance -= itemPrice;
+          selectedBalance += itemPrice;
+        }
       }
     });
     console.log(`Current Balance: ${this.$balance}, Selected Items Balance: ${selectedBalance}, ${itemsToBuy.length} items`)
@@ -62,4 +65,5 @@ export abstract class InventoryFiltererUnit<II> extends WorkerUnit {
 
   abstract getItemName(inventoryItem: II): string;
   abstract getItemPrice(inventoryItem: II): number;
+  abstract isNewItemSuitable(inventoryItemToAdd: II, currentlySelectedInventoryItems: II[]): boolean;
 }

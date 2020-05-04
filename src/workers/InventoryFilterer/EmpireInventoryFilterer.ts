@@ -8,4 +8,9 @@ export class EmpireInventoryFilterer<II extends IEmpireInventoryItem> extends In
   getItemPrice(inventoryItem: II) {
     return inventoryItem.market_value;
   }
+  isNewItemSuitable(inventoryItemToAdd: II, currentlySelectedInventoryItems: II[]): boolean {
+    const maxItemPerBot = 20;
+    const currentBotItems = _.filter(currentlySelectedInventoryItems, ii => ii.bot_id === inventoryItemToAdd.bot_id);
+    return currentBotItems.length < maxItemPerBot;
+  }
 }
