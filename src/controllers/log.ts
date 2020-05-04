@@ -1,12 +1,8 @@
 import Log = require('../models/log');
 
-function create(site: string, bot: string, message: string) {
-    const log = new Log.default({ site, bot, message });
+function create(bot: string, message: string) {
+    const log = new Log.default({ bot, message });
     return log.save();
-}
-
-async function findLastTen(site: string) {
-    return Log.default.find({site}).sort({_id:-1}).limit(10);
 }
 
 async function deleteAll() {
@@ -15,6 +11,5 @@ async function deleteAll() {
 
 export = {
     create,
-    findLastTen,
     deleteAll
 }

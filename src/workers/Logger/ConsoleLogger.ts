@@ -1,10 +1,11 @@
-import { EnumSite, EnumBot } from "../../helpers/enum";
+import { EnumBot, getBotText } from "../../helpers/enum";
 import { LoggerBase } from "./LoggerBase";
 
 export class ConsoleLogger extends LoggerBase {
-  // TODO: Implement
-  handleError(site: EnumSite, bot: EnumBot, taskName: string): void {
-    throw new Error("Method not implemented.");
+  handleError(bot: EnumBot, taskName: string, message: string): void {
+    var botText = getBotText(bot);
+    var logMessage = `[ERROR] ${botText} Bot - ${taskName} Task: ${message}`;
+    this.log(logMessage);
   }
   log(message: string) {
     console.log(message);

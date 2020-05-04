@@ -17,7 +17,7 @@ export enum EnumBot {
   RollbitCsGo = 3
 }
 
-export function botText(bot: EnumBot): string {
+export function getBotText(bot: EnumBot): string {
   switch(bot) {
     case EnumBot.EmpireInstant: return "Instant";
     case EnumBot.EmpireDota: return "Dota";
