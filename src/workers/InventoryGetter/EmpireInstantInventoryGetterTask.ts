@@ -1,5 +1,9 @@
 import { IEmpireInstantInventoryItem } from '../../interfaces/storeItem';
-import { EmpireInventoryGetterTask } from './EmpireInventoryGetterTask';
-export class EmpireInstantInventoryGetterTask extends EmpireInventoryGetterTask<IEmpireInstantInventoryItem> {
-  inventoryUrl = "https://csgoempire.gg/api/v2/p2p/inventory/instant";
+import { InventoryGetterTask } from './InventoryGetterTask';
+import { CSGOEmpireApi } from '../../controllers/api/csgoempire';
+export class EmpireInstantInventoryGetterTask extends InventoryGetterTask<IEmpireInstantInventoryItem> {
+  getStoreItems(): Promise<IEmpireInstantInventoryItem[]> {
+    var api = new CSGOEmpireApi();
+    return api.instantInventory(this.botParam.cookie);
+  }
 }

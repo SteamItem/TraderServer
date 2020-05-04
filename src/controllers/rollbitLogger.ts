@@ -1,10 +1,10 @@
-import axios from 'axios';
 import _ = require('lodash');
 import paramController = require('./botParam');
 import logController = require('./log');
 import RollbitHistory, { IRollbitHistory, IRollbitHistoryDocument } from '../models/rollbitHistory';
 import { EnumBot, getBotText } from '../helpers/enum';
-import { IRollbitInventoryItem, IRollbitInventoryItems } from '../interfaces/storeItem';
+import { IRollbitInventoryItem } from '../interfaces/storeItem';
+import { RollbitApi } from './api/rollbit';
 
 export class RollbitLogger {
   private cookie: string;
@@ -18,17 +18,6 @@ export class RollbitLogger {
   private normalizedItems: IRollbitHistory[] = [];
   private existingItems: IRollbitHistoryDocument[] = [];
   private itemsToInsert: IRollbitHistoryDocument[] = [];
-
-  private get requestConfig() {
-    return {
-      headers: {
-        'Content-Type': 'application/json',
-        'Cookie': this.cookie,
-        'Host': 'api.rollbit.com',
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.122 Safari/537.36'
-      }
-    };
-  }
 
   public async startLogging() {
     var that = this;
@@ -80,8 +69,9 @@ export class RollbitLogger {
     return RollbitHistory.find({});
   }
 
-  private async getItems(maxPrice: number) {
-    return (await axios.get<IRollbitInventoryItems>(`https://api.rollbit.com/steam/market?query&order=1&showTradelocked=false&showCustomPriced=true&min=5&max=${maxPrice}`, this.requestConfig)).data;
+  private getItems(maxPrice: number) {
+    var api = new RollbitApi();
+    return api.csgoInventory(this.cookie, 5, maxPrice);
   }
 
   private normalizeItems(): IRollbitHistory[] {

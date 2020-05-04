@@ -2,7 +2,6 @@ import { IBotParam } from '../../models/botParam';
 import { WorkerTask } from '../Common/WorkerTask';
 export abstract class InventoryGetterTask<SI> extends WorkerTask {
   workerJobName = "Inventory Getter";
-  abstract inventoryUrl: string;
   constructor(botParam: IBotParam) {
     super();
     this.$botParam = botParam;
