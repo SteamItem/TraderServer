@@ -10,14 +10,14 @@ import { InventoryFiltererUnit } from '../InventoryFilterer/InventoryFiltererUni
 import { RollbitInventoryFilterer } from '../InventoryFilterer/RollbitInventoryFilterer';
 import { WithdrawMakerTask } from '../WithdrawMaker/WithdrawMakerTask';
 import { RollbitCsGoWithdrawMakerTask } from '../WithdrawMaker/RollbitCsGoWithdrawMakerTask';
+import { RollbitBalanceCheckerTask } from '../BalanceChecker/RollbitBalanceCheckerTask';
 export class RollbitCsGoWorker extends WorkerBase<IRollbitInventoryItem> {
   inventoryOperationCronExpression = '* * * * * *';
   getDatabaseSelector(): DatabaseSelectorTask {
     return new RollbitCsGoDatabaseSelector(EnumBot.RollbitCsGo);
   }
   getBalanceChecker(): BalanceCheckerTask {
-    // TODO: tamamla
-    throw new Error("Method not implemented.");
+    return new RollbitBalanceCheckerTask(this.botParam);
   }
   getInventoryGetter(): InventoryGetterTask<IRollbitInventoryItem> {
     return new RollbitCsGoInventoryGetterTask(this.botParam);

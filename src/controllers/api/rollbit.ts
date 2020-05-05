@@ -25,7 +25,10 @@ export class RollbitApi {
         'Cookie': cookie,
         'Host': 'api.rollbit.com',
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.122 Safari/537.36'
-      }
+      },
+      withCredentials: true,
+      timeout: 20000,
+      maxRedirects: 4
     };
 
     let data = JSON.stringify({
