@@ -5,6 +5,7 @@
   "scripts": {
     "build-ts": "tsc",
     "watch-ts": "tsc -w",
+    "deploy": "caprover deploy",
     "start": "tsc && pm2-runtime start ecosystem.config.js",
     "dev": "tsc && pm2-runtime start ecosystem.dev.config.js"
   },

@@ -4,7 +4,19 @@
   // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
   "version": "0.2.0",
   "configurations": [
-
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Server",
+      "program": "${workspaceFolder}/src/server.ts",
+      "env": {
+        "CORS_WHITELIST": "http://localhost:8080",
+        "DB_URL": "mongodb://admin:1234qwer@ds161148.mlab.com:61148/dota"
+      },
+      "outFiles": [
+        "${workspaceFolder}/dist/**/*.js"
+      ]
+    },
     {
       "type": "node",
       "request": "launch",
