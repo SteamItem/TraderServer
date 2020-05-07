@@ -6,7 +6,7 @@ export class EmpireInventoryFilterer<II extends IEmpireInventoryItem> extends In
     return inventoryItem.name;
   }
   getItemPrice(inventoryItem: II) {
-    return inventoryItem.market_value;
+    return inventoryItem.market_value / 100;
   }
   isNewItemSuitable(inventoryItemToAdd: II, currentlySelectedInventoryItems: II[]): boolean {
     const maxItemPerBot = 20;
