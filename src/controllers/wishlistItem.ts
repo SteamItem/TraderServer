@@ -8,7 +8,10 @@ async function findAll() {
     return WishlistItem.default.find({});
 }
 
-async function create(appid: number, name: string, max_price: number) {
+async function create(site_id: number, appid: number, name: string, max_price: number) {
+    if(!site_id) {
+        throw new Error("site_id can not be empty");
+    }
     if(!appid) {
         throw new Error("appid can not be empty");
     }
@@ -16,13 +19,16 @@ async function create(appid: number, name: string, max_price: number) {
         throw new Error("name can not be empty");
     }
 
-    const wishlistItem = new WishlistItem.default( { appid, name, max_price });
+    const wishlistItem = new WishlistItem.default( { site_id, appid, name, max_price });
     return wishlistItem.save();
 }
 
-async function update(itemId: string, appid: number, name: string, max_price: number) {
+async function update(itemId: string, site_id: number, appid: number, name: string, max_price: number) {
     if(!itemId) {
         throw new Error("itemId can not be empty");
+    }
+    if(!site_id) {
+        throw new Error("site_id can not be empty");
     }
     if(!appid) {
         throw new Error("appid can not be empty");
@@ -30,7 +36,7 @@ async function update(itemId: string, appid: number, name: string, max_price: nu
     if(!name) {
         throw new Error("name can not be empty");
     }
-    return WishlistItem.default.findByIdAndUpdate(itemId, { appid, name, max_price }, {new: true});
+    return WishlistItem.default.findByIdAndUpdate(itemId, { site_id, appid, name, max_price }, {new: true});
 }
 
 async function remove(itemId: string) {

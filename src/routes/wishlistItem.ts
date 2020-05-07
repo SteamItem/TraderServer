@@ -7,7 +7,7 @@ module.exports = (app: express.Express) => {
   const corsOptions = corsHelper.getCorsOptions();
 
   app.post('/wishlistItems', cors(corsOptions), async (req, res) => {
-    var items = await wishlistItemController.create(req.body.appid, req.body.name, req.body.max_price);
+    var items = await wishlistItemController.create(req.body.site_id, req.body.appid, req.body.name, req.body.max_price);
     res.send(items);
   });
   app.get('/wishlistItems', cors(corsOptions), async (_req, res) => {
@@ -19,7 +19,7 @@ module.exports = (app: express.Express) => {
     res.send(item);
   });
   app.put('/wishlistItems/:_id', cors(corsOptions), async (req, res) => {
-    var item = await wishlistItemController.update(req.params._id, req.body.appid, req.body.name, req.body.max_price);
+    var item = await wishlistItemController.update(req.params._id, req.body.site_id, req.body.appid, req.body.name, req.body.max_price);
     res.send(item);
   });
   app.delete('/wishlistItems/:_id', cors(corsOptions), async (req, res) => {
