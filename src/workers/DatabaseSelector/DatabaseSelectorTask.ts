@@ -11,7 +11,7 @@ export abstract class DatabaseSelectorTask extends WorkerTask {
   }
   private bot: EnumBot;
   private getBotParam() {
-    return paramController.getBotParam(this.bot);
+    return paramController.findOne(this.bot);
   }
   private $botParam: IBotParam;
   public get botParam(): IBotParam {

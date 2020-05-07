@@ -9,9 +9,9 @@ import { RollbitApi } from './api/rollbit';
 export class RollbitLogger {
   private cookie: string;
   private async getCookie() {
-    var cookieParam = await paramController.getCookie(EnumBot.RollbitCsGo);
-    if (!cookieParam) throw new Error("Cookie not found");
-    return cookieParam;
+    var cookieParam = await paramController.findOne(EnumBot.RollbitCsGo);
+    if (!cookieParam.cookie) throw new Error("Cookie not found");
+    return cookieParam.cookie;
   }
 
   private items: IRollbitInventoryItem[] = [];

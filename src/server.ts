@@ -15,9 +15,7 @@ mongoHelper.connect();
 
 require('./routes/index')(app);
 require('./routes/wishlistItem')(app);
-require('./routes/param')(app);
-require('./routes/rollbitFav')(app);
-require('./routes/rollbitHistory')(app);
+require('./routes/botParam')(app);
 
 // listen for requests
 app.listen(PORT, () => {
