@@ -28,11 +28,11 @@ module.exports = {
     }
   }, {
     name: "rollbit",
-    script: "./src/rollbitWorker.ts",
+    script: "./dist/rollbitWorker.js",
     time: true,
     env: {
-      NODE_ENV: "development",
-      DB_URL: "mongodb://admin:1234qwer@ds161148.mlab.com:61148/dota"
+      NODE_ENV: "production",
+      DB_URL: "mongodb://admin:1234qwer@ds159963.mlab.com:59963/csgobot-prod",
     }
   }]
 }
