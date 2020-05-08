@@ -1,7 +1,9 @@
 import mongoHelper = require('./helpers/mongo');
 import { EmpireInstantWorker } from "./workers/Worker/EmpireInstantWorker";
+import { TelegramLogger } from './workers/Logger/TelegramLogger';
 
 mongoHelper.connect();
 
-var worker = new EmpireInstantWorker();
+var logger = new TelegramLogger();
+var worker = new EmpireInstantWorker(logger);
 worker.schedule();
