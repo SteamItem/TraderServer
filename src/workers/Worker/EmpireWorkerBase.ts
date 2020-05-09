@@ -39,7 +39,7 @@ export abstract class EmpireWorkerBase<II extends IEmpireInventoryItem> extends 
         await tokenGetter.work();
         this.token = tokenGetter.token;
       } catch (e) {
-        this.handleError(currentTask, e.message);
+        this.handleError(currentTask, JSON.stringify(e));
       }
     });
   }

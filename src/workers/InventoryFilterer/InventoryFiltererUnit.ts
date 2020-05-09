@@ -13,6 +13,10 @@ export abstract class InventoryFiltererUnit<II> extends WorkerUnit {
   private $balance: number;
   private $inventoryItems: II[];
   private $wishlistItems: IWishlistItem[];
+  private $wishlistFilteredItems: II[];
+  public get wishlistFilteredItems(): II[] {
+    return this.$wishlistFilteredItems;
+  }
   private $itemsToBuy: II[];
   public get itemsToBuy(): II[] {
     return this.$itemsToBuy;
@@ -20,6 +24,7 @@ export abstract class InventoryFiltererUnit<II> extends WorkerUnit {
   public filter() {
     var itemsToBuy: II[] = [];
     itemsToBuy = this.filterForWishlist();
+    this.$wishlistFilteredItems = itemsToBuy;
     itemsToBuy = this.afterFilterAction(itemsToBuy);
     itemsToBuy = this.filterForBalance(itemsToBuy);
     this.$itemsToBuy = itemsToBuy;
