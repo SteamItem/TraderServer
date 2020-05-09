@@ -44,7 +44,7 @@ export abstract class WorkerBase<II> {
   }
 
   balanceChecker() {
-    return cron.schedule('* * * * * *', async () => {
+    return cron.schedule('*/15 * * * * *', async () => {
       if (!this.working) return;
       try {
         var balanceChecker = this.getBalanceChecker();

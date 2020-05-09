@@ -13,4 +13,7 @@ export class EmpireInventoryFilterer<II extends IEmpireInventoryItem> extends In
     const currentBotItems = _.filter(currentlySelectedInventoryItems, ii => ii.bot_id === inventoryItemToAdd.bot_id);
     return currentBotItems.length < maxItemPerBot;
   }
+  afterFilterAction(inventoryItems: II[]) {
+    return _.shuffle(inventoryItems);
+  }
 }

@@ -20,6 +20,7 @@ export abstract class InventoryFiltererUnit<II> extends WorkerUnit {
   public filter() {
     var itemsToBuy: II[] = [];
     itemsToBuy = this.filterForWishlist();
+    itemsToBuy = this.afterFilterAction(itemsToBuy);
     itemsToBuy = this.filterForBalance(itemsToBuy);
     this.$itemsToBuy = itemsToBuy;
   }
@@ -33,6 +34,10 @@ export abstract class InventoryFiltererUnit<II> extends WorkerUnit {
     });
     console.log(`Suits for Wishlist: ${itemsToBuy.length}`);
     return itemsToBuy;
+  }
+
+  afterFilterAction(inventoryItems: II[]) {
+    return inventoryItems;
   }
 
   private filterForBalance(inventoryItems: II[]): II[] {
