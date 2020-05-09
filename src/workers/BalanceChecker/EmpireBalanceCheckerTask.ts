@@ -4,6 +4,6 @@ export class EmpireBalanceCheckerTask extends BalanceCheckerTask {
   async getBalance() {
     var api = new CSGOEmpireApi();
     var profile = await api.profile(this.botParam.cookie);
-    return profile.balance;
+    return profile.balance / 100;
   }
 }
