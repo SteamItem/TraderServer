@@ -22,7 +22,7 @@ export abstract class EmpireWorkerBase<II extends IEmpireInventoryItem> extends 
     return new EmpireTokenGetterTask(this.botParam);
   }
   getWithdrawMaker(): WithdrawMakerTask<II> {
-    return new EmpireWithdrawMakerTask(this.token, this.botParam, this.itemsToBuy);
+    return new EmpireWithdrawMakerTask(this.token, this.botParam, this.itemsToBuy, this.logger);
   }
   async schedule() {
     this.databaseScheduler();

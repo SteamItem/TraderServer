@@ -26,7 +26,7 @@ export class RollbitCsGoWorker extends WorkerBase<IRollbitInventoryItem> {
     return new RollbitInventoryFilterer(this.balance, this.inventoryItems, this.wishlistItems);
   }
   getWithdrawMaker(): WithdrawMakerTask<IRollbitInventoryItem> {
-    return new RollbitCsGoWithdrawMakerTask(this.botParam, this.itemsToBuy);
+    return new RollbitCsGoWithdrawMakerTask(this.botParam, this.itemsToBuy, this.logger);
   }
   async schedule() {
     this.databaseScheduler();

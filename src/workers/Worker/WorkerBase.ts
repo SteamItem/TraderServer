@@ -12,7 +12,7 @@ export abstract class WorkerBase<II> {
     this.logger = logger;
   }
 
-  private logger: LoggerBase;
+  protected logger: LoggerBase;
   protected botParam: IBotParam;
   protected wishlistItems: IWishlistItem[];
   protected inventoryItems: II[] = [];
@@ -73,6 +73,7 @@ export abstract class WorkerBase<II> {
         var withdrawMaker = this.getWithdrawMaker();
         currentTask = withdrawMaker.taskName;
         await withdrawMaker.work();
+        this.handleWithdrawResult(withdrawMaker);
       } catch (e) {
         this.handleError(currentTask, JSON.stringify(e));
       }
@@ -87,6 +88,13 @@ export abstract class WorkerBase<II> {
 
     var filterMessage = `${itemsToBuyLength}/${filteredItemsLength}/${inventoryItemsLength} Buy/Filter/All`;
     this.handleMessage(inventoryFilterer.taskName, filterMessage);
+  }
+
+  private handleWithdrawResult(withdrawMaker: WithdrawMakerTask<II>) {
+    var successWithdrawCount = withdrawMaker.withdrawResult.successWithdrawCount;
+    var failWithdrawCount = withdrawMaker.withdrawResult.failWithdrawCount;
+    var message = `${successWithdrawCount} Success / ${failWithdrawCount} Fail Withdraws made`;
+    this.handleMessage(withdrawMaker.taskName, message);
   }
 
   protected handleMessage(taskName: string, message: string) {
