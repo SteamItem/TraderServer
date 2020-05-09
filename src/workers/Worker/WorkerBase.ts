@@ -68,6 +68,7 @@ export abstract class WorkerBase<II> {
         var inventoryFilterer = this.getInventoryFilterer();
         currentTask = inventoryFilterer.taskName;
         inventoryFilterer.filter();
+        this.handleFilterResult(inventoryFilterer);
         this.itemsToBuy = inventoryFilterer.itemsToBuy;
         var withdrawMaker = this.getWithdrawMaker();
         currentTask = withdrawMaker.taskName;
@@ -76,6 +77,16 @@ export abstract class WorkerBase<II> {
         this.handleError(currentTask, JSON.stringify(e));
       }
     });
+  }
+
+  private handleFilterResult(inventoryFilterer: InventoryFiltererUnit<II>) {
+    if (inventoryFilterer.wishlistFilteredItems.length == 0) return;
+    var itemsToBuyLength = inventoryFilterer.itemsToBuy.length;
+    var filteredItemsLength = inventoryFilterer.wishlistFilteredItems.length;
+    var inventoryItemsLength = this.inventoryItems.length;
+
+    var filterMessage = `${itemsToBuyLength}/${filteredItemsLength}/${inventoryItemsLength} Buy/Filter/All`;
+    this.handleMessage(inventoryFilterer.taskName, filterMessage);
   }
 
   protected handleMessage(taskName: string, message: string) {
