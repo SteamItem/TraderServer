@@ -81,20 +81,23 @@ export abstract class WorkerBase<II> {
   }
 
   private handleFilterResult(inventoryFilterer: InventoryFiltererUnit<II>) {
-    if (inventoryFilterer.wishlistFilteredItems.length == 0) return;
-    var itemsToBuyLength = inventoryFilterer.itemsToBuy.length;
-    var filteredItemsLength = inventoryFilterer.wishlistFilteredItems.length;
-    var inventoryItemsLength = this.inventoryItems.length;
+    if (inventoryFilterer.wishlistFilteredItems.length > 0) {
+      var itemsToBuyLength = inventoryFilterer.itemsToBuy.length;
+      var filteredItemsLength = inventoryFilterer.wishlistFilteredItems.length;
+      var inventoryItemsLength = this.inventoryItems.length;
 
-    var filterMessage = `${itemsToBuyLength}/${filteredItemsLength}/${inventoryItemsLength} Buy/Filter/All`;
-    this.handleMessage(inventoryFilterer.taskName, filterMessage);
+      var filterMessage = `${itemsToBuyLength}/${filteredItemsLength}/${inventoryItemsLength} Buy/Filter/All`;
+      this.handleMessage(inventoryFilterer.taskName, filterMessage);
+    }
   }
 
   private handleWithdrawResult(withdrawMaker: WithdrawMakerTask<II>) {
     var successWithdrawCount = withdrawMaker.withdrawResult.successWithdrawCount;
     var failWithdrawCount = withdrawMaker.withdrawResult.failWithdrawCount;
-    var message = `${successWithdrawCount} Success / ${failWithdrawCount} Fail Withdraws made`;
-    this.handleMessage(withdrawMaker.taskName, message);
+    if ((successWithdrawCount + failWithdrawCount) > 0) {
+      var message = `${successWithdrawCount} Success / ${failWithdrawCount} Fail Withdraws made`;
+      this.handleMessage(withdrawMaker.taskName, message);
+    }
   }
 
   protected handleMessage(taskName: string, message: string) {
