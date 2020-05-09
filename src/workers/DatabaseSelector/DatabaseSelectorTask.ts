@@ -4,7 +4,7 @@ import { IBotParam } from '../../models/botParam';
 import { WorkerTask } from '../Common/WorkerTask';
 import { EnumBot } from '../../helpers/enum';
 export abstract class DatabaseSelectorTask extends WorkerTask {
-  workerJobName = "Database Selector";
+  taskName = "Database Selector";
   constructor(bot: EnumBot) {
     super();
     this.bot = bot;

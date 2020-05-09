@@ -32,13 +32,13 @@ export abstract class WorkerBase<II> {
     return cron.schedule('* * * * * *', async () => {
       try {
         var databaseSelector = this.getDatabaseSelector();
-        var currentTask = databaseSelector.workerJobName;
+        var currentTask = databaseSelector.taskName;
         await databaseSelector.work();
         this.botParam = databaseSelector.botParam;
         this.wishlistItems = databaseSelector.wishlistItems;
         this.working = databaseSelector.botParam.worker;
       } catch (e) {
-        this.logger.handleError(this.botParam.id, currentTask, e.message);
+        this.handleError(currentTask, e.message);
       }
     });
   }
@@ -48,11 +48,11 @@ export abstract class WorkerBase<II> {
       if (!this.working) return;
       try {
         var balanceChecker = this.getBalanceChecker();
-        var currentTask = balanceChecker.workerJobName;
+        var currentTask = balanceChecker.taskName;
         await balanceChecker.work();
         this.balance = balanceChecker.balance;
       } catch (e) {
-        this.logger.handleError(this.botParam.id, currentTask, e.message);
+        this.handleError(currentTask, e.message);
       }
     });
   }
@@ -62,19 +62,23 @@ export abstract class WorkerBase<II> {
       if (!this.working) return;
       try {
         var inventoryGetter = this.getInventoryGetter();
-        var currentTask = inventoryGetter.workerJobName;
+        var currentTask = inventoryGetter.taskName;
         await inventoryGetter.work();
         this.inventoryItems = inventoryGetter.inventoryItems;
         var inventoryFilterer = this.getInventoryFilterer();
-        currentTask = inventoryFilterer.workerJobName;
+        currentTask = inventoryFilterer.taskName;
         inventoryFilterer.filter();
         this.itemsToBuy = inventoryFilterer.itemsToBuy;
         var withdrawMaker = this.getWithdrawMaker();
-        currentTask = withdrawMaker.workerJobName;
+        currentTask = withdrawMaker.taskName;
         await withdrawMaker.work();
       } catch (e) {
-        this.logger.handleError(this.botParam.id, currentTask, e.message);
+        this.handleError(currentTask, e.message);
       }
     });
+  }
+
+  protected handleError(taskName: string, message: string) {
+    this.logger.handleError(this.botParam.id, taskName, message);
   }
 }

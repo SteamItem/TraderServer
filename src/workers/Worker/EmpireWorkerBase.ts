@@ -32,11 +32,15 @@ export abstract class EmpireWorkerBase<II extends IEmpireInventoryItem> extends 
   }
   private tokenScheduler() {
     return cron.schedule('* * * * * *', async () => {
-      if (!this.working)
-        return;
-      var tokenGetter = this.getTokenGetter();
-      await tokenGetter.work();
-      this.token = tokenGetter.token;
+      if (!this.working) return;
+      try {
+        var tokenGetter = this.getTokenGetter();
+        var currentTask = tokenGetter.taskName;
+        await tokenGetter.work();
+        this.token = tokenGetter.token;
+      } catch (e) {
+        this.handleError(currentTask, e.message);
+      }
     });
   }
 }
