@@ -1,8 +1,9 @@
-import axios, { AxiosRequestConfig } from 'axios';
+import { AxiosRequestConfig } from 'axios';
 import { IEmpireProfile } from '../../interfaces/profile';
 import { IEmpireInstantInventoryItem, IEmpireDotaInventoryItem } from '../../interfaces/storeItem';
+import { ApiBase } from './apiBase';
 
-export class CSGOEmpireApi {
+export class CSGOEmpireApi extends ApiBase {
   private baseUrl = 'https://csgoempire.gg/api/v2';
   public async getToken(code: string, cookie: string) {
     let data = JSON.stringify({
@@ -17,7 +18,7 @@ export class CSGOEmpireApi {
         'Host': 'csgoempire.gg'
       }
     };
-    var result = await axios.post(`${this.baseUrl}/user/security/token`, data, content);
+    var result = await this.axiosInstance.post(`${this.baseUrl}/user/security/token`, data, content);
     return result.data;
   }
 
@@ -29,7 +30,7 @@ export class CSGOEmpireApi {
         'Host': 'csgoempire.gg'
       }
     };
-    var result = await axios.get<IEmpireProfile>(`${this.baseUrl}/user`, content);
+    var result = await this.axiosInstance.get<IEmpireProfile>(`${this.baseUrl}/user`, content);
     return result.data;
   }
 
@@ -62,7 +63,7 @@ export class CSGOEmpireApi {
       timeout: 20000,
       maxRedirects: 4
     };
-    var result = await axios.post(`${this.baseUrl}/trade/withdraw`, data, content);
+    var result = await this.axiosInstance.post(`${this.baseUrl}/trade/withdraw`, data, content);
     return result.data;
   }
 
@@ -74,7 +75,7 @@ export class CSGOEmpireApi {
         'Host': 'csgoempire.gg'
       }
     };
-    var items = await axios.get<IEmpireInstantInventoryItem[]>(`${this.baseUrl}/p2p/inventory/instant`, content);
+    var items = await this.axiosInstance.get<IEmpireInstantInventoryItem[]>(`${this.baseUrl}/p2p/inventory/instant`, content);
     return items.data;
   }
 
@@ -86,7 +87,7 @@ export class CSGOEmpireApi {
         'Host': 'csgoempire.gg'
       }
     };
-    var items = await axios.get<IEmpireDotaInventoryItem[]>(`${this.baseUrl}/inventory/site/10`, content);
+    var items = await this.axiosInstance.get<IEmpireDotaInventoryItem[]>(`${this.baseUrl}/inventory/site/10`, content);
     return items.data;
   }
 }

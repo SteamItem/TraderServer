@@ -34,7 +34,7 @@ export class EmpireWithdrawMakerTask<II extends IEmpireInventoryItem> extends Wi
       await api.withdraw(this.botParam.cookie, this.token, bot_id, item_ids);
       return true;
     } catch (e) {
-      this.logger.handleError(this.botParam.id, this.taskName, JSON.stringify(e));
+      this.logger.handleError(this.botParam.id, this.taskName, e.message);
       return false;
     }
   }

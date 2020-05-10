@@ -1,7 +1,8 @@
-import axios, { AxiosRequestConfig } from 'axios';
+import { AxiosRequestConfig } from 'axios';
 import { IRollbitInventoryItems } from '../../interfaces/storeItem';
+import { ApiBase } from './apiBase';
 
-export class RollbitApi {
+export class RollbitApi extends ApiBase {
   private baseUrl = 'https://api.rollbit.com/steam';
 
   public async csgoInventory(cookie: string, minPrice: number, maxPrice: number) {
@@ -14,7 +15,7 @@ export class RollbitApi {
     };
 
     var url = `${this.baseUrl}/market?query&order=1&showTradelocked=false&showCustomPriced=false&min=${minPrice}&max=${maxPrice}`;
-    var items = await axios.get<IRollbitInventoryItems>(url, content);
+    var items = await this.axiosInstance.get<IRollbitInventoryItems>(url, content);
     return items.data;
   }
 
@@ -42,7 +43,7 @@ export class RollbitApi {
     let data = JSON.stringify({
       "refs": refs
     });
-    var result = await axios.post(`${this.baseUrl}/withdraw`, data, content);
+    var result = await this.axiosInstance.post(`${this.baseUrl}/withdraw`, data, content);
     return result.data;
   }
 }

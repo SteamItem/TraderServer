@@ -38,7 +38,7 @@ export abstract class WorkerBase<II> {
         this.wishlistItems = databaseSelector.wishlistItems;
         this.working = databaseSelector.botParam.worker;
       } catch (e) {
-        this.handleError(currentTask, JSON.stringify(e));
+        this.handleError(currentTask, e.message);
       }
     });
   }
@@ -52,7 +52,7 @@ export abstract class WorkerBase<II> {
         await balanceChecker.work();
         this.balance = balanceChecker.balance;
       } catch (e) {
-        this.handleError(currentTask, JSON.stringify(e));
+        this.handleError(currentTask, e.message);
       }
     });
   }
@@ -75,7 +75,7 @@ export abstract class WorkerBase<II> {
         await withdrawMaker.work();
         this.handleWithdrawResult(withdrawMaker);
       } catch (e) {
-        this.handleError(currentTask, JSON.stringify(e));
+        this.handleError(currentTask, e.message);
       }
     });
   }

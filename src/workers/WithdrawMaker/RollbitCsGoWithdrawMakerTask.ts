@@ -27,7 +27,7 @@ export class RollbitCsGoWithdrawMakerTask<II extends IRollbitInventoryItem> exte
       await api.withdraw(this.botParam.cookie, [ref]);
       return true;
     } catch (e) {
-      this.logger.handleError(this.botParam.id, this.taskName, JSON.stringify(e));
+      this.logger.handleError(this.botParam.id, this.taskName, e.message);
       return false;
     }
   }
