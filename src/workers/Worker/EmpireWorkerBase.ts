@@ -11,7 +11,7 @@ import { WithdrawMakerTask } from '../WithdrawMaker/WithdrawMakerTask';
 import { EmpireWithdrawMakerTask } from '../WithdrawMaker/EmpireWithdrawMakerTask';
 export abstract class EmpireWorkerBase<II extends IEmpireInventoryItem> extends WorkerBase<II> {
   protected token: string;
-  inventoryOperationCronExpression = '*/3 * * * * *';
+  inventoryOperationCronExpression = '* * * * * *';
   getBalanceChecker(): BalanceCheckerTask {
     return new EmpireBalanceCheckerTask(this.botParam);
   }
