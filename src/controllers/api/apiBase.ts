@@ -12,8 +12,6 @@ export abstract class ApiBase {
       err => {
         if (err.response) {
           throw new Error(err.response.data.message);
-        } else if (err.request) {
-          throw new Error(err.request);
         } else {
           throw new Error(err.message);
         }
