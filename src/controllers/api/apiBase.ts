@@ -11,7 +11,10 @@ export abstract class ApiBase {
       res => res,
       err => {
         if (err.response) {
-          throw new Error(`${err.response.statusText}-${err.response.status}: ${err.response.data || ""}`);
+          var message = `${err.response.statusText}-${err.response.status}`;
+          var responseMessage = err.response.data.message;
+          if (responseMessage) { message += `: ${responseMessage}`;}
+          throw new Error(message);
         } else {
           throw new Error(err.message);
         }
