@@ -4,6 +4,7 @@ import { WithdrawMakerTask } from './WithdrawMakerTask';
 import { RollbitApi } from '../../controllers/api/rollbit';
 import _ = require('lodash');
 import { LoggerBase } from '../Logger/LoggerBase';
+import { IWithdrawMakerResult, IWithdrawResult } from '../../interfaces/withdraw';
 export class RollbitCsGoWithdrawMakerTask<II extends IRollbitInventoryItem> extends WithdrawMakerTask<II> {
   constructor(botParam: IBotParam, itemsToBuy: II[], logger: LoggerBase) {
     super(itemsToBuy, logger);
@@ -11,24 +12,28 @@ export class RollbitCsGoWithdrawMakerTask<II extends IRollbitInventoryItem> exte
   }
   private botParam: IBotParam;
 
-  async withdrawAll() {
-    var promises: Promise<boolean>[] = [];
+  async withdrawAll(): Promise<IWithdrawMakerResult> {
+    var promises: Promise<IWithdrawResult>[] = [];
     this.inventoryItemsToBuy.forEach(ib => promises.push(this.withdraw(ib.ref)));
     var results = await Promise.all(promises);
 
-    var successWithdrawCount = _.filter(results, r => r === true).length;
-    var failWithdrawCount = _.filter(results, r => r === false).length;
-    return { successWithdrawCount, failWithdrawCount }
+    var successWithdraws = _.filter(results, r => r.status === true);
+    var successWithdrawCount = successWithdraws.length;
+    var successWithdrawItemCount = _.sumBy(successWithdraws, s => s.count);
+    var failWithdraws = _.filter(results, r => r.status === false);
+    var failWithdrawCount = failWithdraws.length;
+    var failWithdrawItemCount = _.sumBy(failWithdraws, w => w.count);
+    return { successWithdrawCount, successWithdrawItemCount, failWithdrawCount, failWithdrawItemCount };
   }
 
-  private async withdraw(ref: string) {
+  private async withdraw(ref: string): Promise<IWithdrawResult> {
     try {
       var api = new RollbitApi();
       await api.withdraw(this.botParam.cookie, [ref]);
-      return true;
+      return { status: true, count: 1};
     } catch (e) {
       this.logger.handleError(this.botParam.id, this.taskName, e.message);
-      return false;
+      return { status: false, count: 1};
     }
   }
 }

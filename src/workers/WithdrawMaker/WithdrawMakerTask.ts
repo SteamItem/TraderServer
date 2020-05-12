@@ -1,5 +1,5 @@
 import { WorkerTask } from '../Common/WorkerTask';
-import { IWithdrawResult } from '../../interfaces/withdraw';
+import { IWithdrawMakerResult } from '../../interfaces/withdraw';
 import { LoggerBase } from '../Logger/LoggerBase';
 export abstract class WithdrawMakerTask<II> extends WorkerTask {
   taskName = "Withdraw Maker";
@@ -9,12 +9,12 @@ export abstract class WithdrawMakerTask<II> extends WorkerTask {
     this.logger = logger;
   }
   private $inventoryItemsToBuy: II[];
-  private $withdrawResult: IWithdrawResult;
+  private $withdrawResult: IWithdrawMakerResult;
   protected logger: LoggerBase;
   public get inventoryItemsToBuy(): II[] {
     return this.$inventoryItemsToBuy;
   }
-  public get withdrawResult(): IWithdrawResult {
+  public get withdrawResult(): IWithdrawMakerResult {
     return this.$withdrawResult;
   }
   async work() {
@@ -22,5 +22,5 @@ export abstract class WithdrawMakerTask<II> extends WorkerTask {
       return Promise.resolve;
     this.$withdrawResult = await this.withdrawAll();
   }
-  abstract withdrawAll(): Promise<IWithdrawResult>;
+  abstract withdrawAll(): Promise<IWithdrawMakerResult>;
 }
