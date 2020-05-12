@@ -92,15 +92,16 @@ export abstract class WorkerBase<II> {
   }
 
   private handleWithdrawResult(withdrawMaker: WithdrawMakerTask<II>) {
-    var successWithdrawCount = withdrawMaker.withdrawResult.successWithdrawCount;
     var successWithdrawItemCount = withdrawMaker.withdrawResult.successWithdrawItemCount;
-    var failWithdrawCount = withdrawMaker.withdrawResult.failWithdrawCount;
     var failWithdrawItemCount = withdrawMaker.withdrawResult.failWithdrawItemCount;
-    if ((successWithdrawCount + failWithdrawCount) > 0) {
-      var messages = [];
-      if(successWithdrawCount > 0) { messages.push(`Success: ${successWithdrawItemCount} Items by ${successWithdrawCount}`); }
-      if(failWithdrawCount > 0) { messages.push(`Fail: ${failWithdrawItemCount} Items by ${failWithdrawCount}`); }
-      var message = `${messages.join(' / ')} Withdraws made`;
+    var totalWithdrawItemCount = successWithdrawItemCount + failWithdrawItemCount;
+
+    var successWithdrawCount = withdrawMaker.withdrawResult.successWithdrawCount;
+    var failWithdrawCount = withdrawMaker.withdrawResult.failWithdrawCount;
+    var totalWithdrawCount = successWithdrawCount + failWithdrawCount;
+
+    if (totalWithdrawCount > 0) {
+      var message = `${successWithdrawItemCount}/${totalWithdrawItemCount} Items by ${successWithdrawCount}/${totalWithdrawCount} Withdraws made`;
       this.handleMessage(withdrawMaker.taskName, message);
     }
   }
