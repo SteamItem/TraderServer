@@ -11,7 +11,8 @@ export interface IRollbitHistory {
   rarity: string;
   exterior: string;
   baseprice: number;
-  created_at?: Date;
+  listed_at?: Date;
+  gone_at?: Date;
 }
 
 export interface IRollbitHistoryDocument extends mongoose.Document, IRollbitHistory {
@@ -27,7 +28,8 @@ const RollbitHistorySchema: mongoose.Schema = new mongoose.Schema({
   rarity: { type: String },
   exterior: { type: String },
   baseprice: { type: String },
-  created_at: { type: Date, default: Date.now }
+  listed_at: { type: Date },
+  gone_at: { type: Date }
 });
 
 export default mongoose.model<IRollbitHistoryDocument>('RollbitHistory', RollbitHistorySchema);

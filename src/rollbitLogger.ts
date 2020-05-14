@@ -1,8 +1,7 @@
-import { RollbitSocket } from './controllers/api/rollbitSocket';
+import mongoHelper = require('./helpers/mongo');
+import { RollbitLogger } from './controllers/rollbitLogger';
 
-var socket = new RollbitSocket();
-socket.connect();
+mongoHelper.connect();
 
-setInterval(function () {
-  socket.send('sync', '', true);
-}, 2500)
+var logger = new RollbitLogger();
+logger.startLogging();
