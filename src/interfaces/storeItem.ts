@@ -34,7 +34,7 @@ export interface IEmpireDotaInventoryItem extends IEmpireInventoryItem {
   created_at: number;
 }
 
-export interface IRollbitInventoryItemDetail {
+export interface IRollbitItem {
   name: string;
   image: string;
   classid: any;
@@ -51,9 +51,17 @@ export interface IRollbitInventoryItem {
   ref: string;
   price: number;
   markup: number;
-  items: IRollbitInventoryItemDetail[];
+  items: IRollbitItem[];
 }
 
 export interface IRollbitInventoryItems {
   items: IRollbitInventoryItem[];
+}
+
+export interface IRollbitSocketItem {
+  ref: string;
+  price: number;
+  markup: number;
+  state: string;
+  items: IRollbitItem[];
 }

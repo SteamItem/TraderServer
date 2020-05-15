@@ -12,7 +12,8 @@ async function findAll() {
       price: history.price,
       markup: history.markup,
       baseprice: history.baseprice,
-      created_at: history.created_at,
+      listed_at: history.listed_at,
+      gone_at: history.gone_at,
       fav: isFav
     })
   });
