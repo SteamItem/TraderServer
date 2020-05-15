@@ -28,6 +28,7 @@ export class RollbitLogger {
       that.beginMarketListen();
     } catch (e) {
       that.handleError(e.message);
+      that.startLogging();
     }
   }
 
