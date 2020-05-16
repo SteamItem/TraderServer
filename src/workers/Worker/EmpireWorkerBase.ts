@@ -21,7 +21,7 @@ export abstract class EmpireWorkerBase<II extends IEmpireInventoryItem> extends 
     return new EmpireBalanceCheckerTask(this.botParam);
   }
   getInventoryFilterer(): InventoryFiltererUnit<II> {
-    return new EmpireInventoryFilterer(this.balance, this.inventoryItems, this.wishlistItems);
+    return new EmpireInventoryFilterer(this.balance, this.inventoryItems, this.wishlistItems, this.logger);
   }
   getTokenGetter(): TokenGetterTask {
     return new EmpireTokenGetterTask(this.botParam);

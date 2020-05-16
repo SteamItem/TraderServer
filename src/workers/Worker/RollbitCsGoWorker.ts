@@ -52,7 +52,7 @@ export class RollbitCsGoWorker extends WorkerBase<IRollbitInventoryItem> {
 
   private async inventoryOperation(item: IRollbitSocketItem) {
     try {
-      var inventoryFilterer = new RollbitInventoryFilterer(this.balance, [item], this.wishlistItems);
+      var inventoryFilterer = new RollbitInventoryFilterer(this.balance, [item], this.wishlistItems, this.logger);
       var currentTask = inventoryFilterer.taskName;
       inventoryFilterer.filter();
       this.handleFilterResult(inventoryFilterer);
