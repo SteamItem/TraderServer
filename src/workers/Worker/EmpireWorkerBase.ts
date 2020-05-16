@@ -9,9 +9,14 @@ import { TokenGetterTask } from '../TokenGetter/TokenGetterTask';
 import { EmpireTokenGetterTask } from '../TokenGetter/EmpireTokenGetterTask';
 import { WithdrawMakerTask } from '../WithdrawMaker/WithdrawMakerTask';
 import { EmpireWithdrawMakerTask } from '../WithdrawMaker/EmpireWithdrawMakerTask';
+import { InventoryGetterTask } from '../InventoryGetter/InventoryGetterTask';
 export abstract class EmpireWorkerBase<II extends IEmpireInventoryItem> extends WorkerBase<II> {
   protected token: string;
-  inventoryOperationCronExpression = '* * * * * *';
+  protected inventoryItems: II[] = [];
+  protected balance: number;
+  protected itemsToBuy: II[] = [];
+  abstract getInventoryGetter(): InventoryGetterTask<II>;
+  private scheduledTasks: cron.ScheduledTask[] = [];
   getBalanceChecker(): BalanceCheckerTask {
     return new EmpireBalanceCheckerTask(this.botParam);
   }
@@ -24,20 +29,58 @@ export abstract class EmpireWorkerBase<II extends IEmpireInventoryItem> extends 
   getWithdrawMaker(): WithdrawMakerTask<II> {
     return new EmpireWithdrawMakerTask(this.token, this.botParam, this.itemsToBuy, this.logger);
   }
-  async schedule() {
-    this.databaseScheduler();
-    this.tokenScheduler();
-    this.balanceChecker();
-    this.inventoryScheduler();
+  start() {
+    var tokenScheduler = this.tokenScheduler();
+    var balanceChecker = this.balanceChecker();
+    var inventoryScheduler = this.inventoryScheduler();
+    this.scheduledTasks = [tokenScheduler, balanceChecker, inventoryScheduler];
+    this.scheduledTasks.forEach(st => { st.start(); });
+  }
+  stop() {
+    this.scheduledTasks.forEach(st => { st.stop(); });
   }
   private tokenScheduler() {
     return cron.schedule('* * * * * *', async () => {
-      if (!this.working) return;
       try {
         var tokenGetter = this.getTokenGetter();
         var currentTask = tokenGetter.taskName;
         await tokenGetter.work();
         this.token = tokenGetter.token;
+      } catch (e) {
+        this.handleError(currentTask, e.message);
+      }
+    });
+  }
+
+  balanceChecker() {
+    return cron.schedule('* * * * * *', async () => {
+      try {
+        var balanceChecker = this.getBalanceChecker();
+        var currentTask = balanceChecker.taskName;
+        await balanceChecker.work();
+        this.balance = balanceChecker.balance;
+      } catch (e) {
+        this.handleError(currentTask, e.message);
+      }
+    });
+  }
+
+  inventoryScheduler() {
+    return cron.schedule('* * * * * *', async () => {
+      try {
+        var inventoryGetter = this.getInventoryGetter();
+        var currentTask = inventoryGetter.taskName;
+        await inventoryGetter.work();
+        this.inventoryItems = inventoryGetter.inventoryItems;
+        var inventoryFilterer = this.getInventoryFilterer();
+        currentTask = inventoryFilterer.taskName;
+        inventoryFilterer.filter();
+        this.handleFilterResult(inventoryFilterer);
+        this.itemsToBuy = inventoryFilterer.itemsToBuy;
+        var withdrawMaker = this.getWithdrawMaker();
+        currentTask = withdrawMaker.taskName;
+        await withdrawMaker.work();
+        this.handleWithdrawResult(withdrawMaker);
       } catch (e) {
         this.handleError(currentTask, e.message);
       }

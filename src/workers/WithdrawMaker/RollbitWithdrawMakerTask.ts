@@ -5,7 +5,7 @@ import { RollbitApi } from '../../controllers/api/rollbit';
 import _ = require('lodash');
 import { LoggerBase } from '../Logger/LoggerBase';
 import { IWithdrawMakerResult, IWithdrawResult } from '../../interfaces/withdraw';
-export class RollbitCsGoWithdrawMakerTask<II extends IRollbitInventoryItem> extends WithdrawMakerTask<II> {
+export class RollbitWithdrawMakerTask<II extends IRollbitInventoryItem> extends WithdrawMakerTask<II> {
   constructor(botParam: IBotParam, itemsToBuy: II[], logger: LoggerBase) {
     super(itemsToBuy, logger);
     this.botParam = botParam;

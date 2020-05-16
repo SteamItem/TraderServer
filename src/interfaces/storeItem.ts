@@ -58,10 +58,6 @@ export interface IRollbitInventoryItems {
   items: IRollbitInventoryItem[];
 }
 
-export interface IRollbitSocketItem {
-  ref: string;
-  price: number;
-  markup: number;
+export interface IRollbitSocketItem extends IRollbitInventoryItem {
   state: string;
-  items: IRollbitItem[];
 }

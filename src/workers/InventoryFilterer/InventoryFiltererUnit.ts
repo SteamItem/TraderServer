@@ -12,6 +12,9 @@ export abstract class InventoryFiltererUnit<II> extends WorkerUnit {
   }
   private $balance: number;
   private $inventoryItems: II[];
+  public get inventoryItems(): II[] {
+    return this.$inventoryItems;
+  }
   private $wishlistItems: IWishlistItem[];
   private $wishlistFilteredItems: II[];
   public get wishlistFilteredItems(): II[] {
@@ -77,5 +80,7 @@ export abstract class InventoryFiltererUnit<II> extends WorkerUnit {
 
   abstract getItemName(inventoryItem: II): string;
   abstract getItemPrice(inventoryItem: II): number;
-  abstract isNewItemSuitable(inventoryItemToAdd: II, currentlySelectedInventoryItems: II[]): boolean;
+  isNewItemSuitable(inventoryItemToAdd: II, currentlySelectedInventoryItems: II[]): boolean {
+    return true;
+  }
 }

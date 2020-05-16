@@ -1,36 +1,68 @@
-import { IRollbitInventoryItem } from '../../interfaces/storeItem';
+import { IRollbitInventoryItem, IRollbitSocketItem } from '../../interfaces/storeItem';
 import { EnumBot } from '../../helpers/enum';
 import { WorkerBase } from "./WorkerBase";
 import { DatabaseSelectorTask } from '../DatabaseSelector/DatabaseSelectorTask';
 import { RollbitCsGoDatabaseSelector } from '../DatabaseSelector/RollbitCsGoDatabaseSelector';
-import { BalanceCheckerTask } from '../BalanceChecker/BalanceCheckerTask';
-import { InventoryGetterTask } from '../InventoryGetter/InventoryGetterTask';
-import { RollbitCsGoInventoryGetterTask } from '../InventoryGetter/RollbitCsGoInventoryGetterTask';
-import { InventoryFiltererUnit } from '../InventoryFilterer/InventoryFiltererUnit';
 import { RollbitInventoryFilterer } from '../InventoryFilterer/RollbitInventoryFilterer';
-import { WithdrawMakerTask } from '../WithdrawMaker/WithdrawMakerTask';
-import { RollbitCsGoWithdrawMakerTask } from '../WithdrawMaker/RollbitCsGoWithdrawMakerTask';
-import { RollbitBalanceCheckerTask } from '../BalanceChecker/RollbitBalanceCheckerTask';
+import { RollbitWithdrawMakerTask } from '../WithdrawMaker/RollbitWithdrawMakerTask';
+import { RollbitSocket } from '../../controllers/api/rollbitSocket';
+import { IRollbitSocketBalance } from '../../interfaces/profile';
+import { IBotParam } from '../../models/botParam';
 export class RollbitCsGoWorker extends WorkerBase<IRollbitInventoryItem> {
-  inventoryOperationCronExpression = '* * * * * *';
+  private socket: RollbitSocket;
+  private syncTimer: NodeJS.Timeout;
+  private balance: number;
+  initialize() {
+    this.socket = new RollbitSocket();
+    this.prepareSocketListeners();
+  }
+  start(botParam: IBotParam): void {
+    var that = this;
+    that.socket.connect(botParam.cookie);
+    that.syncTimer = setInterval(function () {
+      that.socket.send('sync', '', botParam.cookie, true);
+    }, 2500);
+  }
+  stop(): void {
+    this.socket.disconnect();
+    clearInterval(this.syncTimer);
+  }
+  private prepareSocketListeners() {
+    this.prepareSocketBalanceListener();
+    this.prepareSocketMarketListener();
+  }
+  private prepareSocketBalanceListener() {
+    var that = this;
+    that.socket.listen('balance', (socketBalance: IRollbitSocketBalance) => {
+      that.balance = socketBalance.balance / 100;
+    });
+  }
+  private prepareSocketMarketListener() {
+    var that = this;
+    that.socket.listen('steam/market', async (item: IRollbitSocketItem) => {
+      if (item.state === 'listed') {
+        await that.inventoryOperation(item);
+      }
+    })
+  }
+
   getDatabaseSelector(): DatabaseSelectorTask {
     return new RollbitCsGoDatabaseSelector(EnumBot.RollbitCsGo);
   }
-  getBalanceChecker(): BalanceCheckerTask {
-    return new RollbitBalanceCheckerTask(this.botParam);
-  }
-  getInventoryGetter(): InventoryGetterTask<IRollbitInventoryItem> {
-    return new RollbitCsGoInventoryGetterTask(this.botParam);
-  }
-  getInventoryFilterer(): InventoryFiltererUnit<IRollbitInventoryItem> {
-    return new RollbitInventoryFilterer(this.balance, this.inventoryItems, this.wishlistItems);
-  }
-  getWithdrawMaker(): WithdrawMakerTask<IRollbitInventoryItem> {
-    return new RollbitCsGoWithdrawMakerTask(this.botParam, this.itemsToBuy, this.logger);
-  }
-  async schedule() {
-    this.databaseScheduler();
-    this.balanceChecker();
-    this.inventoryScheduler();
+
+  private async inventoryOperation(item: IRollbitSocketItem) {
+    try {
+      var inventoryFilterer = new RollbitInventoryFilterer(this.balance, [item], this.wishlistItems);
+      var currentTask = inventoryFilterer.taskName;
+      inventoryFilterer.filter();
+      this.handleFilterResult(inventoryFilterer);
+
+      var withdrawMaker = new RollbitWithdrawMakerTask(this.botParam, inventoryFilterer.itemsToBuy, this.logger);
+      currentTask = withdrawMaker.taskName;
+      await withdrawMaker.work();
+      this.handleWithdrawResult(withdrawMaker);
+    } catch (e) {
+      this.handleError(currentTask, e.message);
+    }
   }
 }

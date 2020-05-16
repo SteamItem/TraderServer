@@ -64,6 +64,11 @@ export class RollbitSocket {
       that.connected = false;
     }
   }
+  public disconnect() {
+    this.connected = false;
+    this.socket.terminate();
+    this.socket = null;
+  }
   public send(ch: string, message: string, cookie: string, immediate = false) {
     if (this.socket == null) this.connect(cookie);
     var id = Math.random().toString(36);

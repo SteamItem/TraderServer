@@ -76,3 +76,11 @@ export interface IEmpireProfile {
   steam_inventory_url: string;
   steam_api_key?: any;
 }
+
+export interface IRollbitSocketBalance {
+  balance: number;
+  spent: number;
+  deposited: number;
+  withdrawn?: number;
+  type?: string;
+}
