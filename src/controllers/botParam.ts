@@ -1,6 +1,9 @@
 import pm2 = require('pm2');
 import BotParam = require('../models/botParam');
 import { EnumBot } from '../helpers/enum';
+import { ISteamLogin } from '../interfaces/steam';
+import rollbitPuppet from './puppet/rollbit'
+import { Cookie } from 'puppeteer';
 
 async function findOne(id: EnumBot) {
   var botParam = await BotParam.default.findOne({ id }).exec();
@@ -15,7 +18,7 @@ async function update(id: number, worker: boolean, code: string, cookie: string)
   return BotParam.default.findOneAndUpdate({ id }, { worker, code, cookie });
 }
 
-function manageBoot(id: EnumBot, worker: boolean) {
+function manageBot(id: EnumBot, worker: boolean) {
   if (worker) {
     startBot(id);
   } else {
@@ -65,7 +68,23 @@ async function startBot(id: number) {
   });
 }
 
+async function updateCookie(id: EnumBot, steamLogin: ISteamLogin) {
+  var cookies: Cookie[];
+  switch (id) {
+    case EnumBot.EmpireInstant:
+    case EnumBot.EmpireDota:
+      throw new Error("Empire cookie update is not implemented");
+    case EnumBot.RollbitCsGo:
+      cookies = await rollbitPuppet.login(steamLogin);
+      break;
+    default: throw new Error("Unknown bot id");
+  }
+  var cookie = cookies.map(c => `${c.name}=${c.value}`).join(';');
+  return BotParam.default.findOneAndUpdate({ id }, { cookie });
+}
+
 export = {
   findOne,
-  update
+  update,
+  updateCookie
 }

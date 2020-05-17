@@ -16,4 +16,9 @@ module.exports = (app: express.Express) => {
     var item = await paramController.update(id, req.body.worker, req.body.code, req.body.cookie);
     res.send(item);
   });
+  app.post('/botParams/updateCookie/:id', cors(corsOptions), async (req, res) => {
+    var id = parseInt(req.params._id);
+    var item = await paramController.updateCookie(id, req.body);
+    res.send(item);
+  });
 }
