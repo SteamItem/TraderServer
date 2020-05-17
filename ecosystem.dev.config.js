@@ -11,7 +11,7 @@ module.exports = {
       TELEGRAM_CHAT_ID: "-367623724"
     }
   }, {
-    name: "instant",
+    name: "instantWorker",
     script: "./dist/instantWorker.js",
     time: true,
     env: {
@@ -21,7 +21,7 @@ module.exports = {
       TELEGRAM_CHAT_ID: "-367623724"
     }
   }, {
-    name: "dota",
+    name: "dotaWorker",
     script: "./dist/dotaWorker.js",
     time: true,
     env: {
@@ -31,7 +31,7 @@ module.exports = {
       TELEGRAM_CHAT_ID: "-367623724"
     }
   }, {
-    name: "rollbit",
+    name: "rollbitWorker",
     script: "./dist/rollbitWorker.js",
     time: true,
     env: {

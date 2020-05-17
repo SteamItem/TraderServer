@@ -1,6 +1,6 @@
 module.exports = {
   apps : [{
-    name: "Server",
+    name: "server",
     script: "./dist/server.js",
     time: true,
     env: {
@@ -11,7 +11,7 @@ module.exports = {
       TELEGRAM_CHAT_ID: "-479108586"
     }
   }, {
-    name: "dota",
+    name: "dotaWorker",
     script: "./dist/dotaWorker.js",
     time: true,
     env: {
