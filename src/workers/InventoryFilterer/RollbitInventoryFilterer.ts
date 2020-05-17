@@ -7,4 +7,7 @@ export class RollbitInventoryFilterer extends InventoryFiltererUnit<IRollbitInve
   getItemPrice(inventoryItem: IRollbitInventoryItem) {
     return inventoryItem.price;
   }
+  isNewItemSuitable(inventoryItemToAdd: IRollbitInventoryItem, currentlySelectedInventoryItems: IRollbitInventoryItem[]): boolean {
+    return inventoryItemToAdd.markup === 0;
+  }
 }
