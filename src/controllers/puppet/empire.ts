@@ -4,7 +4,7 @@ import steam from './steam';
 import { ISteamLogin } from '../../interfaces/steam';
 
 async function login(steamLogin: ISteamLogin) {
-  const browser = await puppeteer.launch();
+  const browser = await puppeteer.launch({ args: ['--no-sandbox'] });
   const mainPage = await browser.newPage();
   await mainPage.goto('https://csgoempire.gg');
   await mainPage.click('.user-action');
