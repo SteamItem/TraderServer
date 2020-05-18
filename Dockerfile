@@ -1,4 +1,4 @@
-FROM node:12-slim
+FROM library/node:13.4.0-alpine
 RUN apk update && apk upgrade && apk add --no-cache git
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
