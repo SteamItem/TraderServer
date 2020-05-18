@@ -7,7 +7,8 @@ RUN apk add --no-cache \
   harfbuzz \
   ca-certificates \
   ttf-freefont \
-  nodejs
+  nodejs \
+  npm
 
 RUN apk update && apk upgrade && apk add --no-cache git
 RUN mkdir -p /usr/src/app
