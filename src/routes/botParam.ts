@@ -13,12 +13,12 @@ module.exports = (app: express.Express) => {
   });
   app.put('/botParams/:_id', cors(corsOptions), async (req, res) => {
     var id = parseInt(req.params._id);
-    var item = await paramController.update(id, req.body.worker, req.body.code, req.body.cookie);
+    var item = await paramController.update(id, req.body.worker, req.body.code);
     res.send(item);
   });
-  app.post('/botParams/updateCookie/:id', cors(corsOptions), async (req, res) => {
-    var id = parseInt(req.params._id);
-    var item = await paramController.updateCookie(id, req.body);
+  app.post('/botParams/login/:id', cors(corsOptions), async (req, res) => {
+    var id = parseInt(req.params.id);
+    var item = await paramController.login(id, req.body);
     res.send(item);
   });
 }
