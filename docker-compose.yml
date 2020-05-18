@@ -1,0 +1,10 @@
+version: '3'
+services:
+  web:
+    build: .
+    container_name: trader-bot-api
+    expose:
+      - "3000"
+    ports:
+      - "3000:80"
+    command: npm run dev
