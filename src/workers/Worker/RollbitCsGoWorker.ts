@@ -1,3 +1,4 @@
+import cron = require('node-cron');
 import { IRollbitInventoryItem, IRollbitSocketItem } from '../../interfaces/storeItem';
 import { EnumBot } from '../../helpers/enum';
 import { WorkerBase } from "./WorkerBase";
@@ -11,6 +12,7 @@ import { IBotParam } from '../../models/botParam';
 export class RollbitCsGoWorker extends WorkerBase<IRollbitInventoryItem> {
   private socket: RollbitSocket;
   private syncTimer: NodeJS.Timeout;
+  private scheduledTasks: cron.ScheduledTask[] = [];
   private balance: number;
   initialize() {
     this.socket = new RollbitSocket();
@@ -20,12 +22,28 @@ export class RollbitCsGoWorker extends WorkerBase<IRollbitInventoryItem> {
     var that = this;
     that.socket.connect(botParam.cookie);
     that.syncTimer = setInterval(function () {
+      console.log("sync sent");
       that.socket.send('sync', '', botParam.cookie, true);
     }, 2500);
+    var socketRestartScheduler = this.socketRestartScheduler();
+    this.scheduledTasks = [socketRestartScheduler]
   }
   stop(): void {
     this.socket.disconnect();
     clearInterval(this.syncTimer);
+    this.scheduledTasks.forEach(st => { st.stop(); });
+  }
+  private socketRestartScheduler() {
+    return cron.schedule('* * * * *', async () => {
+      try {
+        var currentTask = "Socket Restarter";
+        this.socket.disconnect();
+        await this.socket.connect(this.botParam.cookie);
+        this.logger.log("Socket restarted")
+      } catch (e) {
+        this.handleError(currentTask, e.message);
+      }
+    });
   }
   private prepareSocketListeners() {
     this.prepareSocketBalanceListener();
@@ -35,11 +53,13 @@ export class RollbitCsGoWorker extends WorkerBase<IRollbitInventoryItem> {
     var that = this;
     that.socket.listen('balance', (socketBalance: IRollbitSocketBalance) => {
       that.balance = socketBalance.balance / 100;
+      console.log("Balance: " + that.balance);
     });
   }
   private prepareSocketMarketListener() {
     var that = this;
     that.socket.listen('steam/market', async (item: IRollbitSocketItem) => {
+      console.log("new market item" + JSON.stringify(item));
       if (item.state === 'listed') {
         await that.inventoryOperation(item);
       }
