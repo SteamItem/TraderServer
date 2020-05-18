@@ -18,7 +18,7 @@
     "@types/mongoose": "^5.7.9",
     "@types/node-cron": "^2.0.3",
     "@types/node-telegram-bot-api": "^0.40.2",
-    "@types/puppeteer": "^2.1.0",
+    "@types/puppeteer": "^1.19.0",
     "axios": "^0.19.2",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
@@ -28,7 +28,7 @@
     "node-cron": "^2.0.3",
     "node-telegram-bot-api": "^0.40.0",
     "pm2": "^4.2.3",
-    "puppeteer": "^3.0.4",
+    "puppeteer": "^1.19.0",
     "ts-node": "^8.10.1",
     "tslint": "^6.1.2",
     "typescript": "^3.8.3"

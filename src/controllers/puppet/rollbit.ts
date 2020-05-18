@@ -4,7 +4,12 @@ import steam from './steam';
 import { ISteamLogin } from '../../interfaces/steam';
 
 async function login(steamLogin: ISteamLogin) {
-  const browser = await puppeteer.launch({ args: ['--no-sandbox'] });
+  const browser = await puppeteer.launch({
+    args: [
+      '--no-sandbox',
+      '--disable-setuid-sandbox'
+    ]
+  });
   const mainPage = await browser.newPage();
   await mainPage.goto('https://www.rollbit.com');
   await mainPage.click('.bg-green');
