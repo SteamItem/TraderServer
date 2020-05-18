@@ -1,15 +1,4 @@
-FROM alpine:edge
-RUN apk add --no-cache \
-  chromium \
-  nss \
-  freetype \
-  freetype-dev \
-  harfbuzz \
-  ca-certificates \
-  ttf-freefont \
-  nodejs \
-  npm
-
+FROM node:12-slim
 RUN apk update && apk upgrade && apk add --no-cache git
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
