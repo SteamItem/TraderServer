@@ -34,7 +34,7 @@ export class RollbitCsGoWorker extends WorkerBase<IRollbitInventoryItem> {
     this.scheduledTasks.forEach(st => { st.stop(); });
   }
   private socketRestartScheduler() {
-    return cron.schedule('* * * * *', async () => {
+    return cron.schedule('0 * * * *', async () => {
       try {
         var currentTask = "Socket Restarter";
         this.socket.disconnect();
