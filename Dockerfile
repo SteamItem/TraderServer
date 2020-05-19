@@ -11,7 +11,7 @@ dpkg -i dumb-init_*.deb && rm -f dumb-init_*.deb && \
 apt-get clean && apt-get autoremove -y && rm -rf /var/lib/apt/lists/*
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
-COPY ./package.json /usr/src/app/
+COPY ./package*.json /usr/src/app/
 RUN npm ci
 COPY ./ /usr/src/app
 ENV NODE_ENV production
