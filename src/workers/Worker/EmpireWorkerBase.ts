@@ -17,6 +17,7 @@ export abstract class EmpireWorkerBase<II extends IEmpireInventoryItem> extends 
   protected itemsToBuy: II[] = [];
   abstract getInventoryGetter(): InventoryGetterTask<II>;
   private scheduledTasks: cron.ScheduledTask[] = [];
+  private inventoryTimer: NodeJS.Timeout;
   getBalanceChecker(): BalanceCheckerTask {
     return new EmpireBalanceCheckerTask(this.botParam);
   }
@@ -30,14 +31,18 @@ export abstract class EmpireWorkerBase<II extends IEmpireInventoryItem> extends 
     return new EmpireWithdrawMakerTask(this.token, this.botParam, this.itemsToBuy, this.logger);
   }
   start() {
-    var tokenScheduler = this.tokenScheduler();
-    var balanceChecker = this.balanceChecker();
-    var inventoryScheduler = this.inventoryScheduler();
-    this.scheduledTasks = [tokenScheduler, balanceChecker, inventoryScheduler];
-    this.scheduledTasks.forEach(st => { st.start(); });
+    var that = this;
+    var tokenScheduler = that.tokenScheduler();
+    var balanceChecker = that.balanceChecker();
+    that.scheduledTasks = [tokenScheduler, balanceChecker];
+    that.scheduledTasks.forEach(st => { st.start(); });
+    that.inventoryTimer = setInterval(function () {
+      that.inventoryTask();
+    }, 250);
   }
   stop() {
     this.scheduledTasks.forEach(st => { st.stop(); });
+    clearInterval(this.inventoryTimer);
   }
   private tokenScheduler() {
     return cron.schedule('* * * * * *', async () => {
@@ -65,25 +70,23 @@ export abstract class EmpireWorkerBase<II extends IEmpireInventoryItem> extends 
     });
   }
 
-  inventoryScheduler() {
-    return cron.schedule('* * * * * *', async () => {
-      try {
-        var inventoryGetter = this.getInventoryGetter();
-        var currentTask = inventoryGetter.taskName;
-        await inventoryGetter.work();
-        this.inventoryItems = inventoryGetter.inventoryItems;
-        var inventoryFilterer = this.getInventoryFilterer();
-        currentTask = inventoryFilterer.taskName;
-        inventoryFilterer.filter();
-        this.handleFilterResult(inventoryFilterer);
-        this.itemsToBuy = inventoryFilterer.itemsToBuy;
-        var withdrawMaker = this.getWithdrawMaker();
-        currentTask = withdrawMaker.taskName;
-        await withdrawMaker.work();
-        this.handleWithdrawResult(withdrawMaker);
-      } catch (e) {
-        this.handleError(currentTask, e.message);
-      }
-    });
+  private async inventoryTask() {
+    try {
+      var inventoryGetter = this.getInventoryGetter();
+      var currentTask = inventoryGetter.taskName;
+      await inventoryGetter.work();
+      this.inventoryItems = inventoryGetter.inventoryItems;
+      var inventoryFilterer = this.getInventoryFilterer();
+      currentTask = inventoryFilterer.taskName;
+      inventoryFilterer.filter();
+      this.handleFilterResult(inventoryFilterer);
+      this.itemsToBuy = inventoryFilterer.itemsToBuy;
+      var withdrawMaker = this.getWithdrawMaker();
+      currentTask = withdrawMaker.taskName;
+      await withdrawMaker.work();
+      this.handleWithdrawResult(withdrawMaker);
+    } catch (e) {
+      this.handleError(currentTask, e.message);
+    }
   }
 }
