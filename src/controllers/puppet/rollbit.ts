@@ -2,6 +2,7 @@ import puppeteer = require('puppeteer');
 import helpers from '../../helpers';
 import steam from './steam';
 import { ISteamLogin } from '../../interfaces/steam';
+import { Constants } from '../../helpers/constant';
 
 async function login(steamLogin: ISteamLogin) {
   const browser = await puppeteer.launch({
@@ -11,6 +12,7 @@ async function login(steamLogin: ISteamLogin) {
     ]
   });
   const mainPage = await browser.newPage();
+  mainPage.setUserAgent(Constants.RollbitUserAgent);
   await mainPage.goto('https://www.rollbit.com');
   await mainPage.click('.bg-green');
 

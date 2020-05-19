@@ -1,15 +1,14 @@
 import * as WebSocket from "ws";
+import { Constants } from "../../helpers/constant";
 
 export class RollbitSocket {
   private channels: Map<any, any>;
   private socket: WebSocket;
-  private connected: boolean;
   private queue: any[];
 
   constructor() {
     this.channels = new Map();
     this.socket = null;
-    this.connected = false;
     this.queue = [];
   }
 
@@ -38,7 +37,7 @@ export class RollbitSocket {
         'Connection': 'Upgrade',
         'Pragma': 'no-cache',
         'Cache-Control': 'no-cache',
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36',
+        'User-Agent': Constants.RollbitUserAgent,
         'Upgrade': 'websocket',
         'Origin': 'https://www.rollbit.com',
         'Sec-WebSocket-Version': '13',
@@ -55,17 +54,12 @@ export class RollbitSocket {
         listeners.forEach(l => l(message));
     }
     that.socket.onopen = () => {
-      that.connected = true;
       while (that.queue.length) {
         that.socket.send(that.queue.shift());
       }
     }
-    that.socket.onclose = () => {
-      that.connected = false;
-    }
   }
   public disconnect() {
-    this.connected = false;
     this.socket.terminate();
     this.socket = null;
   }

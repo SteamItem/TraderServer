@@ -2,6 +2,7 @@ import puppeteer = require('puppeteer');
 import helpers from '../../helpers';
 import steam from './steam';
 import { ISteamLogin } from '../../interfaces/steam';
+import { Constants } from '../../helpers/constant';
 
 async function login(steamLogin: ISteamLogin) {
   const browser = await puppeteer.launch({
@@ -11,6 +12,7 @@ async function login(steamLogin: ISteamLogin) {
     ]
   });
   const mainPage = await browser.newPage();
+  mainPage.setUserAgent(Constants.EmpireUserAgent);
   await mainPage.goto('https://csgoempire.gg');
   await mainPage.click('.user-action');
 

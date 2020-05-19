@@ -1,6 +1,7 @@
 import { AxiosRequestConfig } from 'axios';
 import { IRollbitInventoryItems } from '../../interfaces/storeItem';
 import { ApiBase } from './apiBase';
+import { Constants } from '../../helpers/constant';
 
 export class RollbitApi extends ApiBase {
   private baseUrl = 'https://api.rollbit.com/steam';
@@ -10,7 +11,7 @@ export class RollbitApi extends ApiBase {
       headers: {
         'Cookie': cookie,
         'Host': 'api.rollbit.com',
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.129 Safari/537.36'
+        'User-Agent': Constants.RollbitUserAgent
       }
     };
 
@@ -34,7 +35,7 @@ export class RollbitApi extends ApiBase {
         'Sec-Fetch-Dest': 'empty',
         'Sec-Fetch-Mode': 'cors',
         'Sec-Fetch-Site': 'same-site',
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36'
+        'User-Agent': Constants.RollbitUserAgent
       },
       timeout: 20000,
       maxRedirects: 4

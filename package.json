@@ -19,6 +19,7 @@
     "@types/node-cron": "^2.0.3",
     "@types/node-telegram-bot-api": "^0.40.2",
     "@types/puppeteer": "^1.19.0",
+    "@types/ws": "^7.2.4",
     "axios": "^0.19.2",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",

@@ -2,6 +2,7 @@ import { AxiosRequestConfig } from 'axios';
 import { IEmpireProfile } from '../../interfaces/profile';
 import { IEmpireInstantInventoryItem, IEmpireDotaInventoryItem } from '../../interfaces/storeItem';
 import { ApiBase } from './apiBase';
+import { Constants } from '../../helpers/constant';
 
 export class CSGOEmpireApi extends ApiBase {
   private baseUrl = 'https://csgoempire.gg/api/v2';
@@ -57,7 +58,7 @@ export class CSGOEmpireApi extends ApiBase {
         'Sec-Fetch-Site': 'same-origin',
         'Sec-Fetch-Mode': 'cors',
         'Sec-Fetch-Dest': 'empty',
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.129 Safari/537.36'
+        'User-Agent': Constants.EmpireUserAgent
       },
       withCredentials: true,
       timeout: 20000,
