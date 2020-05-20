@@ -14,7 +14,8 @@ export function siteText(site: EnumSite): string {
 export enum EnumBot {
   EmpireInstant = 1,
   EmpireDota = 2,
-  RollbitCsGo = 3
+  RollbitCsGo = 3,
+  RollbitCsGoLogger = 4
 }
 
 export function getBotText(bot: EnumBot): string {

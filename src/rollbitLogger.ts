@@ -1,7 +1,9 @@
 import mongoHelper = require('./helpers/mongo');
-import { RollbitLogger } from './controllers/rollbitLogger';
+import { RollbitCsGoLogger } from "./workers/Worker/RollbitCsGoLogger";
+import { TelegramLogger } from './workers/Logger/TelegramLogger';
 
 mongoHelper.connect();
 
-var logger = new RollbitLogger();
-logger.startLogging();
+var logger = new TelegramLogger();
+var worker = new RollbitCsGoLogger(logger);
+worker.schedule();
