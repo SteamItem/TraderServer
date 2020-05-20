@@ -14,7 +14,7 @@ export class RollbitWithdrawMakerTask<II extends IRollbitInventoryItem> extends 
 
   async withdrawAll(): Promise<IWithdrawMakerResult> {
     var promises: Promise<IWithdrawResult>[] = [];
-    this.inventoryItemsToBuy.forEach(ib => promises.push(this.withdraw(ib.ref)));
+    this.inventoryItemsToBuy.forEach(ib => promises.push(this.withdraw(ib)));
     var results = await Promise.all(promises);
 
     var successWithdraws = _.filter(results, r => r.status === true);
@@ -26,10 +26,12 @@ export class RollbitWithdrawMakerTask<II extends IRollbitInventoryItem> extends 
     return { successWithdrawCount, successWithdrawItemCount, failWithdrawCount, failWithdrawItemCount };
   }
 
-  private async withdraw(ref: string): Promise<IWithdrawResult> {
+  private async withdraw(ib: IRollbitInventoryItem): Promise<IWithdrawResult> {
     try {
       var api = new RollbitApi();
-      await api.withdraw(this.botParam.cookie, [ref]);
+      await api.withdraw(this.botParam.cookie, [ib.ref]);
+      var itemName = ib.items.map(ii => ii.name).join("#");
+      this.logger.handleMessage(this.botParam.id, this.taskName, `${itemName} withdrawn for ${ib.price}`);
       return { status: true, count: 1};
     } catch (e) {
       this.logger.handleError(this.botParam.id, this.taskName, e.message);
