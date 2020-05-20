@@ -29,6 +29,7 @@ function getBotFileName(id: EnumBot) {
     case EnumBot.EmpireInstant: return "instantWorker";
     case EnumBot.EmpireDota: return "dotaWorker";
     case EnumBot.RollbitCsGo: return "rollbitWorker";
+    case EnumBot.RollbitCsGoLogger: return "rollbitLogger";
     default: throw new Error("Bot not found");
   }
 }
@@ -74,6 +75,7 @@ async function login(id: EnumBot, steamLogin: ISteamLogin) {
       cookies = await empirePuppet.login(steamLogin);
       break;
     case EnumBot.RollbitCsGo:
+    case EnumBot.RollbitCsGoLogger:
       cookies = await rollbitPuppet.login(steamLogin);
       break;
     default: throw new Error("Unknown bot id");

@@ -23,6 +23,7 @@ export function getBotText(bot: EnumBot): string {
     case EnumBot.EmpireInstant: return "Instant";
     case EnumBot.EmpireDota: return "Dota";
     case EnumBot.RollbitCsGo: return "Rollbit";
+    case EnumBot.RollbitCsGoLogger: return "Rollbit Logger";
     default: throw new Error("Bot not found");
   }
 }
