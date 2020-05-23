@@ -2,8 +2,9 @@ import RollbitHistory = require('../models/rollbitHistory');
 import RollbitFav = require('../models/rollbitFav');
 
 async function findAll() {
-  var histories = await RollbitHistory.default.find();
-  var favs = await RollbitFav.default.find();
+  // TODO: Parallel
+  var histories = await RollbitHistory.default.find().exec();
+  var favs = await RollbitFav.default.find().exec();
   var returnItems: any[] = [];
   histories.forEach(history => {
     var isFav = favs.filter(f => f.name === history.name).length > 0;

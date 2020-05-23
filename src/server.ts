@@ -19,6 +19,7 @@ require('./routes/botParam')(app);
 require('./routes/telegram')(app);
 require('./routes/rollbitHistory')(app);
 require('./routes/rollbitFav')(app);
+require('./routes/pricEmpire')(app);
 
 // listen for requests
 app.listen(PORT, () => {
