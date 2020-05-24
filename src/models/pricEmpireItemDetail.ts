@@ -41,6 +41,7 @@ export interface IPricEmpireItemDetail extends mongoose.Document {
   family: PricEmpireItemFamily[];
   exterior: string;
   created_at: Date;
+  api_selection_date: Date;
   prices: PricEmpireItemPrice[];
   qty: PricEmpireItemQuantity[];
 }
@@ -86,6 +87,7 @@ const PricEmpireItemDetailSchema: mongoose.Schema = new mongoose.Schema({
   family: [PricEmpireItemFamilySchema],
   exterior: String,
   created_at: Date,
+  api_selection_date: { type: Date, default: Date.now },
   prices: [PricEmpireItemPriceSchema],
   qty: [PricEmpireItemQuantitySchema]
 });

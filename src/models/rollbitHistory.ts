@@ -27,7 +27,7 @@ const RollbitHistorySchema: mongoose.Schema = new mongoose.Schema({
   skin: { type: String },
   rarity: { type: String },
   exterior: { type: String },
-  baseprice: { type: String },
+  baseprice: { type: Number },
   listed_at: { type: Date },
   gone_at: { type: Date }
 });

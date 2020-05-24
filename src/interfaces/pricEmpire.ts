@@ -12,6 +12,7 @@ export interface IPricEmpireSourceDetail {
   min_price: number
   avg_price: number;
   max_price: number;
+  update_date: Date;
 }
 
 export interface IPricEmpireSearchResponse {

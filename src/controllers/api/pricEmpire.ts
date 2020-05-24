@@ -1,7 +1,7 @@
 import { AxiosRequestConfig } from 'axios';
-import { IEmpireProfile } from '../../interfaces/profile';
 import { ApiBase } from './apiBase';
 import { IPricEmpireItem } from '../../models/pricEmpireItem';
+import { IPricEmpireItemDetail } from '../../models/pricEmpireItemDetail';
 
 export class PricEmpireApi extends ApiBase {
   private baseUrl = 'https://pricempire.com/api';
@@ -28,7 +28,7 @@ export class PricEmpireApi extends ApiBase {
         'Content-Type': 'application/json',
       }
     };
-    var result = await this.axiosInstance.get<IEmpireProfile>(`${this.baseUrl}/item/${id}`, content);
+    var result = await this.axiosInstance.get<IPricEmpireItemDetail>(`${this.baseUrl}/item/${id}`, content);
     return result.data;
   }
 }
