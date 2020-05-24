@@ -159,22 +159,46 @@ async function searchItems(pricEmpireSearchRequest: IPricEmpireSearchRequest): P
     let rollbitDetail = getRollbitDetail(rollbitHistoryResult);
     let csgoempireDetail = getCsgoEmpireDetail(empireDetail, detailEmpirePrices);
 
-    let profit: number;
+    let last_profit: number;
     if (csgoempireDetail != null && rollbitDetail != null) {
-      profit = 100 * (csgoempireDetail.avg_price - rollbitDetail.avg_price) / rollbitDetail.avg_price;
+      last_profit = 100 * (csgoempireDetail.avg_price - rollbitDetail.avg_price) / rollbitDetail.avg_price;
+    }
+
+    let converted_pricempire_last_price = r.last_price * 1.12 / 100;
+    let history_profit: number;
+    if (converted_pricempire_last_price > 0 && rollbitDetail != null) {
+      history_profit = 100 * (converted_pricempire_last_price - rollbitDetail.avg_price) / converted_pricempire_last_price;
     }
 
     let response: IPricEmpireSearchResponse = {
       id: r.id,
       name: r.market_hash_name,
       app_id: r.app_id,
-      pricempire_last_price: r.last_price,
-      profit,
+      last_price: r.last_price,
+      last_profit,
+      history_profit,
       csgoempire: csgoempireDetail,
       rollbit: rollbitDetail
     };
     return response;
   })
+
+  if (pricEmpireSearchRequest.last_profit_from) {
+    mappedResult = mappedResult.filter(r => r.last_profit >= pricEmpireSearchRequest.last_profit_from);
+  }
+
+  if (pricEmpireSearchRequest.last_profit_to) {
+    mappedResult = mappedResult.filter(r => r.last_profit <= pricEmpireSearchRequest.last_profit_to);
+  }
+
+  if (pricEmpireSearchRequest.history_profit_from) {
+    mappedResult = mappedResult.filter(r => r.history_profit >= pricEmpireSearchRequest.history_profit_from);
+  }
+
+  if (pricEmpireSearchRequest.history_profit_to) {
+    mappedResult = mappedResult.filter(r => r.history_profit <= pricEmpireSearchRequest.history_profit_to);
+  }
+
   return mappedResult;
 }
 

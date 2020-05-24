@@ -6,6 +6,10 @@ export interface IPricEmpireSearchRequest {
   skin?: string;
   family?: string;
   exterior?: string;
+  last_profit_from?: number;
+  last_profit_to?: number;
+  history_profit_from?: number;
+  history_profit_to?: number;
 }
 
 export interface IPricEmpireSourceDetail {
@@ -22,8 +26,9 @@ export interface IPricEmpireSearchResponse {
   id: number;
   name: string;
   app_id: number;
-  pricempire_last_price: number;
-  profit: number;
+  last_price: number;
+  last_profit: number;
+  history_profit: number;
   csgoempire: IPricEmpireSourceDetail;
   rollbit: IPricEmpireSourceDetail;
 }
