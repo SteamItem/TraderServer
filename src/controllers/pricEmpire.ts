@@ -146,14 +146,11 @@ async function searchItems(pricEmpireSearchRequest: IPricEmpireSearchRequest): P
     }
     let rollbitHistoryResult = _.filter(rollbitHistoryAllResult, rh => rh.name === r.market_hash_name);
 
-    if (pricEmpireSearchRequest.date_from) {
-      detailEmpirePrices = _.filter(detailEmpirePrices, dep => dep.created_at >= pricEmpireSearchRequest.date_from);
-      rollbitHistoryResult = _.filter(rollbitHistoryResult, rhr => rhr.listed_at >= pricEmpireSearchRequest.date_from || rhr.gone_at >= pricEmpireSearchRequest.date_from);
-    }
-
-    if (pricEmpireSearchRequest.date_to) {
-      detailEmpirePrices = _.filter(detailEmpirePrices, dep => dep.created_at <= pricEmpireSearchRequest.date_to);
-      rollbitHistoryResult = _.filter(rollbitHistoryResult, rhr => rhr.listed_at <= pricEmpireSearchRequest.date_to || rhr.gone_at <= pricEmpireSearchRequest.date_to);
+    if (pricEmpireSearchRequest.last_days) {
+      let date_from = new Date();
+      date_from.setDate(date_from.getDate() - pricEmpireSearchRequest.last_days);
+      detailEmpirePrices = _.filter(detailEmpirePrices, dep => dep.created_at >= date_from);
+      rollbitHistoryResult = _.filter(rollbitHistoryResult, rhr => rhr.listed_at >= date_from || rhr.gone_at >= date_from);
     }
 
     let rollbitDetail = getRollbitDetail(rollbitHistoryResult);

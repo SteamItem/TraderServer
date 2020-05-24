@@ -1,8 +1,7 @@
 export interface IPricEmpireSearchRequest {
   name?: string;
   app_id?: number;
-  date_from?: Date;
-  date_to?: Date;
+  last_days?: number;
   skin?: string;
   family?: string;
   exterior?: string;
