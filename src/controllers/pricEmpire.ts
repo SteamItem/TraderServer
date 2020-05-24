@@ -19,6 +19,18 @@ async function searchPricEmpireItems(pricEmpireSearchRequest: IPricEmpireSearchR
     itemsQuery = itemsQuery.where('app_id').equals(pricEmpireSearchRequest.app_id);
   }
 
+  if (pricEmpireSearchRequest.exterior) {
+    itemsQuery = itemsQuery.where('exterior').equals(pricEmpireSearchRequest.exterior);
+  }
+
+  if (pricEmpireSearchRequest.family) {
+    itemsQuery = itemsQuery.where('family').equals(pricEmpireSearchRequest.family);
+  }
+
+  if (pricEmpireSearchRequest.skin) {
+    itemsQuery = itemsQuery.where('skin').equals(pricEmpireSearchRequest.skin);
+  }
+
   let itemsResult = await itemsQuery.exec();
   return itemsResult;
 }

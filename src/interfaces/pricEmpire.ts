@@ -3,6 +3,9 @@ export interface IPricEmpireSearchRequest {
   app_id?: number;
   date_from?: Date;
   date_to?: Date;
+  skin?: string;
+  family?: string;
+  exterior?: string;
 }
 
 export interface IPricEmpireSourceDetail {
