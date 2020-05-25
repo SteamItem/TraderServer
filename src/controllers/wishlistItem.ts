@@ -1,11 +1,11 @@
 import WishlistItem = require('../models/wishlistItem');
 
 async function findOne(itemId: string) {
-    return WishlistItem.default.findById(itemId)
+    return await WishlistItem.default.findById(itemId).exec();
 }
 
 async function findAll() {
-    return WishlistItem.default.find({});
+    return await WishlistItem.default.find({}).exec();
 }
 
 async function create(site_id: number, appid: number, name: string, max_price: number) {
@@ -19,8 +19,9 @@ async function create(site_id: number, appid: number, name: string, max_price: n
         throw new Error("name can not be empty");
     }
 
+    await WishlistItem.default.findOneAndDelete({ site_id, appid, name });
     const wishlistItem = new WishlistItem.default( { site_id, appid, name, max_price });
-    return wishlistItem.save();
+    return await wishlistItem.save();
 }
 
 async function update(itemId: string, site_id: number, appid: number, name: string, max_price: number) {
@@ -36,11 +37,12 @@ async function update(itemId: string, site_id: number, appid: number, name: stri
     if(!name) {
         throw new Error("name can not be empty");
     }
-    return WishlistItem.default.findByIdAndUpdate(itemId, { site_id, appid, name, max_price }, {new: true});
+    await WishlistItem.default.findOneAndDelete({ site_id, appid, name });
+    return await WishlistItem.default.findByIdAndUpdate(itemId, { site_id, appid, name, max_price }, {new: true});
 }
 
 async function remove(itemId: string) {
-    return WishlistItem.default.findByIdAndRemove(itemId);
+    return await WishlistItem.default.findByIdAndRemove(itemId);
 }
 
 export = {

@@ -21,7 +21,7 @@ module.exports = {
       TELEGRAM_CHAT_ID: "-479108586"
     }
   }, {
-    name: "dotaWorker",
+    name: "rollbitLogger",
     script: "./dist/rollbitLogger.js",
     time: true,
     env: {
