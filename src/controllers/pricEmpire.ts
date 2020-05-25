@@ -156,14 +156,15 @@ async function searchItems(pricEmpireSearchRequest: IPricEmpireSearchRequest): P
     let rollbitDetail = getRollbitDetail(rollbitHistoryResult);
     let csgoempireDetail = getCsgoEmpireDetail(empireDetail, detailEmpirePrices);
 
+    let last_price = r.last_price * 1.12 / 100;
     let last_profit: number;
-    if (csgoempireDetail != null && rollbitDetail != null) {
-      last_profit = 100 * (csgoempireDetail.avg_price - rollbitDetail.avg_price) / rollbitDetail.avg_price;
+    if (last_price > 0 && rollbitDetail != null) {
+      last_profit = 100 * (last_price - rollbitDetail.avg_price) / rollbitDetail.avg_price;
     }
 
-    let converted_pricempire_last_price = r.last_price * 1.12 / 100;
     let history_profit: number;
-    if (converted_pricempire_last_price > 0 && rollbitDetail != null) {
+    if (csgoempireDetail != null && rollbitDetail != null) {
+      let converted_pricempire_last_price = csgoempireDetail.avg_price;
       history_profit = 100 * (converted_pricempire_last_price - rollbitDetail.avg_price) / converted_pricempire_last_price;
     }
 
@@ -171,7 +172,7 @@ async function searchItems(pricEmpireSearchRequest: IPricEmpireSearchRequest): P
       id: r.id,
       name: r.market_hash_name,
       app_id: r.app_id,
-      last_price: r.last_price,
+      last_price,
       last_profit,
       history_profit,
       csgoempire: csgoempireDetail,
@@ -209,13 +210,20 @@ async function refreshItems() {
 
 async function refreshItemDetails(ids: number[]) {
   if (ids.length > 10) throw new Error("Maximum 10 items could be selected.");
-  let api = new PricEmpireApi();
-  ids.forEach(async id => {
-    let itemDetail = await api.getItemDetail(id);
-    itemDetail.api_selection_date = new Date();
-    await PricEmpireItemDetail.default.findOneAndUpdate({id}, itemDetail, { upsert: true, new: true }).exec();
+  let promises = [];
+  ids.forEach(id => {
+    let promise = refreshItemDetail(id);
+    promises.push(promise);
   });
+  await Promise.all(promises);
   return "Success";
+}
+
+async function refreshItemDetail(id: number) {
+  let api = new PricEmpireApi();
+  let itemDetail = await api.getItemDetail(id);
+  itemDetail.api_selection_date = new Date();
+  await PricEmpireItemDetail.default.findOneAndUpdate({id}, itemDetail, { upsert: true, new: true }).exec();
 }
 
 export = {
