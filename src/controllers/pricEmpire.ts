@@ -31,6 +31,10 @@ async function searchPricEmpireItems(pricEmpireSearchRequest: IPricEmpireSearchR
     itemsQuery = itemsQuery.where('skin').equals(pricEmpireSearchRequest.skin);
   }
 
+  if (pricEmpireSearchRequest.ignore_zero_price) {
+    itemsQuery = itemsQuery.where('last_price').gt(0);
+  }
+
   let itemsResult = await itemsQuery.exec();
   return itemsResult;
 }

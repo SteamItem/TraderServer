@@ -9,6 +9,7 @@ export interface IPricEmpireSearchRequest {
   last_profit_to?: number;
   history_profit_from?: number;
   history_profit_to?: number;
+  ignore_zero_price?: boolean;
 }
 
 export interface IPricEmpireSourceDetail {
