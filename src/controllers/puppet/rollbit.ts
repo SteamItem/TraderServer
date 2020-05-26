@@ -21,6 +21,7 @@ async function login(steamLogin: ISteamLogin) {
 
   var postPages = await browser.pages();
   var steamLoginPage = postPages[postPages.length - 1];
+  steamLoginPage.setUserAgent(Constants.RollbitUserAgent);
 
   await steam.login(steamLoginPage, steamLogin);
 
