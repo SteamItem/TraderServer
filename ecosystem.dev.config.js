@@ -48,6 +48,7 @@ module.exports = {
     env: {
       NODE_ENV: "development",
       DB_URL: "mongodb://admin:1234qwer@ds161148.mlab.com:61148/dota",
+      RDB_URL: "postgres://postgres:42786765@192.168.1.8:5432/Trader",
       TELEGRAM_TOKEN: "1271936615:AAH-ZQajPguxAMBp2j6vvLZfe0vN7xeoo1E",
       TELEGRAM_CHAT_ID: "-367623724"
     }
