@@ -6,8 +6,9 @@ import { DatabaseSelectorTask } from '../DatabaseSelector/DatabaseSelectorTask';
 import { RollbitCsGoDatabaseSelector } from '../DatabaseSelector/RollbitCsGoDatabaseSelector';
 import { RollbitSocket } from '../../controllers/api/rollbitSocket';
 import { IBotParam } from '../../models/botParam';
-import RollbitHistory, { IRollbitHistory } from '../../models/rollbitHistory';
+import { IRollbitHistory } from '../../models/rollbitHistory';
 import _ = require('lodash');
+import db = require('../../db');
 export class RollbitCsGoLogger extends WorkerBase<IRollbitInventoryItem> {
   private socket: RollbitSocket;
   private syncTimer: NodeJS.Timeout;
@@ -64,13 +65,12 @@ export class RollbitCsGoLogger extends WorkerBase<IRollbitInventoryItem> {
 
   private saveListedItem(item: IRollbitHistory) {
     item.listed_at = new Date();
-    const history = new RollbitHistory(item);
-    return history.save();
+    return db.updateRollbitHistoryListed(item);
   }
 
   private saveGoneItem(item: IRollbitHistory) {
     item.gone_at = new Date();
-    return RollbitHistory.findOneAndUpdate({ref: item.ref}, { $set: {ref: item.ref, price: item.price, markup: item.markup, name: item.name, weapon: item.weapon, skin: item.skin, rarity: item.rarity, exterior: item.exterior, baseprice: item.baseprice, gone_at: item.gone_at} }, { upsert: true, new: true }).exec();
+    return db.updateRollbitHistoryGone(item);
   }
 
   private normalizeItem(item: IRollbitSocketItem): IRollbitHistory {

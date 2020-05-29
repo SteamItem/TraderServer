@@ -2,6 +2,7 @@ import express = require('express');
 import bodyParser = require('body-parser');
 import cors = require('cors');
 import mongoHelper = require('./helpers/mongo');
+import sequelize = require('./db');
 const PORT = process.env.PORT || 3000;
 
 // create express app
@@ -12,6 +13,7 @@ app.use(bodyParser.json());
 app.use(cors());
 
 mongoHelper.connect();
+sequelize.sync();
 
 require('./routes/index')(app);
 require('./routes/wishlistItem')(app);

@@ -13,7 +13,7 @@ export interface PricEmpireItemFamily {
   created_at: Date;
 }
 
-export interface PricEmpireItemPrice {
+export interface IPricEmpireItemPrice {
   id: number;
   item_id: number;
   price: number;
@@ -21,7 +21,7 @@ export interface PricEmpireItemPrice {
   created_at: Date;
 }
 
-export interface PricEmpireItemQuantity {
+export interface IPricEmpireItemQuantity {
   id: number;
   itemId: number;
   qty: number;
@@ -42,8 +42,8 @@ export interface IPricEmpireItemDetail extends mongoose.Document {
   exterior: string;
   created_at: Date;
   api_selection_date: Date;
-  prices: PricEmpireItemPrice[];
-  qty: PricEmpireItemQuantity[];
+  prices: IPricEmpireItemPrice[];
+  qty: IPricEmpireItemQuantity[];
 }
 
 const PricEmpireItemFamilySchema: mongoose.Schema = new mongoose.Schema({
