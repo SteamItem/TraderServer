@@ -33,12 +33,9 @@ class PricEmpireItem extends Model {
 
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
-  public readonly prices!: PricEmpireItemPrice[];
-  public readonly rollbits!: RollbitHistory[];
 
   public static associations: {
     prices: Association<PricEmpireItem, PricEmpireItemPrice>;
-    rollbits: Association<PricEmpireItem, RollbitHistory>;
   };
 }
 
@@ -188,12 +185,6 @@ RollbitHistory.init({
   sequelize,
   tableName: "rollbithistories"
 })
-
-PricEmpireItem.hasMany(RollbitHistory, {
-  sourceKey: 'market_hash_name',
-  foreignKey: 'name',
-  as: 'rollbits'
-});
 
 function sync() {
   return sequelize.sync();
