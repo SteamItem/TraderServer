@@ -1,4 +1,4 @@
-import { Sequelize, Model, DataTypes, Association, Op, WhereOptions, Includeable } from 'sequelize';
+import { Sequelize, Model, DataTypes, Association } from 'sequelize';
 import config = require('../config');
 import { IPricEmpireItem } from '../models/pricEmpireItem';
 import { IPricEmpireItemPrice } from '../models/pricEmpireItemDetail';
@@ -6,6 +6,19 @@ import { IRollbitHistory } from '../models/rollbitHistory';
 import { IPricEmpireSearchRequest } from '../interfaces/pricEmpire';
 
 const sequelize = new Sequelize(config.RDB_URL, {dialect: "postgres"});
+
+class ProfitSearchView extends Model {
+  public id!: number;
+  public name!: string;
+  public app_id!: number;
+  public last_price!: number;
+  public csgoempire_avg_price!: number;
+  public csgoempire_count!: number;
+  public rollbit_avg_price!: number;
+  public rollbit_count!: number;
+  public last_profit!: number;
+  public history_profit!: number;
+}
 
 class PricEmpireItem extends Model {
   public id!: number;
@@ -202,54 +215,95 @@ function updateRollbitHistoryGone(item: IRollbitHistory) {
   return RollbitHistory.upsert(item, {fields: ['ref','price','markup','name','weapon','skin','rarity','exterior','baseprice','gone_at']})
 }
 
+// TODO: parameter mapping $1 $2 ...
 function profitSearch(pricEmpireSearchRequest: IPricEmpireSearchRequest) {
-  let whereStatement: WhereOptions = {};
+  let price_lateral = `
+  	SELECT AVG(pr.price * 1.12 / 100) as avg_price,
+		COUNT(1) as cnt
+		FROM pricempire_itemprices pr
+		WHERE pi.id = pr.item_id AND pr.source = 'csgoempire'
+  `;
+  let rollbit_lateral = `
+    SELECT AVG(rh.baseprice) as avg_price,
+    COUNT(1) as cnt
+    FROM rollbithistories rh
+    WHERE pi.name = rh.name
+  `;
+  if (pricEmpireSearchRequest.last_days) {
+    price_lateral += ` AND pr.created_at >= CURRENT_DATE - INTERVAL '${pricEmpireSearchRequest.last_days} day'`;
+    rollbit_lateral += ` AND rh."createdAt" >= CURRENT_DATE - INTERVAL '${pricEmpireSearchRequest.last_days} day'`;
+  }
+
+  let inner_query = `
+  SELECT
+    pi.id,
+    pi.name,
+    pi.app_id,
+    pi.converted_last_price as last_price,
+    pr.avg_price as csgoempire_avg_price,
+    pr.cnt as csgoempire_count,
+    rh.avg_price as rollbit_avg_price,
+    rh.cnt as rollbit_count,
+    100 * (pi.converted_last_price - rh.avg_price) / rh.avg_price as last_profit,
+    100 * (pr.avg_price - rh.avg_price) / rh.avg_price as history_profit
+  FROM
+    (
+      SELECT
+        id,
+        market_hash_name as name,
+        app_id,
+        last_price * 1.12 / 100 as converted_last_price
+      FROM pricempire_items pi
+    ) as pi
+    LEFT JOIN LATERAL ( ${price_lateral} ) as pr ON true
+    LEFT JOIN LATERAL ( ${rollbit_lateral} ) as rh ON TRUE
+  WHERE 1 = 1`;
   if (pricEmpireSearchRequest.name) {
-    whereStatement.market_hash_name = { [Op.like]: `%${pricEmpireSearchRequest.name}%` }
+    inner_query += ` AND pi.name like '%${pricEmpireSearchRequest.name}%'`;
   }
   if (pricEmpireSearchRequest.app_id) {
-    whereStatement.app_id = { [Op.eq]: pricEmpireSearchRequest.app_id }
+    inner_query += ` AND pi.app_id = ${pricEmpireSearchRequest.app_id}`;
   }
   if (pricEmpireSearchRequest.skin) {
-    whereStatement.skin = { [Op.like]: `%${pricEmpireSearchRequest.skin}%` }
+    inner_query += ` AND pi.skin like '%${pricEmpireSearchRequest.skin}%'`;
   }
   if (pricEmpireSearchRequest.family) {
-    whereStatement.family = { [Op.like]: `%${pricEmpireSearchRequest.family}%` }
+    inner_query += ` AND pi.family like '%${pricEmpireSearchRequest.family}%'`;
   }
-  if (pricEmpireSearchRequest.exterior) {
-    whereStatement.exterior = { [Op.like]: `%${pricEmpireSearchRequest.exterior}%` }
+  if (pricEmpireSearchRequest.family) {
+    inner_query += ` AND pi.exterior like '%${pricEmpireSearchRequest.exterior}%'`;
   }
   if (pricEmpireSearchRequest.ignore_zero_price) {
-    whereStatement.last_price = { [Op.gt]: 0 }
+    inner_query += ` AND pi.converted_last_price > 0`;
   }
-  if (pricEmpireSearchRequest.last_price_from && pricEmpireSearchRequest.last_price_to) {
-    whereStatement.last_price = {
-      [Op.gte]: pricEmpireSearchRequest.last_price_from,
-      [Op.lte]: pricEmpireSearchRequest.last_price_to
-    };
-  } else if (pricEmpireSearchRequest.last_price_from) {
-    whereStatement.last_price = { [Op.gte]: pricEmpireSearchRequest.last_price_from }
-  } else if (pricEmpireSearchRequest.last_price_to) {
-    whereStatement.last_price = { [Op.lte]: pricEmpireSearchRequest.last_price_to }
+  if (pricEmpireSearchRequest.last_price_from) {
+    inner_query += ` AND pi.converted_last_price >= ${pricEmpireSearchRequest.last_price_from}`;
+  }
+  if (pricEmpireSearchRequest.last_price_to) {
+    inner_query += ` AND pi.converted_last_price <= ${pricEmpireSearchRequest.last_price_to}`;
   }
 
-  let empireWhereOptions: WhereOptions = { source: "csgoempire" };
-  let rollbitWhereOptions: WhereOptions = {}
-  if (pricEmpireSearchRequest.last_days) {
-    let date_from = new Date();
-    date_from.setDate(date_from.getDate() - pricEmpireSearchRequest.last_days);
-    empireWhereOptions.created_at = { [Op.gte]: date_from };
-    rollbitWhereOptions.createdAt = { [Op.gte]: date_from };
-  }
-  let empireIncludeable: Includeable = { model: PricEmpireItemPrice, required: false, as: "prices", where: empireWhereOptions };
-  let rollbitIncludeable: Includeable = { model: RollbitHistory, required: false, as: "rollbits", where: rollbitWhereOptions };
+  let profit_query = `SELECT * FROM (${inner_query}) iq WHERE 1 = 1`;
 
-  return PricEmpireItem.findAll({
-    include: [
-      empireIncludeable,
-      rollbitIncludeable,
-    ],
-    where: whereStatement
+  if (pricEmpireSearchRequest.last_profit_from) {
+    profit_query += ` AND iq.last_profit >= ${pricEmpireSearchRequest.last_profit_from}`;
+  }
+
+  if (pricEmpireSearchRequest.last_profit_to) {
+    profit_query += ` AND iq.last_profit <= ${pricEmpireSearchRequest.last_profit_to}`;
+  }
+
+  if (pricEmpireSearchRequest.history_profit_from) {
+    profit_query += ` AND iq.history_profit >= ${pricEmpireSearchRequest.history_profit_from}`;
+  }
+
+  if (pricEmpireSearchRequest.history_profit_to) {
+    profit_query += ` AND iq.history_profit <= ${pricEmpireSearchRequest.history_profit_to}`;
+  }
+
+  return sequelize.query(profit_query, {
+    mapToModel: true,
+    model: ProfitSearchView
   });
 }
 
