@@ -234,18 +234,21 @@ function profitSearch(pricEmpireSearchRequest: IPricEmpireSearchRequest) {
     pi.id,
     pi.name,
     pi.app_id,
-    pi.converted_last_price as last_price,
-    pr.avg_price as csgoempire_avg_price,
+    ROUND(pi.converted_last_price::numeric,2) as last_price,
+    ROUND(pr.avg_price::numeric,2) as csgoempire_avg_price,
     pr.cnt as csgoempire_count,
-    rh.avg_price as rollbit_avg_price,
+    ROUND(rh.avg_price::numeric,2) as rollbit_avg_price,
     rh.cnt as rollbit_count,
-    100 * (pi.converted_last_price - rh.avg_price) / rh.avg_price as last_profit,
-    100 * (pr.avg_price - rh.avg_price) / rh.avg_price as history_profit
+    ROUND((100 * (pi.converted_last_price - rh.avg_price) / rh.avg_price)::numeric,2) as last_profit,
+    ROUND((100 * (pr.avg_price - rh.avg_price) / rh.avg_price)::numeric,2) as history_profit
   FROM
     (
       SELECT
         id,
         market_hash_name as name,
+        skin,
+        family,
+        exterior,
         app_id,
         last_price * 1.12 / 100 as converted_last_price
       FROM pricempire_items pi
@@ -253,46 +256,46 @@ function profitSearch(pricEmpireSearchRequest: IPricEmpireSearchRequest) {
     LEFT JOIN LATERAL ( ${price_lateral} ) as pr ON true
     LEFT JOIN LATERAL ( ${rollbit_lateral} ) as rh ON TRUE
   WHERE 1 = 1`;
-  if (pricEmpireSearchRequest.name) {
+  if (!!pricEmpireSearchRequest.name) {
     inner_query += ` AND pi.name ILIKE '%${pricEmpireSearchRequest.name}%'`;
   }
-  if (pricEmpireSearchRequest.app_id) {
+  if (pricEmpireSearchRequest.app_id > 0) {
     inner_query += ` AND pi.app_id = ${pricEmpireSearchRequest.app_id}`;
   }
-  if (pricEmpireSearchRequest.skin) {
+  if (!!pricEmpireSearchRequest.skin) {
     inner_query += ` AND pi.skin ILIKE '%${pricEmpireSearchRequest.skin}%'`;
   }
-  if (pricEmpireSearchRequest.family) {
+  if (!!pricEmpireSearchRequest.family) {
     inner_query += ` AND pi.family ILIKE '%${pricEmpireSearchRequest.family}%'`;
   }
-  if (pricEmpireSearchRequest.exterior) {
+  if (!!pricEmpireSearchRequest.exterior) {
     inner_query += ` AND pi.exterior ILIKE '%${pricEmpireSearchRequest.exterior}%'`;
   }
-  if (pricEmpireSearchRequest.ignore_zero_price) {
+  if (pricEmpireSearchRequest.ignore_zero_price == true) {
     inner_query += ` AND pi.converted_last_price > 0`;
   }
-  if (pricEmpireSearchRequest.last_price_from) {
+  if (pricEmpireSearchRequest.last_price_from > 0) {
     inner_query += ` AND pi.converted_last_price >= ${pricEmpireSearchRequest.last_price_from}`;
   }
-  if (pricEmpireSearchRequest.last_price_to) {
+  if (pricEmpireSearchRequest.last_price_to > 0) {
     inner_query += ` AND pi.converted_last_price <= ${pricEmpireSearchRequest.last_price_to}`;
   }
 
   let profit_query = `SELECT * FROM (${inner_query}) iq WHERE 1 = 1`;
 
-  if (pricEmpireSearchRequest.last_profit_from) {
+  if (pricEmpireSearchRequest.last_profit_from > 0) {
     profit_query += ` AND iq.last_profit >= ${pricEmpireSearchRequest.last_profit_from}`;
   }
 
-  if (pricEmpireSearchRequest.last_profit_to) {
+  if (pricEmpireSearchRequest.last_profit_to > 0) {
     profit_query += ` AND iq.last_profit <= ${pricEmpireSearchRequest.last_profit_to}`;
   }
 
-  if (pricEmpireSearchRequest.history_profit_from) {
+  if (pricEmpireSearchRequest.history_profit_from > 0) {
     profit_query += ` AND iq.history_profit >= ${pricEmpireSearchRequest.history_profit_from}`;
   }
 
-  if (pricEmpireSearchRequest.history_profit_to) {
+  if (pricEmpireSearchRequest.history_profit_to > 0) {
     profit_query += ` AND iq.history_profit <= ${pricEmpireSearchRequest.history_profit_to}`;
   }
 
