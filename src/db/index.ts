@@ -254,19 +254,19 @@ function profitSearch(pricEmpireSearchRequest: IPricEmpireSearchRequest) {
     LEFT JOIN LATERAL ( ${rollbit_lateral} ) as rh ON TRUE
   WHERE 1 = 1`;
   if (pricEmpireSearchRequest.name) {
-    inner_query += ` AND pi.name like '%${pricEmpireSearchRequest.name}%'`;
+    inner_query += ` AND pi.name ILIKE '%${pricEmpireSearchRequest.name}%'`;
   }
   if (pricEmpireSearchRequest.app_id) {
     inner_query += ` AND pi.app_id = ${pricEmpireSearchRequest.app_id}`;
   }
   if (pricEmpireSearchRequest.skin) {
-    inner_query += ` AND pi.skin like '%${pricEmpireSearchRequest.skin}%'`;
+    inner_query += ` AND pi.skin ILIKE '%${pricEmpireSearchRequest.skin}%'`;
   }
   if (pricEmpireSearchRequest.family) {
-    inner_query += ` AND pi.family like '%${pricEmpireSearchRequest.family}%'`;
+    inner_query += ` AND pi.family ILIKE '%${pricEmpireSearchRequest.family}%'`;
   }
   if (pricEmpireSearchRequest.family) {
-    inner_query += ` AND pi.exterior like '%${pricEmpireSearchRequest.exterior}%'`;
+    inner_query += ` AND pi.exterior ILIKE '%${pricEmpireSearchRequest.exterior}%'`;
   }
   if (pricEmpireSearchRequest.ignore_zero_price) {
     inner_query += ` AND pi.converted_last_price > 0`;
