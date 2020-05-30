@@ -34,3 +34,63 @@ export interface IPricEmpireSearchResponse {
   csgoempire?: IPricEmpireSourceDetail;
   rollbit?: IPricEmpireSourceDetail;
 }
+
+export interface IPricEmpireItem {
+  id: number;
+  market_hash_name: string;
+  image: string;
+  app_id: number;
+  last_price: number;
+  buff_id: number;
+  skin: string;
+  family: string;
+  exterior: string;
+  created_at: Date;
+}
+
+
+export interface PricEmpireItemFamily {
+  id: number;
+  market_hash_name: string;
+  image: string;
+  app_id: number;
+  last_price: number;
+  buff_id: number;
+  skin: string;
+  family: string;
+  exterior: string;
+  created_at: Date;
+}
+
+export interface IPricEmpireItemPrice {
+  id: number;
+  item_id: number;
+  price: number;
+  source: string;
+  created_at: Date;
+}
+
+export interface IPricEmpireItemQuantity {
+  id: number;
+  itemId: number;
+  qty: number;
+  source: string;
+  date: string;
+  created_at: Date;
+}
+
+export interface IPricEmpireItemDetail {
+  id: number;
+  market_hash_name: string;
+  image: string;
+  app_id: number;
+  last_price: number;
+  buff_id: number;
+  skin: string;
+  family: PricEmpireItemFamily[];
+  exterior: string;
+  created_at: Date;
+  api_selection_date: Date;
+  prices: IPricEmpireItemPrice[];
+  qty: IPricEmpireItemQuantity[];
+}

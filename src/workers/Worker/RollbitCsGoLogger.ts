@@ -6,9 +6,9 @@ import { DatabaseSelectorTask } from '../DatabaseSelector/DatabaseSelectorTask';
 import { RollbitCsGoDatabaseSelector } from '../DatabaseSelector/RollbitCsGoDatabaseSelector';
 import { RollbitSocket } from '../../controllers/api/rollbitSocket';
 import { IBotParam } from '../../models/botParam';
-import { IRollbitHistory } from '../../models/rollbitHistory';
 import _ = require('lodash');
 import db = require('../../db');
+import { IRollbitHistory } from '../../interfaces/rollbit';
 export class RollbitCsGoLogger extends WorkerBase<IRollbitInventoryItem> {
   private socket: RollbitSocket;
   private syncTimer: NodeJS.Timeout;

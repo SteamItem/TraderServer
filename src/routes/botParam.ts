@@ -8,17 +8,20 @@ module.exports = (app: express.Express) => {
 
   app.get('/botParams/:id', cors(corsOptions), async (req, res) => {
     var id = parseInt(req.params.id);
-    var status = await paramController.findOne(id);
-    res.send(status);
+    paramController.findOne(id)
+      .then(result => res.send(result))
+      .catch(error => res.status(500).send(error));
   });
   app.put('/botParams/:_id', cors(corsOptions), async (req, res) => {
     var id = parseInt(req.params._id);
-    var item = await paramController.update(id, req.body.worker, req.body.code);
-    res.send(item);
+    paramController.update(id, req.body.worker, req.body.code)
+      .then(result => res.send(result))
+      .catch(error => res.status(500).send(error));
   });
   app.post('/botParams/login/:id', cors(corsOptions), async (req, res) => {
     var id = parseInt(req.params.id);
-    var item = await paramController.login(id, req.body);
-    res.send(item);
+    paramController.login(id, req.body)
+      .then(result => res.send(result))
+      .catch(error => res.status(500).send(error));
   });
 }

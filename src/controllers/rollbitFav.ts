@@ -1,17 +1,18 @@
-import RollbitFav = require('../models/rollbitFav');
+import db = require('../db');
 
 async function findAll() {
-  return RollbitFav.default.find();
+  return db.rollbitFavs();
 }
 
 async function addToFavorites(name: string) {
   await removeFromFavorites(name);
-  const fav = new RollbitFav.default({ name });
-  return await fav.save();
+  await db.rollbitFavAdd(name);
+  return;
 }
 
 async function removeFromFavorites(name: string) {
-  return await RollbitFav.default.findOneAndRemove({name});
+  await db.rollbitFavRemove(name);
+  return;
 }
 
 export = {

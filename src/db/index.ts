@@ -1,10 +1,8 @@
 import { Sequelize, Model, DataTypes, Association } from 'sequelize';
 import R = require('ramda');
 import config = require('../config');
-import { IPricEmpireItem } from '../models/pricEmpireItem';
-import { IPricEmpireItemPrice } from '../models/pricEmpireItemDetail';
-import { IRollbitHistory } from '../models/rollbitHistory';
-import { IPricEmpireSearchRequest } from '../interfaces/pricEmpire';
+import { IPricEmpireSearchRequest, IPricEmpireItem, IPricEmpireItemPrice } from '../interfaces/pricEmpire';
+import { IRollbitHistory } from '../interfaces/rollbit';
 
 const sequelize = new Sequelize(config.RDB_URL, {dialect: "postgres"});
 
@@ -187,6 +185,20 @@ RollbitHistory.init({
   tableName: "rollbithistories"
 })
 
+class RollbitFav extends Model {
+  public name!: string;
+}
+
+RollbitFav.init({
+  name: {
+    type: DataTypes.STRING(200),
+    allowNull: false
+  }
+}, {
+  sequelize,
+  tableName: "rollbitfavs"
+})
+
 function sync() {
   return sequelize.sync();
 }
@@ -271,7 +283,7 @@ function profitSearch(pricEmpireSearchRequest: IPricEmpireSearchRequest) {
   if (!!pricEmpireSearchRequest.exterior) {
     inner_query += ` AND pi.exterior ILIKE '%${pricEmpireSearchRequest.exterior}%'`;
   }
-  if (pricEmpireSearchRequest.ignore_zero_price == true) {
+  if (pricEmpireSearchRequest.ignore_zero_price) {
     inner_query += ` AND pi.converted_last_price > 0`;
   }
   if (pricEmpireSearchRequest.last_price_from > 0) {
@@ -305,11 +317,31 @@ function profitSearch(pricEmpireSearchRequest: IPricEmpireSearchRequest) {
   });
 }
 
+function rollbitHistories() {
+  return RollbitHistory.findAll();
+}
+
+function rollbitFavs() {
+  return RollbitFav.findAll();
+}
+
+function rollbitFavAdd(name: string) {
+  return RollbitFav.create({ name: name });
+}
+
+function rollbitFavRemove(name: string) {
+  return RollbitFav.destroy({where: { name: name }})
+}
+
 export = {
   sync,
   updatePricEmpireItems,
   updatePricEmpireItemPrices,
   updateRollbitHistoryListed,
   updateRollbitHistoryGone,
-  profitSearch
+  profitSearch,
+  rollbitHistories,
+  rollbitFavs,
+  rollbitFavAdd,
+  rollbitFavRemove
 }
