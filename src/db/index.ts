@@ -265,7 +265,7 @@ function profitSearch(pricEmpireSearchRequest: IPricEmpireSearchRequest) {
   if (pricEmpireSearchRequest.family) {
     inner_query += ` AND pi.family ILIKE '%${pricEmpireSearchRequest.family}%'`;
   }
-  if (pricEmpireSearchRequest.family) {
+  if (pricEmpireSearchRequest.exterior) {
     inner_query += ` AND pi.exterior ILIKE '%${pricEmpireSearchRequest.exterior}%'`;
   }
   if (pricEmpireSearchRequest.ignore_zero_price) {
