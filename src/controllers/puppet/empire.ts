@@ -11,24 +11,27 @@ async function login(steamLogin: ISteamLogin) {
       '--disable-setuid-sandbox'
     ]
   });
-  const mainPage = await browser.newPage();
-  mainPage.setUserAgent(Constants.EmpireUserAgent);
-  await mainPage.goto('https://csgoempire.gg');
-  await mainPage.click('.user-action');
+  try {
+    const mainPage = await browser.newPage();
+    mainPage.setUserAgent(Constants.EmpireUserAgent);
+    await mainPage.goto('https://csgoempire.gg');
+    await mainPage.click('.user-action');
 
-  // TODO: handle
-  await helpers.sleep(2000);
+    // TODO: handle
+    await helpers.sleep(2000);
 
-  var postPages = await browser.pages();
-  var steamLoginPage = postPages[postPages.length - 1];
-  steamLoginPage.setUserAgent(Constants.EmpireUserAgent);
+    var postPages = await browser.pages();
+    var steamLoginPage = postPages[postPages.length - 1];
+    steamLoginPage.setUserAgent(Constants.EmpireUserAgent);
 
-  await steam.login(steamLoginPage, steamLogin);
+    await steam.login(steamLoginPage, steamLogin);
 
-  const cookies = await mainPage.cookies();
+    const cookies = await mainPage.cookies();
 
-  await browser.close();
-  return cookies;
+    return cookies;
+  } finally {
+    await browser.close();
+  }
 }
 
 export default {
