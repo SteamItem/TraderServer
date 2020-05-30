@@ -6,6 +6,7 @@ import { Constants } from '../../helpers/constant';
 
 async function login(steamLogin: ISteamLogin) {
   const browser = await puppeteer.launch({
+    headless: false,
     args: [
       '--no-sandbox',
       '--disable-setuid-sandbox'
