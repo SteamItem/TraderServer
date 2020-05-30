@@ -1,4 +1,5 @@
 import { Sequelize, Model, DataTypes, Association } from 'sequelize';
+import R = require('ramda');
 import config = require('../config');
 import { IPricEmpireItem } from '../models/pricEmpireItem';
 import { IPricEmpireItemPrice } from '../models/pricEmpireItemDetail';
@@ -190,8 +191,11 @@ function sync() {
   return sequelize.sync();
 }
 
-function updatePricEmpireItems(items: IPricEmpireItem[]) {
-  return PricEmpireItem.bulkCreate(items, {updateOnDuplicate: ['image','last_price']});
+async function updatePricEmpireItems(items: IPricEmpireItem[]) {
+  let splittedArray = R.splitEvery(1000, items);
+  splittedArray.forEach(async arr => {
+    await PricEmpireItem.bulkCreate(arr, {updateOnDuplicate: ['image','last_price']});
+  });
 }
 
 function updatePricEmpireItemPrices(items: IPricEmpireItemPrice[]) {
