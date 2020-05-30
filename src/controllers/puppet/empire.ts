@@ -16,6 +16,7 @@ async function login(steamLogin: ISteamLogin) {
     const mainPage = await browser.newPage();
     mainPage.setUserAgent(Constants.EmpireUserAgent);
     await mainPage.goto('https://csgoempire.gg');
+    await mainPage.waitForSelector('.user-action')
     await mainPage.click('.user-action');
 
     // TODO: handle
@@ -23,6 +24,7 @@ async function login(steamLogin: ISteamLogin) {
 
     var postPages = await browser.pages();
     var steamLoginPage = postPages[postPages.length - 1];
+    await steamLoginPage.waitForSelector('#imageLogin');
     steamLoginPage.setUserAgent(Constants.EmpireUserAgent);
 
     await steam.login(steamLoginPage, steamLogin);

@@ -6,7 +6,6 @@ import { Constants } from '../../helpers/constant';
 
 async function login(steamLogin: ISteamLogin) {
   const browser = await puppeteer.launch({
-    headless: false,
     args: [
       '--no-sandbox',
       '--disable-setuid-sandbox'
@@ -16,6 +15,7 @@ async function login(steamLogin: ISteamLogin) {
     const mainPage = await browser.newPage();
     mainPage.setUserAgent(Constants.RollbitUserAgent);
     await mainPage.goto('https://www.rollbit.com');
+    await mainPage.waitForSelector('.bg-green')
     await mainPage.click('.bg-green');
 
     // TODO: handle
@@ -23,6 +23,7 @@ async function login(steamLogin: ISteamLogin) {
 
     var postPages = await browser.pages();
     var steamLoginPage = postPages[postPages.length - 1];
+    await steamLoginPage.waitForSelector('#imageLogin');
     steamLoginPage.setUserAgent(Constants.RollbitUserAgent);
 
     await steam.login(steamLoginPage, steamLogin);
