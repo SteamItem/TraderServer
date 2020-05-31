@@ -1,9 +1,9 @@
 import { AxiosRequestConfig } from 'axios';
 import { ApiBase } from './apiBase';
-import config = require('../../config');
-import { EnumSite } from '../../helpers/enum';
-import { ISteamLogin } from '../../interfaces/steam';
-import { ICookie } from '../../interfaces/puppet';
+import config = require('../config');
+import { EnumSite } from '../helpers/enum';
+import { ISteamLogin } from '../interfaces/steam';
+import { ICookie } from '../interfaces/puppet';
 
 export class PuppetApi extends ApiBase {
   private baseUrl = config.PUPPET_API;

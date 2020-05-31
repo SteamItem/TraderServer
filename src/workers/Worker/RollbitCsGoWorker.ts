@@ -6,7 +6,7 @@ import { DatabaseSelectorTask } from '../DatabaseSelector/DatabaseSelectorTask';
 import { RollbitCsGoDatabaseSelector } from '../DatabaseSelector/RollbitCsGoDatabaseSelector';
 import { RollbitInventoryFilterer } from '../InventoryFilterer/RollbitInventoryFilterer';
 import { RollbitWithdrawMakerTask } from '../WithdrawMaker/RollbitWithdrawMakerTask';
-import { RollbitSocket } from '../../controllers/api/rollbitSocket';
+import { RollbitSocket } from '../../api/rollbitSocket';
 import { IRollbitSocketBalance } from '../../interfaces/profile';
 import { IBotParam } from '../../models/botParam';
 export class RollbitCsGoWorker extends WorkerBase<IRollbitInventoryItem> {

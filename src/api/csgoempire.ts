@@ -1,8 +1,8 @@
 import { AxiosRequestConfig } from 'axios';
-import { IEmpireProfile } from '../../interfaces/profile';
-import { IEmpireInstantInventoryItem, IEmpireDotaInventoryItem } from '../../interfaces/storeItem';
+import { IEmpireProfile } from '../interfaces/profile';
+import { IEmpireInstantInventoryItem, IEmpireDotaInventoryItem } from '../interfaces/storeItem';
 import { ApiBase } from './apiBase';
-import { Constants } from '../../helpers/constant';
+import { Constants } from '../helpers/constant';
 
 export class CSGOEmpireApi extends ApiBase {
   private baseUrl = 'https://csgoempire.gg/api/v2';

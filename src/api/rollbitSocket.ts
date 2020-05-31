@@ -1,5 +1,5 @@
 import * as WebSocket from "ws";
-import { Constants } from "../../helpers/constant";
+import { Constants } from "../helpers/constant";
 
 export class RollbitSocket {
   private channels: Map<any, any>;

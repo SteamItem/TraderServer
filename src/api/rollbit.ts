@@ -1,7 +1,7 @@
 import { AxiosRequestConfig } from 'axios';
-import { IRollbitInventoryItems } from '../../interfaces/storeItem';
+import { IRollbitInventoryItems } from '../interfaces/storeItem';
 import { ApiBase } from './apiBase';
-import { Constants } from '../../helpers/constant';
+import { Constants } from '../helpers/constant';
 
 export class RollbitApi extends ApiBase {
   private baseUrl = 'https://api.rollbit.com/steam';

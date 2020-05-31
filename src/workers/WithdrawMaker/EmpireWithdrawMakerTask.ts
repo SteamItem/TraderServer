@@ -2,7 +2,7 @@ import { IBotParam } from '../../models/botParam';
 import { IEmpireInventoryItem } from '../../interfaces/storeItem';
 import { WithdrawMakerTask } from './WithdrawMakerTask';
 import _ = require('lodash');
-import { CSGOEmpireApi } from '../../controllers/api/csgoempire';
+import { CSGOEmpireApi } from '../../api/csgoempire';
 import { LoggerBase } from '../Logger/LoggerBase';
 import { IWithdrawResult, IWithdrawMakerResult } from '../../interfaces/withdraw';
 export class EmpireWithdrawMakerTask<II extends IEmpireInventoryItem> extends WithdrawMakerTask<II> {

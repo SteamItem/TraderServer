@@ -1,6 +1,6 @@
 import { AxiosRequestConfig } from 'axios';
 import { ApiBase } from './apiBase';
-import { IPricEmpireItem, IPricEmpireItemDetail } from '../../interfaces/pricEmpire';
+import { IPricEmpireItem, IPricEmpireItemDetail } from '../interfaces/pricEmpire';
 
 export class PricEmpireApi extends ApiBase {
   private baseUrl = 'https://pricempire.com/api';

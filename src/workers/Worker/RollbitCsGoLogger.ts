@@ -4,7 +4,7 @@ import { EnumBot } from '../../helpers/enum';
 import { WorkerBase } from "./WorkerBase";
 import { DatabaseSelectorTask } from '../DatabaseSelector/DatabaseSelectorTask';
 import { RollbitCsGoDatabaseSelector } from '../DatabaseSelector/RollbitCsGoDatabaseSelector';
-import { RollbitSocket } from '../../controllers/api/rollbitSocket';
+import { RollbitSocket } from '../../api/rollbitSocket';
 import { IBotParam } from '../../models/botParam';
 import _ = require('lodash');
 import db = require('../../db');

@@ -4,7 +4,7 @@ import { EnumBot } from '../helpers/enum';
 import { ISteamLogin } from '../interfaces/steam';
 import config = require('../config');
 import helpers from '../helpers';
-import { PuppetApi } from './api/puppet';
+import { PuppetApi } from '../api/puppet';
 
 async function findOne(id: EnumBot) {
   var botParam = await BotParam.default.findOne({ id }).exec();

@@ -1,6 +1,6 @@
 import { IEmpireInstantInventoryItem } from '../../interfaces/storeItem';
 import { InventoryGetterTask } from './InventoryGetterTask';
-import { CSGOEmpireApi } from '../../controllers/api/csgoempire';
+import { CSGOEmpireApi } from '../../api/csgoempire';
 export class EmpireInstantInventoryGetterTask extends InventoryGetterTask<IEmpireInstantInventoryItem> {
   getStoreItems(): Promise<IEmpireInstantInventoryItem[]> {
     var api = new CSGOEmpireApi();

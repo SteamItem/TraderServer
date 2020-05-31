@@ -1,4 +1,4 @@
-import { PricEmpireApi } from "./api/pricEmpire"
+import { PricEmpireApi } from "../api/pricEmpire"
 import { IPricEmpireSearchRequest } from "../interfaces/pricEmpire";
 import db = require("../db");
 

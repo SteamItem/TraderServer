@@ -1,7 +1,7 @@
 import _ = require('lodash');
 import { IRollbitInventoryItem } from '../../interfaces/storeItem';
 import { InventoryGetterTask } from './InventoryGetterTask';
-import { RollbitApi } from '../../controllers/api/rollbit';
+import { RollbitApi } from '../../api/rollbit';
 export class RollbitCsGoInventoryGetterTask extends InventoryGetterTask<IRollbitInventoryItem> {
   private minPrice = 5;
   private maxPrice = 500;

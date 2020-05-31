@@ -1,5 +1,5 @@
 import { TokenGetterTask } from './TokenGetterTask';
-import { CSGOEmpireApi } from '../../controllers/api/csgoempire';
+import { CSGOEmpireApi } from '../../api/csgoempire';
 export class EmpireTokenGetterTask extends TokenGetterTask {
   async getToken() {
     var code = this.botParam.code;

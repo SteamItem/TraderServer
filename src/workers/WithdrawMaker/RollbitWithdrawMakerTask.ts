@@ -1,7 +1,7 @@
 import { IBotParam } from '../../models/botParam';
 import { IRollbitInventoryItem } from '../../interfaces/storeItem';
 import { WithdrawMakerTask } from './WithdrawMakerTask';
-import { RollbitApi } from '../../controllers/api/rollbit';
+import { RollbitApi } from '../../api/rollbit';
 import _ = require('lodash');
 import { LoggerBase } from '../Logger/LoggerBase';
 import { IWithdrawMakerResult, IWithdrawResult } from '../../interfaces/withdraw';

@@ -1,5 +1,5 @@
 import { BalanceCheckerTask } from './BalanceCheckerTask';
-import { CSGOEmpireApi } from '../../controllers/api/csgoempire';
+import { CSGOEmpireApi } from '../../api/csgoempire';
 export class EmpireBalanceCheckerTask extends BalanceCheckerTask {
   async getBalance() {
     var api = new CSGOEmpireApi();
