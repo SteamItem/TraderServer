@@ -5,6 +5,7 @@ import { ISteamLogin } from '../interfaces/steam';
 import rollbitPuppet from './puppet/rollbit'
 import empirePuppet from './puppet/empire'
 import { Cookie } from 'puppeteer';
+import config = require('../config');
 
 async function findOne(id: EnumBot) {
   var botParam = await BotParam.default.findOne({ id }).exec();
@@ -13,14 +14,15 @@ async function findOne(id: EnumBot) {
 }
 
 async function update(id: number, worker: boolean, code: string) {
+  await manageBot(id, worker);
   return await BotParam.default.findOneAndUpdate({ id }, { worker, code }).exec();
 }
 
 function manageBot(id: EnumBot, worker: boolean) {
   if (worker) {
-    startBot(id);
+    return startBot(id);
   } else {
-    stopBot(id);
+    return stopBot(id);
   }
 }
 
@@ -39,7 +41,7 @@ function getWorkerPath(fileName: string) {
 }
 
 async function stopBot(id: number) {
-  var botFileName = this.getBotFileName(id);
+  var botFileName = getBotFileName(id);
   pm2.stop(botFileName, function(err) {
     pm2.disconnect();
     if (err) throw err
@@ -52,13 +54,17 @@ async function startBot(id: number) {
   pm2.connect(err => {
     if (err) {
       console.error(err);
-      process.exit(2);
+      throw err;
     }
     pm2.start({
       script: workerPath,
       name: botFileName,
       env: {
-        DB_URL: process.env.DB_URL
+        NODE_ENV: config.NODE_ENV,
+        DB_URL: config.DB_URL,
+        RDB_URL: config.RDB_URL,
+        TELEGRAM_TOKEN: config.TELEGRAM_TOKEN,
+        TELEGRAM_CHAT_ID: config.TELEGRAM_CHAT_ID
       }
     }, function(err) {
       pm2.disconnect();
