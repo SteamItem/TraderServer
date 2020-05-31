@@ -73,6 +73,14 @@ async function startBot(id: number) {
   });
 }
 
+async function restartBot(id: number) {
+  var botFileName = getBotFileName(id);
+  pm2.restart(botFileName, function(err) {
+    pm2.disconnect();
+    if (err) throw err
+  });
+}
+
 async function login(id: EnumBot, steamLogin: ISteamLogin) {
   var cookies: Cookie[];
   switch (id) {
@@ -90,8 +98,16 @@ async function login(id: EnumBot, steamLogin: ISteamLogin) {
   return BotParam.default.findOneAndUpdate({ id }, { cookie });
 }
 
+async function handleBots() {
+  let bots = await BotParam.default.find({worker: true}).exec();
+  bots.forEach(async bot => {
+    await restartBot(bot.id);
+  });
+}
+
 export = {
   findOne,
   update,
-  login
+  login,
+  handleBots
 }
