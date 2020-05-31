@@ -2,10 +2,9 @@ import pm2 = require('pm2');
 import BotParam = require('../models/botParam');
 import { EnumBot } from '../helpers/enum';
 import { ISteamLogin } from '../interfaces/steam';
-import rollbitPuppet from './puppet/rollbit'
-import empirePuppet from './puppet/empire'
-import { Cookie } from 'puppeteer';
 import config = require('../config');
+import helpers from '../helpers';
+import { PuppetApi } from './api/puppet';
 
 async function findOne(id: EnumBot) {
   var botParam = await BotParam.default.findOne({ id }).exec();
@@ -73,28 +72,11 @@ async function startBot(id: number) {
   });
 }
 
-async function restartBot(id: number) {
-  var botFileName = getBotFileName(id);
-  pm2.restart(botFileName, function(err) {
-    pm2.disconnect();
-    if (err) throw err
-  });
-}
-
 async function login(id: EnumBot, steamLogin: ISteamLogin) {
-  var cookies: Cookie[];
-  switch (id) {
-    case EnumBot.EmpireInstant:
-    case EnumBot.EmpireDota:
-      cookies = await empirePuppet.login(steamLogin);
-      break;
-    case EnumBot.RollbitCsGo:
-    case EnumBot.RollbitCsGoLogger:
-      cookies = await rollbitPuppet.login(steamLogin);
-      break;
-    default: throw new Error("Unknown bot id");
-  }
-  var cookie = cookies.map(c => `${c.name}=${c.value}`).join(';');
+  let site = helpers.getSiteOfBot(id);
+  let api = new PuppetApi();
+  let cookies = await api.login(site, steamLogin);
+  let cookie = cookies.map(c => `${c.name}=${c.value}`).join(';');
   return BotParam.default.findOneAndUpdate({ id }, { cookie });
 }
 

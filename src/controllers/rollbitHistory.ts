@@ -1,5 +1,4 @@
 import db = require('../db');
-// import RollbitFav = require('../models/rollbitFav');
 
 async function findAll() {
   var histories = await db.rollbitHistories();

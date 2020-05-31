@@ -1,3 +1,5 @@
+import { EnumBot, EnumSite } from "./enum";
+
 function sleep(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
@@ -11,7 +13,20 @@ function compareStrings(s1: string, s2: string) {
   return s1.localeCompare(s2) === 0;
 }
 
+function getSiteOfBot(id: EnumBot): EnumSite {
+  switch (id) {
+    case EnumBot.EmpireInstant:
+    case EnumBot.EmpireDota:
+      return EnumSite.CsGoEmpire;
+    case EnumBot.RollbitCsGo:
+    case EnumBot.RollbitCsGoLogger:
+      return EnumSite.Rollbit;
+    default: throw new Error("Unknown bot id");
+  }
+}
+
 export default {
   sleep,
-  compareStrings
+  compareStrings,
+  getSiteOfBot
 }
