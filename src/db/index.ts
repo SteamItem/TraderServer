@@ -224,22 +224,28 @@ function updateRollbitHistoryGone(item: IRollbitHistory) {
 
 // TODO: parameter mapping $1 $2 ...
 function profitSearch(pricEmpireSearchRequest: IPricEmpireSearchRequest) {
-  let price_lateral = `
-  	SELECT AVG(pr.price * 1.12 / 100) as avg_price,
-		COUNT(1) as cnt
+  let price_group = `
+  	SELECT
+      pr.item_id,
+      AVG(pr.price * 1.12 / 100) as avg_price,
+		  COUNT(1) as cnt
 		FROM pricempire_itemprices pr
-		WHERE pi.id = pr.item_id AND pr.source = 'csgoempire'
+		WHERE pr.source = 'csgoempire'
   `;
-  let rollbit_lateral = `
-    SELECT AVG(rh.baseprice) as avg_price,
-    COUNT(1) as cnt
+  let rollbit_group = `
+    SELECT
+      rh.name,
+      AVG(rh.baseprice) as avg_price,
+      COUNT(1) as cnt
     FROM rollbithistories rh
-    WHERE pi.name = rh.name
+    WHERE 1 = 1
   `;
   if (pricEmpireSearchRequest.last_days) {
-    price_lateral += ` AND pr.created_at >= CURRENT_DATE - INTERVAL '${pricEmpireSearchRequest.last_days} day'`;
-    rollbit_lateral += ` AND rh."createdAt" >= CURRENT_DATE - INTERVAL '${pricEmpireSearchRequest.last_days} day'`;
+    price_group += ` AND pr.created_at >= CURRENT_DATE - INTERVAL '${pricEmpireSearchRequest.last_days} day'`;
+    rollbit_group += ` AND rh."createdAt" >= CURRENT_DATE - INTERVAL '${pricEmpireSearchRequest.last_days} day'`;
   }
+  price_group += ` GROUP BY pr.item_id`;
+  rollbit_group += ` GROUP BY rh.name`;
 
   let inner_query = `
   SELECT
@@ -265,8 +271,8 @@ function profitSearch(pricEmpireSearchRequest: IPricEmpireSearchRequest) {
         last_price * 1.12 / 100 as converted_last_price
       FROM pricempire_items pi
     ) as pi
-    LEFT JOIN LATERAL ( ${price_lateral} ) as pr ON true
-    LEFT JOIN LATERAL ( ${rollbit_lateral} ) as rh ON TRUE
+    LEFT JOIN ( ${price_group} ) as pr ON pi.id = pr.item_id
+    LEFT JOIN ( ${rollbit_group} ) as rh ON pi.name = rh.name
   WHERE 1 = 1`;
   if (!!pricEmpireSearchRequest.name) {
     inner_query += ` AND pi.name ILIKE '%${pricEmpireSearchRequest.name}%'`;
