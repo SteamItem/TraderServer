@@ -101,7 +101,7 @@ async function login(id: EnumBot, steamLogin: ISteamLogin) {
 async function handleBots() {
   let bots = await BotParam.default.find({worker: true}).exec();
   bots.forEach(async bot => {
-    await restartBot(bot.id);
+    await startBot(bot.id);
   });
 }
 
