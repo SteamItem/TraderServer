@@ -18,13 +18,13 @@ export class RollbitCsGoLogger extends WorkerBase<IRollbitInventoryItem> {
     this.prepareSocketListeners();
   }
   start(botParam: IBotParam): void {
-    var that = this;
+    const that = this;
     that.socket.connect(botParam.cookie);
     that.syncTimer = setInterval(function () {
       console.log("sync sent");
       that.socket.send('sync', '', botParam.cookie, true);
     }, 2500);
-    var socketRestartScheduler = this.socketRestartScheduler();
+    const socketRestartScheduler = this.socketRestartScheduler();
     this.scheduledTasks = [socketRestartScheduler]
   }
   stop(): void {
@@ -34,8 +34,9 @@ export class RollbitCsGoLogger extends WorkerBase<IRollbitInventoryItem> {
   }
   private socketRestartScheduler() {
     return cron.schedule('0 * * * *', async () => {
+      let currentTask = "socketRestartScheduler";
       try {
-        var currentTask = "Socket Restarter";
+        currentTask = "Socket Restarter";
         this.socket.disconnect();
         await this.socket.connect(this.botParam.cookie);
         this.logger.log("Socket restarted")
@@ -51,9 +52,9 @@ export class RollbitCsGoLogger extends WorkerBase<IRollbitInventoryItem> {
     return new RollbitCsGoDatabaseSelector(EnumBot.RollbitCsGoLogger);
   }
   private prepareSocketMarketListener() {
-    var that = this;
+    const that = this;
     that.socket.listen('steam/market', async (item: IRollbitSocketItem) => {
-      var normalizedItem = that.normalizeItem(item);
+      const normalizedItem = that.normalizeItem(item);
       if (item.state === 'listed') {
         await that.saveListedItem(normalizedItem);
       }

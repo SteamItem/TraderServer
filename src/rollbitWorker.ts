@@ -4,6 +4,6 @@ import { TelegramLogger } from './workers/Logger/TelegramLogger';
 
 mongoHelper.connect();
 
-var logger = new TelegramLogger();
-var worker = new RollbitCsGoWorker(logger);
+const logger = new TelegramLogger();
+const worker = new RollbitCsGoWorker(logger);
 worker.schedule();

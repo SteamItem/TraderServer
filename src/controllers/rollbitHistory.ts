@@ -1,11 +1,11 @@
 import db = require('../db');
 
 async function findAll() {
-  var histories = await db.rollbitHistories();
-  var favs = await db.rollbitFavs();
-  var returnItems: any[] = [];
+  const histories = await db.rollbitHistories();
+  const favs = await db.rollbitFavs();
+  const returnItems: any[] = [];
   histories.forEach(history => {
-    var isFav = favs.filter(f => f.name === history.name).length > 0;
+    const isFav = favs.filter(f => f.name === history.name).length > 0;
     returnItems.push({
       name: history.name,
       price: history.price,

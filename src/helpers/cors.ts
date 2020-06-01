@@ -2,9 +2,9 @@ import cors = require('cors');
 import config = require('../config');
 
 function getCorsOptions() {
-  var whitelistConfig = config.CORS_WHITELIST;
-  var whitelist = whitelistConfig.split(",");
-  var corsOptions: cors.CorsOptions = {
+  const whitelistConfig = config.CORS_WHITELIST;
+  const whitelist = whitelistConfig.split(",");
+  const corsOptions: cors.CorsOptions = {
     origin: function (origin, callback) {
       if (origin && whitelist.indexOf(origin) !== -1) {
         callback(null, true)

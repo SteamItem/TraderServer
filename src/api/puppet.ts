@@ -8,12 +8,12 @@ import { ICookie } from '../interfaces/puppet';
 export class PuppetApi extends ApiBase {
   private baseUrl = config.PUPPET_API;
   public async login(site: EnumSite, steamLogin: ISteamLogin) {
-    let content: AxiosRequestConfig = {
+    const content: AxiosRequestConfig = {
       headers: {
         'Content-Type': 'application/json',
       }
     };
-    var result = await this.axiosInstance.post<ICookie[]>(`${this.baseUrl}/login/${site}`, steamLogin, content);
+    const result = await this.axiosInstance.post<ICookie[]>(`${this.baseUrl}/login/${site}`, steamLogin, content);
     return result.data;
   }
 }

@@ -19,13 +19,13 @@ export class RollbitCsGoWorker extends WorkerBase<IRollbitInventoryItem> {
     this.prepareSocketListeners();
   }
   start(botParam: IBotParam): void {
-    var that = this;
+    const that = this;
     that.socket.connect(botParam.cookie);
     that.syncTimer = setInterval(function () {
       console.log("sync sent");
       that.socket.send('sync', '', botParam.cookie, true);
     }, 2500);
-    var socketRestartScheduler = this.socketRestartScheduler();
+    const socketRestartScheduler = this.socketRestartScheduler();
     this.scheduledTasks = [socketRestartScheduler]
   }
   stop(): void {
@@ -35,8 +35,8 @@ export class RollbitCsGoWorker extends WorkerBase<IRollbitInventoryItem> {
   }
   private socketRestartScheduler() {
     return cron.schedule('0 * * * *', async () => {
+      const currentTask = "Socket Restarter";
       try {
-        var currentTask = "Socket Restarter";
         this.socket.disconnect();
         await this.socket.connect(this.botParam.cookie);
         this.logger.log("Socket restarted")
@@ -50,14 +50,14 @@ export class RollbitCsGoWorker extends WorkerBase<IRollbitInventoryItem> {
     this.prepareSocketMarketListener();
   }
   private prepareSocketBalanceListener() {
-    var that = this;
+    const that = this;
     that.socket.listen('balance', (socketBalance: IRollbitSocketBalance) => {
       that.balance = socketBalance.balance / 100;
       console.log("Balance: " + that.balance);
     });
   }
   private prepareSocketMarketListener() {
-    var that = this;
+    const that = this;
     that.socket.listen('steam/market', async (item: IRollbitSocketItem) => {
       console.log("new market item" + JSON.stringify(item));
       if (item.state === 'listed') {
@@ -71,13 +71,14 @@ export class RollbitCsGoWorker extends WorkerBase<IRollbitInventoryItem> {
   }
 
   private async inventoryOperation(item: IRollbitSocketItem) {
+    let currentTask = "inventoryOperation";
     try {
-      var inventoryFilterer = new RollbitInventoryFilterer(this.balance, [item], this.wishlistItems, this.logger);
-      var currentTask = inventoryFilterer.taskName;
+      const inventoryFilterer = new RollbitInventoryFilterer(this.balance, [item], this.wishlistItems, this.logger);
+      currentTask = inventoryFilterer.taskName;
       inventoryFilterer.filter();
       this.handleFilterResult(inventoryFilterer);
 
-      var withdrawMaker = new RollbitWithdrawMakerTask(this.botParam, inventoryFilterer.itemsToBuy, this.logger);
+      const withdrawMaker = new RollbitWithdrawMakerTask(this.botParam, inventoryFilterer.itemsToBuy, this.logger);
       currentTask = withdrawMaker.taskName;
       await withdrawMaker.work();
       this.handleWithdrawResult(withdrawMaker);

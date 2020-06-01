@@ -7,7 +7,7 @@ import helpers from '../helpers';
 import { PuppetApi } from '../api/puppet';
 
 async function findOne(id: EnumBot) {
-  var botParam = await BotParam.default.findOne({ id }).exec();
+  const botParam = await BotParam.default.findOne({ id }).exec();
   if (!botParam) throw new Error("BotParam not found");
   return botParam;
 }
@@ -40,7 +40,7 @@ function getWorkerPath(fileName: string) {
 }
 
 async function stopBot(id: number) {
-  var botFileName = getBotFileName(id);
+  const botFileName = getBotFileName(id);
   pm2.stop(botFileName, function(err) {
     pm2.disconnect();
     if (err) throw err
@@ -48,8 +48,8 @@ async function stopBot(id: number) {
 }
 
 async function startBot(id: number) {
-  var botFileName = getBotFileName(id);
-  var workerPath = getWorkerPath(botFileName);
+  const botFileName = getBotFileName(id);
+  const workerPath = getWorkerPath(botFileName);
   pm2.connect(err => {
     if (err) {
       console.error(err);
@@ -73,15 +73,15 @@ async function startBot(id: number) {
 }
 
 async function login(id: EnumBot, steamLogin: ISteamLogin) {
-  let site = helpers.getSiteOfBot(id);
-  let api = new PuppetApi();
-  let cookies = await api.login(site, steamLogin);
-  let cookie = cookies.map(c => `${c.name}=${c.value}`).join(';');
+  const site = helpers.getSiteOfBot(id);
+  const api = new PuppetApi();
+  const cookies = await api.login(site, steamLogin);
+  const cookie = cookies.map(c => `${c.name}=${c.value}`).join(';');
   return BotParam.default.findOneAndUpdate({ id }, { cookie });
 }
 
-async function handleBots() {
-  let bots = await BotParam.default.find({worker: true}).exec();
+async function handleBots() {
+  const bots = await BotParam.default.find({worker: true}).exec();
   bots.forEach(async bot => {
     await startBot(bot.id);
   });

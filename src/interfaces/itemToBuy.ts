@@ -12,6 +12,3 @@ export interface IEmpireItemToBuy extends IItemToBuy {
   bot_id: number;
   store_item_id: string;
 }
-
-export interface IRollbitItemToBuy extends IItemToBuy {
-}

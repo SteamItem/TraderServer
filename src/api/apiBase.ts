@@ -11,8 +11,8 @@ export abstract class ApiBase {
       res => res,
       err => {
         if (err.response) {
-          var message = `${err.response.statusText}-${err.response.status}`;
-          var responseMessage = err.response.data.message;
+          let message = `${err.response.statusText}-${err.response.status}`;
+          const responseMessage = err.response.data.message;
           if (responseMessage) { message += `: ${responseMessage}`;}
           throw new Error(message);
         } else {

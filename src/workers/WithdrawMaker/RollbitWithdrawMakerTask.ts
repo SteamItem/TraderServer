@@ -13,24 +13,24 @@ export class RollbitWithdrawMakerTask<II extends IRollbitInventoryItem> extends 
   private botParam: IBotParam;
 
   async withdrawAll(): Promise<IWithdrawMakerResult> {
-    var promises: Promise<IWithdrawResult>[] = [];
+    const promises: Promise<IWithdrawResult>[] = [];
     this.inventoryItemsToBuy.forEach(ib => promises.push(this.withdraw(ib)));
-    var results = await Promise.all(promises);
+    const results = await Promise.all(promises);
 
-    var successWithdraws = _.filter(results, r => r.status === true);
-    var successWithdrawCount = successWithdraws.length;
-    var successWithdrawItemCount = _.sumBy(successWithdraws, s => s.count);
-    var failWithdraws = _.filter(results, r => r.status === false);
-    var failWithdrawCount = failWithdraws.length;
-    var failWithdrawItemCount = _.sumBy(failWithdraws, w => w.count);
+    const successWithdraws = _.filter(results, r => r.status === true);
+    const successWithdrawCount = successWithdraws.length;
+    const successWithdrawItemCount = _.sumBy(successWithdraws, s => s.count);
+    const failWithdraws = _.filter(results, r => r.status === false);
+    const failWithdrawCount = failWithdraws.length;
+    const failWithdrawItemCount = _.sumBy(failWithdraws, w => w.count);
     return { successWithdrawCount, successWithdrawItemCount, failWithdrawCount, failWithdrawItemCount };
   }
 
   private async withdraw(ib: IRollbitInventoryItem): Promise<IWithdrawResult> {
     try {
-      var api = new RollbitApi();
+      const api = new RollbitApi();
       await api.withdraw(this.botParam.cookie, [ib.ref]);
-      var itemName = ib.items.map(ii => ii.name).join("#");
+      const itemName = ib.items.map(ii => ii.name).join("#");
       this.logger.handleMessage(this.botParam.id, this.taskName, `${itemName} withdrawn for ${ib.price}`);
       return { status: true, count: 1};
     } catch (e) {

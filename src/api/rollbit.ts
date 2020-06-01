@@ -7,7 +7,7 @@ export class RollbitApi extends ApiBase {
   private baseUrl = 'https://api.rollbit.com/steam';
 
   public async csgoInventory(cookie: string, minPrice: number, maxPrice: number) {
-    var content: AxiosRequestConfig = {
+    const content: AxiosRequestConfig = {
       headers: {
         'Cookie': cookie,
         'Host': 'api.rollbit.com',
@@ -15,13 +15,13 @@ export class RollbitApi extends ApiBase {
       }
     };
 
-    var url = `${this.baseUrl}/market?query&order=1&showTradelocked=false&showCustomPriced=false&min=${minPrice}&max=${maxPrice}`;
-    var items = await this.axiosInstance.get<IRollbitInventoryItems>(url, content);
+    const url = `${this.baseUrl}/market?query&order=1&showTradelocked=false&showCustomPriced=false&min=${minPrice}&max=${maxPrice}`;
+    const items = await this.axiosInstance.get<IRollbitInventoryItems>(url, content);
     return items.data;
   }
 
-  public async withdraw(cookie: string, refs: string[]) {
-    var content: AxiosRequestConfig = {
+  public async withdraw(cookie: string, refs: string[]) {
+    const content: AxiosRequestConfig = {
       headers: {
         'Accept': 'application/json, text/*',
         'Accept-Language': 'en-US,en;q=0.9,tr;q=0.8',
@@ -41,10 +41,10 @@ export class RollbitApi extends ApiBase {
       maxRedirects: 4
     };
 
-    let data = JSON.stringify({
+    const data = JSON.stringify({
       "refs": refs
     });
-    var result = await this.axiosInstance.post(`${this.baseUrl}/withdraw`, data, content);
+    const result = await this.axiosInstance.post(`${this.baseUrl}/withdraw`, data, content);
     return result.data;
   }
 }

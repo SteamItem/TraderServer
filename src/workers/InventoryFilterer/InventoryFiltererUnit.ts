@@ -28,7 +28,7 @@ export abstract class InventoryFiltererUnit<II> extends WorkerUnit {
     return this.$itemsToBuy;
   }
   public filter() {
-    var itemsToBuy: II[] = [];
+    let itemsToBuy: II[] = [];
     itemsToBuy = this.filterForWishlist();
     this.$wishlistFilteredItems = itemsToBuy;
     itemsToBuy = this.afterFilterAction(itemsToBuy);
@@ -36,9 +36,9 @@ export abstract class InventoryFiltererUnit<II> extends WorkerUnit {
     this.$itemsToBuy = itemsToBuy;
   }
   private filterForWishlist(): II[] {
-    var itemsToBuy = [];
+    const itemsToBuy = [];
     this.$wishlistItems.forEach(wi => {
-      var filterResult = _.filter(this.$inventoryItems, ii => {
+      const filterResult = _.filter(this.$inventoryItems, ii => {
         return this.checkForItemToBuy(ii, wi);
       });
       filterResult.forEach(r => itemsToBuy.push(r));
@@ -51,14 +51,14 @@ export abstract class InventoryFiltererUnit<II> extends WorkerUnit {
     return inventoryItems;
   }
 
-  private filterForBalance(inventoryItems: II[]): II[] {
-    var itemsToBuy: II[] = [];
-    var currentBalance = this.$balance;
-    var selectedBalance = 0;
+  private filterForBalance(inventoryItems: II[]): II[] {
+    const itemsToBuy: II[] = [];
+    let currentBalance = this.$balance;
+    let selectedBalance = 0;
     inventoryItems.forEach(ii => {
-      var itemPrice = this.getItemPrice(ii);
+      const itemPrice = this.getItemPrice(ii);
       if (itemPrice <= currentBalance) {
-        var suitableFilter = this.isNewItemSuitable(ii, itemsToBuy);
+        const suitableFilter = this.isNewItemSuitable(ii, itemsToBuy);
         if (suitableFilter) {
           itemsToBuy.push(ii);
           currentBalance -= itemPrice;
@@ -73,10 +73,10 @@ export abstract class InventoryFiltererUnit<II> extends WorkerUnit {
   }
 
   private checkForItemToBuy(inventoryItem: II, wishlistItem: IWishlistItem): boolean {
-    var itemName = this.getItemName(inventoryItem);
-    var itemPrice = this.getItemPrice(inventoryItem)
+    const itemName = this.getItemName(inventoryItem);
+    const itemPrice = this.getItemPrice(inventoryItem)
 
-    var filterResult = helpers.compareStrings(itemName, wishlistItem.name);
+    let filterResult = helpers.compareStrings(itemName, wishlistItem.name);
     if (wishlistItem.max_price) {
       filterResult = filterResult && itemPrice <= wishlistItem.max_price;
     }

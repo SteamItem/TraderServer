@@ -8,17 +8,17 @@ export class RollbitCsGoInventoryGetterTask extends InventoryGetterTask<IRollbit
   private iterationLimit = 1;
 
   async getStoreItems() {
-    var allItems: IRollbitInventoryItem[] = [];
-    var minPrice = this.minPrice;
-    var maxPrice = this.maxPrice;
-    var iteration = 0;
+    const allItems: IRollbitInventoryItem[] = [];
+    const minPrice = this.minPrice;
+    let maxPrice = this.maxPrice;
+    let iteration = 0;
     while (iteration < this.iterationLimit) {
       iteration++;
-      var currentResult = await this.getItems(minPrice, maxPrice);
-      var currentItems = currentResult.items;
+      const currentResult = await this.getItems(minPrice, maxPrice);
+      const currentItems = currentResult.items;
       if (currentItems.length > 0) {
         currentItems.forEach(i => allItems.push(i));
-        var minItem = _.last(allItems);
+        const minItem = _.last(allItems);
         if (minItem) {
           maxPrice = minItem.price;
         } else {
@@ -29,7 +29,7 @@ export class RollbitCsGoInventoryGetterTask extends InventoryGetterTask<IRollbit
     return allItems;
   }
   private async getItems(minPrice: number, maxPrice: number) {
-    var api = new RollbitApi();
+    const api = new RollbitApi();
     return await api.csgoInventory(this.botParam.cookie, minPrice, maxPrice);
   }
 }

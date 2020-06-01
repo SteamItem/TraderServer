@@ -23,9 +23,9 @@ export abstract class DatabaseSelectorTask extends WorkerTask {
   }
   abstract getWishlistItems(): Promise<IWishlistItem[]>;
   async work() {
-    var botParamPromise = this.getBotParam();
-    var wishlistItemsPromise = this.getWishlistItems();
-    var result = await Promise.all([botParamPromise, wishlistItemsPromise]);
+    const botParamPromise = this.getBotParam();
+    const wishlistItemsPromise = this.getWishlistItems();
+    const result = await Promise.all([botParamPromise, wishlistItemsPromise]);
     this.$botParam = result[0];
     this.$wishlistItems = result[1];
   }

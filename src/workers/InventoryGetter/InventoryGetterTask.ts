@@ -7,14 +7,14 @@ export abstract class InventoryGetterTask<SI> extends WorkerTask {
     this.$botParam = botParam;
   }
   private $botParam: IBotParam;
-  public get botParam() {
+  public get botParam(): IBotParam {
     return this.$botParam;
   }
   private $storeItems: SI[] = [];
   public get inventoryItems(): SI[] {
     return this.$storeItems;
   }
-  async work() {
+  async work(): Promise<void> {
     this.$storeItems = await this.getStoreItems();
   }
   abstract getStoreItems(): Promise<SI[]>;

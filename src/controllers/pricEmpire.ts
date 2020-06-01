@@ -7,17 +7,17 @@ function searchItems(pricEmpireSearchRequest: IPricEmpireSearchRequest) {
 }
 
 async function refreshItems() {
-  let api = new PricEmpireApi();
-  let items = await api.getItemsByName();
+  const api = new PricEmpireApi();
+  const items = await api.getItemsByName();
   await db.updatePricEmpireItems(items);
   return "Success";
 }
 
 async function refreshItemDetails(ids: number[]) {
   if (ids.length > 10) throw new Error("Maximum 10 items could be selected.");
-  let promises = [];
+  const promises = [];
   ids.forEach(id => {
-    let promise = refreshItemDetail(id);
+    const promise = refreshItemDetail(id);
     promises.push(promise);
   });
   await Promise.all(promises);
@@ -25,8 +25,8 @@ async function refreshItemDetails(ids: number[]) {
 }
 
 async function refreshItemDetail(id: number) {
-  let api = new PricEmpireApi();
-  let itemDetail = await api.getItemDetail(id);
+  const api = new PricEmpireApi();
+  const itemDetail = await api.getItemDetail(id);
   await db.updatePricEmpireItemPrices(itemDetail.prices);
 }
 

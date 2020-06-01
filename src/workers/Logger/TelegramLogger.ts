@@ -1,5 +1,5 @@
 import { LoggerBase } from "./LoggerBase";
-var telegramController = require("../../controllers/telegram");
+const telegramController = require("../../controllers/telegram");
 
 export class TelegramLogger extends LoggerBase {
   log(message: string) {

@@ -6,6 +6,7 @@
     "build-ts": "tsc",
     "watch-ts": "tsc -w",
     "deploy": "caprover deploy -a server -b master --default",
+    "lint": "npx eslint .",
     "start": "tsc && pm2-runtime start ecosystem.config.js",
     "dev": "tsc && pm2-runtime start ecosystem.dev.config.js"
   },
@@ -37,5 +38,10 @@
     "ts-node": "^8.10.1",
     "tslint": "^6.1.2",
     "typescript": "^3.8.3"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^3.0.2",
+    "@typescript-eslint/parser": "^3.0.2",
+    "eslint": "^7.1.0"
   }
 }

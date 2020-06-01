@@ -7,42 +7,42 @@ import { Constants } from '../helpers/constant';
 export class CSGOEmpireApi extends ApiBase {
   private baseUrl = 'https://csgoempire.gg/api/v2';
   public async getToken(code: string, cookie: string) {
-    let data = JSON.stringify({
+    const data = JSON.stringify({
       "code": code,
       "uuid": "1"
     });
 
-    let content: AxiosRequestConfig = {
+    const content: AxiosRequestConfig = {
       headers: {
         'Content-Type': 'application/json',
         'Cookie': cookie,
         'Host': 'csgoempire.gg'
       }
     };
-    var result = await this.axiosInstance.post(`${this.baseUrl}/user/security/token`, data, content);
+    const result = await this.axiosInstance.post(`${this.baseUrl}/user/security/token`, data, content);
     return result.data;
   }
 
   public async profile(cookie: string) {
-    let content = {
+    const content = {
       headers: {
         'Content-Type': 'application/json',
         'Cookie': cookie,
         'Host': 'csgoempire.gg'
       }
     };
-    var result = await this.axiosInstance.get<IEmpireProfile>(`${this.baseUrl}/user`, content);
+    const result = await this.axiosInstance.get<IEmpireProfile>(`${this.baseUrl}/user`, content);
     return result.data;
   }
 
   public async withdraw(cookie: string, token: string, bot_id: number, item_ids: string[]) {
-    let data = JSON.stringify({
+    const data = JSON.stringify({
       "security_token": token,
       "bot_id": bot_id,
       "item_ids": item_ids
     });
 
-    let content = {
+    const content = {
       headers: {
         'Accept': 'application/json, text/plain, */*',
         'Accept-Encoding': 'gzip, deflate, br',
@@ -64,31 +64,31 @@ export class CSGOEmpireApi extends ApiBase {
       timeout: 20000,
       maxRedirects: 4
     };
-    var result = await this.axiosInstance.post(`${this.baseUrl}/trade/withdraw`, data, content);
+    const result = await this.axiosInstance.post(`${this.baseUrl}/trade/withdraw`, data, content);
     return result.data;
   }
 
   public async instantInventory(cookie: string) {
-    var content = {
+    const content = {
       headers: {
         'Content-Type': 'application/json',
         'Cookie': cookie,
         'Host': 'csgoempire.gg'
       }
     };
-    var items = await this.axiosInstance.get<IEmpireInstantInventoryItem[]>(`${this.baseUrl}/p2p/inventory/instant`, content);
+    const items = await this.axiosInstance.get<IEmpireInstantInventoryItem[]>(`${this.baseUrl}/p2p/inventory/instant`, content);
     return items.data;
   }
 
   public async dotaInventory(cookie: string) {
-    var content = {
+    const content = {
       headers: {
         'Content-Type': 'application/json',
         'Cookie': cookie,
         'Host': 'csgoempire.gg'
       }
     };
-    var items = await this.axiosInstance.get<IEmpireDotaInventoryItem[]>(`${this.baseUrl}/inventory/site/10`, content);
+    const items = await this.axiosInstance.get<IEmpireDotaInventoryItem[]>(`${this.baseUrl}/inventory/site/10`, content);
     return items.data;
   }
 }

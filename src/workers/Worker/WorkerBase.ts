@@ -13,9 +13,9 @@ export abstract class WorkerBase<II> {
   protected logger: LoggerBase;
   protected botParam: IBotParam;
   protected wishlistItems: IWishlistItem[];
-  private _working: boolean = false;
+  private _working = false;
   private set working(value: boolean) {
-    var taskName = "Worker Status";
+    const taskName = "Worker Status";
     if (this._working === true && value === false) {
       this.stop();
       this.logger.handleMessage(this.botParam.id, taskName, "Stopped");
@@ -31,7 +31,7 @@ export abstract class WorkerBase<II> {
 
   abstract getDatabaseSelector(): DatabaseSelectorTask;
   async schedule() {
-    var databaseScheduler = this.databaseScheduler();
+    const databaseScheduler = this.databaseScheduler();
     databaseScheduler.start();
     this.initialize();
   }
@@ -39,9 +39,10 @@ export abstract class WorkerBase<II> {
 
   private databaseScheduler() {
     return cron.schedule('* * * * * *', async () => {
+      let currentTask = "databaseScheduler";
       try {
-        var databaseSelector = this.getDatabaseSelector();
-        var currentTask = databaseSelector.taskName;
+        const databaseSelector = this.getDatabaseSelector();
+        currentTask = databaseSelector.taskName;
         await databaseSelector.work();
         this.botParam = databaseSelector.botParam;
         this.wishlistItems = databaseSelector.wishlistItems;
@@ -54,26 +55,26 @@ export abstract class WorkerBase<II> {
 
   protected handleFilterResult(inventoryFilterer: InventoryFiltererUnit<II>) {
     if (inventoryFilterer.wishlistFilteredItems.length > 0) {
-      var itemsToBuyLength = inventoryFilterer.itemsToBuy.length;
-      var filteredItemsLength = inventoryFilterer.wishlistFilteredItems.length;
-      var inventoryItemsLength = inventoryFilterer.inventoryItems.length;
+      const itemsToBuyLength = inventoryFilterer.itemsToBuy.length;
+      const filteredItemsLength = inventoryFilterer.wishlistFilteredItems.length;
+      const inventoryItemsLength = inventoryFilterer.inventoryItems.length;
 
-      var filterMessage = `${itemsToBuyLength}/${filteredItemsLength}/${inventoryItemsLength} Buy/Filter/All`;
+      const filterMessage = `${itemsToBuyLength}/${filteredItemsLength}/${inventoryItemsLength} Buy/Filter/All`;
       this.handleMessage(inventoryFilterer.taskName, filterMessage);
     }
   }
 
   protected handleWithdrawResult(withdrawMaker: WithdrawMakerTask<II>) {
-    var successWithdrawItemCount = withdrawMaker.withdrawResult.successWithdrawItemCount;
-    var failWithdrawItemCount = withdrawMaker.withdrawResult.failWithdrawItemCount;
-    var totalWithdrawItemCount = successWithdrawItemCount + failWithdrawItemCount;
+    const successWithdrawItemCount = withdrawMaker.withdrawResult.successWithdrawItemCount;
+    const failWithdrawItemCount = withdrawMaker.withdrawResult.failWithdrawItemCount;
+    const totalWithdrawItemCount = successWithdrawItemCount + failWithdrawItemCount;
 
-    var successWithdrawCount = withdrawMaker.withdrawResult.successWithdrawCount;
-    var failWithdrawCount = withdrawMaker.withdrawResult.failWithdrawCount;
-    var totalWithdrawCount = successWithdrawCount + failWithdrawCount;
+    const successWithdrawCount = withdrawMaker.withdrawResult.successWithdrawCount;
+    const failWithdrawCount = withdrawMaker.withdrawResult.failWithdrawCount;
+    const totalWithdrawCount = successWithdrawCount + failWithdrawCount;
 
     if (totalWithdrawCount > 0) {
-      var message = `${successWithdrawItemCount}/${totalWithdrawItemCount} Items by ${successWithdrawCount}/${totalWithdrawCount} Withdraws made`;
+      const message = `${successWithdrawItemCount}/${totalWithdrawItemCount} Items by ${successWithdrawCount}/${totalWithdrawCount} Withdraws made`;
       this.handleMessage(withdrawMaker.taskName, message);
     }
   }

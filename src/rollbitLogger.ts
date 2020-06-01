@@ -6,6 +6,6 @@ import db = require('./db');
 mongoHelper.connect();
 db.sync();
 
-var logger = new TelegramLogger();
-var worker = new RollbitCsGoLogger(logger);
+const logger = new TelegramLogger();
+const worker = new RollbitCsGoLogger(logger);
 worker.schedule();

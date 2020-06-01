@@ -4,6 +4,7 @@ import cors = require('cors');
 import mongoHelper = require('./helpers/mongo');
 import db = require('./db');
 import botParam = require('./controllers/botParam');
+import routes = require('./routes');
 const PORT = process.env.PORT || 3000;
 
 // create express app
@@ -16,13 +17,7 @@ app.use(cors());
 mongoHelper.connect();
 db.sync();
 
-require('./routes/index')(app);
-require('./routes/wishlistItem')(app);
-require('./routes/botParam')(app);
-require('./routes/telegram')(app);
-require('./routes/rollbitHistory')(app);
-require('./routes/rollbitFav')(app);
-require('./routes/pricEmpire')(app);
+routes.registerRoutes(app);
 
 botParam.handleBots();
 

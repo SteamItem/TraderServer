@@ -31,9 +31,9 @@ export abstract class EmpireWorkerBase<II extends IEmpireInventoryItem> extends 
     return new EmpireWithdrawMakerTask(this.token, this.botParam, this.itemsToBuy, this.logger);
   }
   start() {
-    var that = this;
-    var tokenScheduler = that.tokenScheduler();
-    var balanceChecker = that.balanceChecker();
+    const that = this;
+    const tokenScheduler = that.tokenScheduler();
+    const balanceChecker = that.balanceChecker();
     that.scheduledTasks = [tokenScheduler, balanceChecker];
     that.scheduledTasks.forEach(st => { st.start(); });
     that.inventoryTimer = setInterval(function () {
@@ -46,9 +46,10 @@ export abstract class EmpireWorkerBase<II extends IEmpireInventoryItem> extends 
   }
   private tokenScheduler() {
     return cron.schedule('* * * * * *', async () => {
+      let currentTask = "tokenScheduler";
       try {
-        var tokenGetter = this.getTokenGetter();
-        var currentTask = tokenGetter.taskName;
+        const tokenGetter = this.getTokenGetter();
+        currentTask = tokenGetter.taskName;
         await tokenGetter.work();
         this.token = tokenGetter.token;
       } catch (e) {
@@ -59,9 +60,10 @@ export abstract class EmpireWorkerBase<II extends IEmpireInventoryItem> extends 
 
   balanceChecker() {
     return cron.schedule('* * * * * *', async () => {
+      let currentTask = "balanceChecker";
       try {
-        var balanceChecker = this.getBalanceChecker();
-        var currentTask = balanceChecker.taskName;
+        const balanceChecker = this.getBalanceChecker();
+        currentTask = balanceChecker.taskName;
         await balanceChecker.work();
         this.balance = balanceChecker.balance;
       } catch (e) {
@@ -71,17 +73,18 @@ export abstract class EmpireWorkerBase<II extends IEmpireInventoryItem> extends 
   }
 
   private async inventoryTask() {
+    let currentTask = "inventoryTask";
     try {
-      var inventoryGetter = this.getInventoryGetter();
-      var currentTask = inventoryGetter.taskName;
+      const inventoryGetter = this.getInventoryGetter();
+      currentTask = inventoryGetter.taskName;
       await inventoryGetter.work();
       this.inventoryItems = inventoryGetter.inventoryItems;
-      var inventoryFilterer = this.getInventoryFilterer();
+      const inventoryFilterer = this.getInventoryFilterer();
       currentTask = inventoryFilterer.taskName;
       inventoryFilterer.filter();
       this.handleFilterResult(inventoryFilterer);
       this.itemsToBuy = inventoryFilterer.itemsToBuy;
-      var withdrawMaker = this.getWithdrawMaker();
+      const withdrawMaker = this.getWithdrawMaker();
       currentTask = withdrawMaker.taskName;
       await withdrawMaker.work();
       this.handleWithdrawResult(withdrawMaker);

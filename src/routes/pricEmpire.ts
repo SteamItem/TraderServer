@@ -3,7 +3,7 @@ import cors = require('cors');
 import corsHelper = require('../helpers/cors');
 import pricEmpireController = require('../controllers/pricEmpire');
 
-module.exports = (app: express.Express) => {
+export = (app: express.Express) => {
   const corsOptions = corsHelper.getCorsOptions();
 
   app.post('/pricEmpire/searchItems', cors(corsOptions), async (req, res) => {

@@ -14,7 +14,7 @@ export abstract class TokenGetterTask extends WorkerTask {
   public get token(): string {
     return this.$token;
   }
-  async work() {
+  async work(): Promise<void> {
     this.$token = await this.getToken();
   }
   abstract getToken(): Promise<string>;

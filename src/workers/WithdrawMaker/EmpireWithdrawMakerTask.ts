@@ -15,27 +15,27 @@ export class EmpireWithdrawMakerTask<II extends IEmpireInventoryItem> extends Wi
   private token: string;
 
   async withdrawAll(): Promise<IWithdrawMakerResult> {
-    var promises: Promise<IWithdrawResult>[] = [];
-    var groupedItems = _.groupBy(this.inventoryItemsToBuy, i => i.bot_id);
+    const promises: Promise<IWithdrawResult>[] = [];
+    const groupedItems = _.groupBy(this.inventoryItemsToBuy, i => i.bot_id);
 
-    for (var key in groupedItems) {
-      var item_ids = _.map(groupedItems[key], i => i.id);
-      var promise = this.withdraw(parseInt(key), item_ids);
+    for (const key in groupedItems) {
+      const item_ids = _.map(groupedItems[key], i => i.id);
+      const promise = this.withdraw(parseInt(key), item_ids);
       promises.push(promise);
     }
-    var results = await Promise.all(promises);
-    var successWithdraws = _.filter(results, r => r.status === true);
-    var successWithdrawCount = successWithdraws.length;
-    var successWithdrawItemCount = _.sumBy(successWithdraws, s => s.count);
-    var failWithdraws = _.filter(results, r => r.status === false);
-    var failWithdrawCount = failWithdraws.length;
-    var failWithdrawItemCount = _.sumBy(failWithdraws, w => w.count);
+    const results = await Promise.all(promises);
+    const successWithdraws = _.filter(results, r => r.status === true);
+    const successWithdrawCount = successWithdraws.length;
+    const successWithdrawItemCount = _.sumBy(successWithdraws, s => s.count);
+    const failWithdraws = _.filter(results, r => r.status === false);
+    const failWithdrawCount = failWithdraws.length;
+    const failWithdrawItemCount = _.sumBy(failWithdraws, w => w.count);
     return { successWithdrawCount, successWithdrawItemCount, failWithdrawCount, failWithdrawItemCount };
   }
 
   private async withdraw(bot_id: number, item_ids: string[]): Promise<IWithdrawResult> {
     try {
-      var api = new CSGOEmpireApi();
+      const api = new CSGOEmpireApi();
       await api.withdraw(this.botParam.cookie, this.token, bot_id, item_ids);
       return { status: true, count: item_ids.length };
     } catch (e) {

@@ -13,7 +13,7 @@ export class RollbitSocket {
   }
 
   public listen (ch: string, listener) {
-    var chs = this.channels.get(ch);
+    let chs = this.channels.get(ch);
     if (chs == null) {
       chs = [];
       this.channels.set(ch, chs);
@@ -21,13 +21,13 @@ export class RollbitSocket {
     chs.push(listener);
 
     return function () {
-      var idx = chs.indexOf(listener);
+      const idx = chs.indexOf(listener);
       if (idx < 0) return;
       chs.splice(idx, 1);
     }
   }
   public async connect(cookie: string) {
-    var that = this;
+    const that = this;
     if (that.socket) return;
     const url = 'https://ws.rollbit.com/';
     const options: WebSocket.ClientOptions = {
@@ -49,7 +49,7 @@ export class RollbitSocket {
     that.socket = new WebSocket(url, "optionalProtocol", options);
     that.socket.onmessage = (ev: WebSocket.MessageEvent) => {
       const [ch, message, id] = JSON.parse(ev.data.toString());
-      var listeners = that.channels.get(ch);
+      const listeners = that.channels.get(ch);
       if (listeners && listeners.length)
         listeners.forEach(l => l(message));
     }
@@ -65,7 +65,7 @@ export class RollbitSocket {
   }
   public send(ch: string, message: string, cookie: string, immediate = false) {
     if (this.socket == null) this.connect(cookie);
-    var id = Math.random().toString(36);
+    const id = Math.random().toString(36);
     const payload = JSON.stringify([ch, message, id]);
     const isConnected = this.socket.readyState === 1;
     if (immediate && !isConnected) return;

@@ -17,9 +17,8 @@ export abstract class WithdrawMakerTask<II> extends WorkerTask {
   public get withdrawResult(): IWithdrawMakerResult {
     return this.$withdrawResult;
   }
-  async work() {
-    if (!this.inventoryItemsToBuy)
-      return Promise.resolve;
+  async work(): Promise<void> {
+    if (!this.inventoryItemsToBuy) return;
     this.$withdrawResult = await this.withdrawAll();
   }
   abstract withdrawAll(): Promise<IWithdrawMakerResult>;

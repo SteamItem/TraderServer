@@ -204,7 +204,7 @@ function sync() {
 }
 
 async function updatePricEmpireItems(items: IPricEmpireItem[]) {
-  let splittedArray = R.splitEvery(1000, items);
+  const splittedArray = R.splitEvery(1000, items);
   splittedArray.forEach(async arr => {
     await PricEmpireItem.bulkCreate(arr, {updateOnDuplicate: ['image','last_price']});
   });
@@ -274,19 +274,19 @@ function profitSearch(pricEmpireSearchRequest: IPricEmpireSearchRequest) {
     LEFT JOIN ( ${price_group} ) as pr ON pi.id = pr.item_id
     LEFT JOIN ( ${rollbit_group} ) as rh ON pi.name = rh.name
   WHERE 1 = 1`;
-  if (!!pricEmpireSearchRequest.name) {
+  if (pricEmpireSearchRequest.name) {
     inner_query += ` AND pi.name ILIKE '%${pricEmpireSearchRequest.name}%'`;
   }
   if (pricEmpireSearchRequest.app_id > 0) {
     inner_query += ` AND pi.app_id = ${pricEmpireSearchRequest.app_id}`;
   }
-  if (!!pricEmpireSearchRequest.skin) {
+  if (pricEmpireSearchRequest.skin) {
     inner_query += ` AND pi.skin ILIKE '%${pricEmpireSearchRequest.skin}%'`;
   }
-  if (!!pricEmpireSearchRequest.family) {
+  if (pricEmpireSearchRequest.family) {
     inner_query += ` AND pi.family ILIKE '%${pricEmpireSearchRequest.family}%'`;
   }
-  if (!!pricEmpireSearchRequest.exterior) {
+  if (pricEmpireSearchRequest.exterior) {
     inner_query += ` AND pi.exterior ILIKE '%${pricEmpireSearchRequest.exterior}%'`;
   }
   if (pricEmpireSearchRequest.ignore_zero_price) {
