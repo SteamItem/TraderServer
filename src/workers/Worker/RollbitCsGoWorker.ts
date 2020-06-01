@@ -51,8 +51,12 @@ export class RollbitCsGoWorker extends WorkerBase<IRollbitInventoryItem> {
   }
   private prepareSocketBalanceListener() {
     const that = this;
+    const taskName = "Balance";
     that.socket.listen('balance', (socketBalance: IRollbitSocketBalance) => {
       that.balance = socketBalance.balance / 100;
+      const type = socketBalance.type || "Initial"
+      const message = `Balance updated: ${that.balance} - ${type}`;
+      that.handleMessage(taskName, message);
       console.log("Balance: " + that.balance);
     });
   }
