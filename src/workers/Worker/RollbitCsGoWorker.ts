@@ -77,15 +77,13 @@ export class RollbitCsGoWorker extends WorkerBase<IRollbitInventoryItem> {
   private async inventoryOperation(item: IRollbitSocketItem) {
     let currentTask = "inventoryOperation";
     try {
-      const inventoryFilterer = new RollbitInventoryFilterer(this.balance, [item], this.wishlistItems, this.logger);
+      const inventoryFilterer = new RollbitInventoryFilterer(this.balance, [item], this.wishlistItems);
       currentTask = inventoryFilterer.taskName;
       inventoryFilterer.filter();
-      this.handleFilterResult(inventoryFilterer);
 
       const withdrawMaker = new RollbitWithdrawMakerTask(this.botParam, inventoryFilterer.itemsToBuy, this.logger);
       currentTask = withdrawMaker.taskName;
       await withdrawMaker.work();
-      this.handleWithdrawResult(withdrawMaker);
     } catch (e) {
       this.handleError(currentTask, e.message);
     }

@@ -53,32 +53,6 @@ export abstract class WorkerBase<II> {
     });
   }
 
-  protected handleFilterResult(inventoryFilterer: InventoryFiltererUnit<II>) {
-    if (inventoryFilterer.wishlistFilteredItems.length > 0) {
-      const itemsToBuyLength = inventoryFilterer.itemsToBuy.length;
-      const filteredItemsLength = inventoryFilterer.wishlistFilteredItems.length;
-      const inventoryItemsLength = inventoryFilterer.inventoryItems.length;
-
-      const filterMessage = `${itemsToBuyLength}/${filteredItemsLength}/${inventoryItemsLength} Buy/Filter/All`;
-      this.handleMessage(inventoryFilterer.taskName, filterMessage);
-    }
-  }
-
-  protected handleWithdrawResult(withdrawMaker: WithdrawMakerTask<II>) {
-    const successWithdrawItemCount = withdrawMaker.withdrawResult.successWithdrawItemCount;
-    const failWithdrawItemCount = withdrawMaker.withdrawResult.failWithdrawItemCount;
-    const totalWithdrawItemCount = successWithdrawItemCount + failWithdrawItemCount;
-
-    const successWithdrawCount = withdrawMaker.withdrawResult.successWithdrawCount;
-    const failWithdrawCount = withdrawMaker.withdrawResult.failWithdrawCount;
-    const totalWithdrawCount = successWithdrawCount + failWithdrawCount;
-
-    if (totalWithdrawCount > 0) {
-      const message = `${successWithdrawItemCount}/${totalWithdrawItemCount} Items by ${successWithdrawCount}/${totalWithdrawCount} Withdraws made`;
-      this.handleMessage(withdrawMaker.taskName, message);
-    }
-  }
-
   protected handleMessage(taskName: string, message: string) {
     this.logger.handleMessage(this.botParam.id, taskName, message);
   }

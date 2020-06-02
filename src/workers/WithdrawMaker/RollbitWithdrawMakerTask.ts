@@ -27,14 +27,14 @@ export class RollbitWithdrawMakerTask<II extends IRollbitInventoryItem> extends 
   }
 
   private async withdraw(ib: IRollbitInventoryItem): Promise<IWithdrawResult> {
+    const itemName = ib.items.map(ii => ii.name).join("#");
     try {
       const api = new RollbitApi();
       await api.withdraw(this.botParam.cookie, [ib.ref]);
-      const itemName = ib.items.map(ii => ii.name).join("#");
       this.logger.handleMessage(this.botParam.id, this.taskName, `${itemName} withdrawn for ${ib.price}`);
       return { status: true, count: 1};
     } catch (e) {
-      this.logger.handleError(this.botParam.id, this.taskName, e.message);
+      this.logger.handleError(this.botParam.id, this.taskName, `${itemName} withdraw failed ${ib.price} - ${e.message}`);
       return { status: false, count: 1};
     }
   }
