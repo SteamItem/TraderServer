@@ -36,7 +36,7 @@ export abstract class EmpireWorkerBase<II extends IEmpireInventoryItem> extends 
     const balanceChecker = that.balanceChecker();
     that.scheduledTasks = [tokenScheduler, balanceChecker];
     that.scheduledTasks.forEach(st => { st.start(); });
-    that.inventoryTimer = setInterval(function () {
+    that.inventoryTimer = setInterval(() => {
       that.inventoryTask();
     }, 250);
   }

@@ -3,8 +3,6 @@ import { IWishlistItem } from '../../models/wishlistItem';
 import { IBotParam } from '../../models/botParam';
 import { DatabaseSelectorTask } from '../DatabaseSelector/DatabaseSelectorTask';
 import { LoggerBase } from '../Logger/LoggerBase';
-import { InventoryFiltererUnit } from '../InventoryFilterer/InventoryFiltererUnit';
-import { WithdrawMakerTask } from '../WithdrawMaker/WithdrawMakerTask';
 export abstract class WorkerBase<II> {
   constructor(logger: LoggerBase) {
     this.logger = logger;

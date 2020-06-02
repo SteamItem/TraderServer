@@ -14,6 +14,7 @@ export class RollbitCsGoWorker extends WorkerBase<IRollbitInventoryItem> {
   private syncTimer: NodeJS.Timeout;
   private scheduledTasks: cron.ScheduledTask[] = [];
   private balance: number;
+  private syncReceived = false;
   initialize() {
     this.socket = new RollbitSocket();
     this.prepareSocketListeners();
@@ -21,7 +22,7 @@ export class RollbitCsGoWorker extends WorkerBase<IRollbitInventoryItem> {
   start(botParam: IBotParam): void {
     const that = this;
     that.socket.connect(botParam.cookie);
-    that.syncTimer = setInterval(function () {
+    that.syncTimer = setInterval(() => {
       console.log("sync sent");
       that.socket.send('sync', '', botParam.cookie, true);
     }, 2500);
@@ -34,12 +35,16 @@ export class RollbitCsGoWorker extends WorkerBase<IRollbitInventoryItem> {
     this.scheduledTasks.forEach(st => { st.stop(); });
   }
   private socketRestartScheduler() {
-    return cron.schedule('0 * * * *', async () => {
+    return cron.schedule('* * * * *', async () => {
       const currentTask = "Socket Restarter";
       try {
+        if (this.syncReceived) {
+          this.syncReceived = false;
+          return;
+        }
         this.socket.disconnect();
         await this.socket.connect(this.botParam.cookie);
-        this.logger.log("Socket restarted")
+        this.handleMessage(currentTask, "Restarted");
       } catch (e) {
         this.handleError(currentTask, e.message);
       }
@@ -63,6 +68,7 @@ export class RollbitCsGoWorker extends WorkerBase<IRollbitInventoryItem> {
   private prepareSocketMarketListener() {
     const that = this;
     that.socket.listen('steam/market', async (item: IRollbitSocketItem) => {
+      this.syncReceived = true;
       console.log("new market item" + JSON.stringify(item));
       if (item.state === 'listed') {
         await that.inventoryOperation(item);
