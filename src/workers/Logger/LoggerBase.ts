@@ -1,6 +1,12 @@
 import { EnumBot, getBotText } from "../../helpers/enum";
 
-export abstract class LoggerBase {
+export interface ILogger {
+  handleError(bot: EnumBot, taskName: string, message: string): void,
+  handleMessage(bot: EnumBot, taskName: string, message: string): void,
+  log(message: string): void
+}
+
+export abstract class LoggerBase implements ILogger {
   protected site: string;
   protected bot: string;
   handleError(bot: EnumBot, taskName: string, message: string): void {
