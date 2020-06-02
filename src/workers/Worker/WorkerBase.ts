@@ -13,13 +13,10 @@ export abstract class WorkerBase<II> {
   protected wishlistItems: IWishlistItem[];
   private _working = false;
   private set working(value: boolean) {
-    const taskName = "Worker Status";
     if (this._working === true && value === false) {
       this.stop();
-      this.logger.handleMessage(this.botParam.id, taskName, "Stopped");
     } else if (this._working === false && value === true) {
       this.start(this.botParam);
-      this.logger.handleMessage(this.botParam.id, taskName, "Started");
     }
     this._working = value;
   }
