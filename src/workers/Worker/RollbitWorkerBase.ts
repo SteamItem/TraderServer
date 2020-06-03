@@ -68,6 +68,6 @@ export abstract class RollbitWorkerBase extends WorkerBase<IRollbitInventoryItem
   protected onBalance(_socketBalance: IRollbitSocketBalance): void {}
 
   getDatabaseSelector(): DatabaseSelectorTask {
-    return new RollbitCsGoDatabaseSelector(this.botParam.id);
+    return new RollbitCsGoDatabaseSelector(this.bot);
   }
 }

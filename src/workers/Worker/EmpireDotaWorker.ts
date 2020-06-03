@@ -6,6 +6,7 @@ import { EmpireDotaDatabaseSelector } from '../DatabaseSelector/EmpireDotaDataba
 import { InventoryGetterTask } from '../InventoryGetter/InventoryGetterTask';
 import { EmpireDotaInventoryGetterTask } from '../InventoryGetter/EmpireDotaInventoryGetterTask';
 export class EmpireDotaWorker extends EmpireWorkerBase<IEmpireDotaInventoryItem> {
+  bot = EnumBot.EmpireDota;
   getDatabaseSelector(): DatabaseSelectorTask {
     return new EmpireDotaDatabaseSelector(EnumBot.EmpireDota);
   }

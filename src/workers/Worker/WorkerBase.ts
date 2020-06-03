@@ -3,11 +3,13 @@ import { IWishlistItem } from '../../models/wishlistItem';
 import { IBotParam } from '../../models/botParam';
 import { DatabaseSelectorTask } from '../DatabaseSelector/DatabaseSelectorTask';
 import { LoggerBase } from '../Logger/LoggerBase';
+import { EnumBot } from '../../helpers/enum';
 export abstract class WorkerBase<II> {
   constructor(logger: LoggerBase) {
     this.logger = logger;
   }
 
+  abstract bot: EnumBot;
   protected logger: LoggerBase;
   protected botParam: IBotParam;
   protected wishlistItems: IWishlistItem[];
@@ -49,10 +51,10 @@ export abstract class WorkerBase<II> {
   }
 
   protected handleMessage(taskName: string, message: string) {
-    this.logger.handleMessage(this.botParam.id, taskName, message);
+    this.logger.handleMessage(this.bot, taskName, message);
   }
 
   protected handleError(taskName: string, message: string) {
-    this.logger.handleError(this.botParam.id, taskName, message);
+    this.logger.handleError(this.bot, taskName, message);
   }
 }

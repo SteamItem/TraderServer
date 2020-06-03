@@ -3,7 +3,9 @@ import { RollbitInventoryFilterer } from '../InventoryFilterer/RollbitInventoryF
 import { RollbitWithdrawMakerTask } from '../WithdrawMaker/RollbitWithdrawMakerTask';
 import { RollbitWorkerBase } from './RollbitWorkerBase';
 import { IRollbitSocketBalance } from '../../interfaces/profile';
+import { EnumBot } from '../../helpers/enum';
 export class RollbitCsGoWorker extends RollbitWorkerBase {
+  bot = EnumBot.RollbitCsGo;
   private balance: number;
 
   async onSteamMarketItem(item: IRollbitSocketItem): Promise<void> {
