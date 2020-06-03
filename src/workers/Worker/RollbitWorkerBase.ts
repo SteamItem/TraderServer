@@ -1,12 +1,12 @@
 import cron = require('node-cron');
-import { IRollbitInventoryItem, IRollbitSocketItem } from '../../interfaces/storeItem';
+import { IRollbitSocketItem } from '../../interfaces/storeItem';
 import { WorkerBase } from "./WorkerBase";
 import { DatabaseSelectorTask } from '../DatabaseSelector/DatabaseSelectorTask';
 import { RollbitCsGoDatabaseSelector } from '../DatabaseSelector/RollbitCsGoDatabaseSelector';
 import { RollbitSocket } from '../../api/rollbitSocket';
 import { IRollbitSocketBalance } from '../../interfaces/profile';
 import { IBotParam } from '../../models/botParam';
-export abstract class RollbitWorkerBase extends WorkerBase<IRollbitInventoryItem> {
+export abstract class RollbitWorkerBase extends WorkerBase {
   private socket: RollbitSocket;
   private syncTimer: NodeJS.Timeout;
   private scheduledTasks: cron.ScheduledTask[] = [];

@@ -4,35 +4,30 @@ import { IBotParam } from '../../models/botParam';
 import { DatabaseSelectorTask } from '../DatabaseSelector/DatabaseSelectorTask';
 import { LoggerBase } from '../Logger/LoggerBase';
 import { EnumBot } from '../../helpers/enum';
-export abstract class WorkerBase<II> {
+export abstract class WorkerBase {
   constructor(logger: LoggerBase) {
     this.logger = logger;
   }
 
-  abstract bot: EnumBot;
   protected logger: LoggerBase;
   protected botParam: IBotParam;
   protected wishlistItems: IWishlistItem[];
   private _working = false;
   private set working(value: boolean) {
-    if (this._working === true && value === false) {
-      this.stop();
-    } else if (this._working === false && value === true) {
+    if (this._working === false && value === true) {
       this.start(this.botParam);
     }
     this._working = value;
   }
 
+  abstract bot: EnumBot;
   abstract start(botParam: IBotParam): void;
-  abstract stop(): void;
 
   abstract getDatabaseSelector(): DatabaseSelectorTask;
   async schedule() {
     const databaseScheduler = this.databaseScheduler();
     databaseScheduler.start();
-    this.initialize();
   }
-  initialize() {}
 
   private databaseScheduler() {
     return cron.schedule('* * * * * *', async () => {

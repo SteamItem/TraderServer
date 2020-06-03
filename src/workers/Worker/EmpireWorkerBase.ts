@@ -10,7 +10,7 @@ import { EmpireTokenGetterTask } from '../TokenGetter/EmpireTokenGetterTask';
 import { WithdrawMakerTask } from '../WithdrawMaker/WithdrawMakerTask';
 import { EmpireWithdrawMakerTask } from '../WithdrawMaker/EmpireWithdrawMakerTask';
 import { InventoryGetterTask } from '../InventoryGetter/InventoryGetterTask';
-export abstract class EmpireWorkerBase<II extends IEmpireInventoryItem> extends WorkerBase<II> {
+export abstract class EmpireWorkerBase<II extends IEmpireInventoryItem> extends WorkerBase {
   protected token: string;
   protected inventoryItems: II[] = [];
   protected balance: number;
