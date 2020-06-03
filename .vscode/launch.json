@@ -14,63 +14,7 @@
         "DB_URL": "mongodb://admin:1234qwer@ds161148.mlab.com:61148/dota",
         "RDB_URL": "postgres://postgres:42786765@192.168.1.8:5432/Trader",
         "PUPPET_API": "http://localhost:3001",
-        "TELEGRAM_TOKEN": "1271936615:AAH-ZQajPguxAMBp2j6vvLZfe0vN7xeoo1E",
-        "TELEGRAM_CHAT_ID": "-367623724"
-      },
-      "outFiles": [
-        "${workspaceFolder}/dist/**/*.js"
-      ]
-    },
-    {
-      "type": "node",
-      "request": "launch",
-      "name": "Instant Worker",
-      "program": "${workspaceFolder}/src/instantWorker.ts",
-      "env": {
-        "DB_URL": "mongodb://admin:1234qwer@ds161148.mlab.com:61148/dota",
-        "TELEGRAM_TOKEN": "1271936615:AAH-ZQajPguxAMBp2j6vvLZfe0vN7xeoo1E",
-        "TELEGRAM_CHAT_ID": "-367623724"
-      },
-      "outFiles": [
-        "${workspaceFolder}/dist/**/*.js"
-      ]
-    },
-    {
-      "type": "node",
-      "request": "launch",
-      "name": "Dota Worker",
-      "program": "${workspaceFolder}/src/dotaWorker.ts",
-      "env": {
-        "DB_URL": "mongodb://admin:1234qwer@ds161148.mlab.com:61148/dota",
-        "TELEGRAM_TOKEN": "1271936615:AAH-ZQajPguxAMBp2j6vvLZfe0vN7xeoo1E",
-        "TELEGRAM_CHAT_ID": "-367623724"
-      },
-      "outFiles": [
-        "${workspaceFolder}/dist/**/*.js"
-      ]
-    },
-    {
-      "type": "node",
-      "request": "launch",
-      "name": "Rollbit Worker",
-      "program": "${workspaceFolder}/src/rollbitWorker.ts",
-      "env": {
-        "DB_URL": "mongodb://admin:1234qwer@ds161148.mlab.com:61148/dota",
-        "TELEGRAM_TOKEN": "1271936615:AAH-ZQajPguxAMBp2j6vvLZfe0vN7xeoo1E",
-        "TELEGRAM_CHAT_ID": "-367623724"
-      },
-      "outFiles": [
-        "${workspaceFolder}/dist/**/*.js"
-      ]
-    },
-    {
-      "type": "node",
-      "request": "launch",
-      "name": "Rollbit Logger",
-      "program": "${workspaceFolder}/src/rollbitLogger.ts",
-      "env": {
-        "DB_URL": "mongodb://admin:1234qwer@ds161148.mlab.com:61148/dota",
-        "RDB_URL": "postgres://postgres:42786765@192.168.1.8:5432/Trader",
+        "BOT_API": "http://localhost:3002",
         "TELEGRAM_TOKEN": "1271936615:AAH-ZQajPguxAMBp2j6vvLZfe0vN7xeoo1E",
         "TELEGRAM_CHAT_ID": "-367623724"
       },
