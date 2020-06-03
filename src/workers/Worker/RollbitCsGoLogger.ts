@@ -20,7 +20,7 @@ export class RollbitCsGoLogger extends WorkerBase<IRollbitInventoryItem> {
   start(botParam: IBotParam): void {
     const that = this;
     that.socket.connect(botParam.cookie);
-    that.syncTimer = setInterval(function () {
+    that.syncTimer = setInterval(() => {
       console.log("sync sent");
       that.socket.send('sync', '', botParam.cookie, true);
     }, 2500);
