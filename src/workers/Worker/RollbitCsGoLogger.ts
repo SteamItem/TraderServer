@@ -39,7 +39,7 @@ export class RollbitCsGoLogger extends WorkerBase<IRollbitInventoryItem> {
         currentTask = "Socket Restarter";
         this.socket.disconnect();
         await this.socket.connect(this.botParam.cookie);
-        this.logger.log("Socket restarted")
+        this.logger.handleMessage(this.botParam.id, currentTask, "Restarted")
       } catch (e) {
         this.handleError(currentTask, e.message);
       }
