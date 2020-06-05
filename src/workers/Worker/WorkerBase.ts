@@ -1,9 +1,8 @@
 import cron = require('node-cron');
-import { IWishlistItem } from '../../models/wishlistItem';
-import { IBotParam } from '../../models/botParam';
 import { DatabaseSelectorTask } from '../DatabaseSelector/DatabaseSelectorTask';
 import { LoggerBase } from '../Logger/LoggerBase';
 import { EnumBot } from '../../helpers/enum';
+import { IBotParam, IWishlistItem } from '../../interfaces/common';
 export abstract class WorkerBase {
   constructor(logger: LoggerBase) {
     this.logger = logger;

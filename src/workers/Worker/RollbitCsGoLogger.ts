@@ -1,9 +1,9 @@
 import { IRollbitSocketItem } from '../../interfaces/storeItem';
-import db = require('../../db');
 import { IRollbitHistory } from '../../interfaces/rollbit';
 import { RollbitWorkerBase } from './RollbitWorkerBase';
 import _ = require('lodash');
 import { EnumBot } from '../../helpers/enum';
+import { DataApi } from '../../api/data';
 export class RollbitCsGoLogger extends RollbitWorkerBase {
   bot = EnumBot.RollbitCsGoLogger;
   async onSteamMarketItem(item: IRollbitSocketItem): Promise<void> {
@@ -31,12 +31,14 @@ export class RollbitCsGoLogger extends RollbitWorkerBase {
   }
 
   private saveListedItem(item: IRollbitHistory) {
+    const data = new DataApi();
     item.listed_at = new Date();
-    return db.updateRollbitHistoryListed(item);
+    return data.updateRollbitHistoryListed(item);
   }
 
   private saveGoneItem(item: IRollbitHistory) {
+    const data = new DataApi();
     item.gone_at = new Date();
-    return db.updateRollbitHistoryGone(item);
+    return data.updateRollbitHistoryGone(item);
   }
 }

@@ -1,5 +1,5 @@
-import { IBotParam } from '../../models/botParam';
 import { WorkerTask } from '../Common/WorkerTask';
+import { IBotParam } from '../../interfaces/common';
 export abstract class TokenGetterTask extends WorkerTask {
   taskName = "Token Getter";
   constructor(botParam: IBotParam) {

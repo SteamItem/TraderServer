@@ -1,5 +1,5 @@
-import { IBotParam } from '../../models/botParam';
 import { WorkerTask } from '../Common/WorkerTask';
+import { IBotParam } from '../../interfaces/common';
 export abstract class BalanceCheckerTask extends WorkerTask {
   taskName = "Balance Checker";
   constructor(botParam: IBotParam) {

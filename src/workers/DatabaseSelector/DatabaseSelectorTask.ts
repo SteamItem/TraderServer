@@ -1,8 +1,7 @@
 import paramController = require('../../controllers/botParam');
-import { IWishlistItem } from '../../models/wishlistItem';
-import { IBotParam } from '../../models/botParam';
 import { WorkerTask } from '../Common/WorkerTask';
 import { EnumBot } from '../../helpers/enum';
+import { IBotParam, IWishlistItem } from '../../interfaces/common';
 export abstract class DatabaseSelectorTask extends WorkerTask {
   taskName = "Database Selector";
   constructor(bot: EnumBot) {

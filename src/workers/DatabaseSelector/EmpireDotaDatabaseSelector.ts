@@ -1,9 +1,10 @@
-import { IWishlistItem } from '../../models/wishlistItem';
 import { EnumSite, EnumSteamApp } from '../../helpers/enum';
-import WishlistItem = require('../../models/wishlistItem');
 import { DatabaseSelectorTask } from "./DatabaseSelectorTask";
+import { IWishlistItem } from '../../interfaces/common';
+import { DataApi } from '../../api/data';
 export class EmpireDotaDatabaseSelector extends DatabaseSelectorTask {
-  async getWishlistItems(): Promise<IWishlistItem[]> {
-    return WishlistItem.default.find({ site_id: EnumSite.CsGoEmpire, appid: EnumSteamApp.Dota }).exec();
+  getWishlistItems(): Promise<IWishlistItem[]> {
+    const data = new DataApi();
+    return data.searchWishlistItems(EnumSite.CsGoEmpire, EnumSteamApp.Dota);
   }
 }

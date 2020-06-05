@@ -1,22 +1,23 @@
 import pm2 = require('pm2');
-import BotParam = require('../models/botParam');
 import { EnumBot, getBotText } from '../helpers/enum';
 import { ISteamLogin } from '../interfaces/steam';
 import config = require('../config');
 import helpers from '../helpers';
 import telegramController = require("./telegram");
 import { PuppetApi } from '../api/puppet';
+import { DataApi } from '../api/data';
+import _ = require('lodash');
 
 async function findOne(id: EnumBot) {
-  const botParam = await BotParam.default.findOne({ id }).exec();
-  if (!botParam) throw new Error("BotParam not found");
-  return botParam;
+  const data = new DataApi();
+  return await data.findBot(id);
 }
 
 async function update(id: number, worker: boolean, code: string) {
   await manageBot(id, worker);
   await sendBotMessage(id, worker);
-  return await BotParam.default.findOneAndUpdate({ id }, { worker, code }).exec();
+  const data = new DataApi();
+  return await data.updateBot(id, worker, code);
 }
 
 function manageBot(id: EnumBot, worker: boolean) {
@@ -44,10 +45,6 @@ function getBotFileName(id: EnumBot) {
   }
 }
 
-function getWorkerPath(fileName: string) {
-  return `./dist/${fileName}.js`;
-}
-
 async function stopBot(id: number) {
   const botFileName = getBotFileName(id);
   pm2.stop(botFileName, function(err) {
@@ -58,7 +55,7 @@ async function stopBot(id: number) {
 
 async function startBot(id: number) {
   const botFileName = getBotFileName(id);
-  const workerPath = getWorkerPath(botFileName);
+  const workerPath = `./dist/${botFileName}.js`;
   pm2.connect(err => {
     if (err) {
       console.error(err);
@@ -69,10 +66,9 @@ async function startBot(id: number) {
       name: botFileName,
       env: {
         NODE_ENV: config.NODE_ENV,
-        DB_URL: config.DB_URL,
-        RDB_URL: config.RDB_URL,
+        DATA_API: config.DATA_API,
         TELEGRAM_TOKEN: config.TELEGRAM_TOKEN,
-        TELEGRAM_CHAT_ID: config.TELEGRAM_CHAT_ID
+        TELEGRAM_CHAT_ID: config.TELEGRAM_CHAT_ID,
       }
     }, function(err) {
       pm2.disconnect();
@@ -86,12 +82,15 @@ async function login(id: EnumBot, steamLogin: ISteamLogin) {
   const api = new PuppetApi();
   const cookies = await api.login(site, steamLogin);
   const cookie = cookies.map(c => `${c.name}=${c.value}`).join(';');
-  return BotParam.default.findOneAndUpdate({ id }, { cookie });
+  const data = new DataApi();
+  return await data.updateBotCookie(id, cookie);
 }
 
 async function handleBots() {
-  const bots = await BotParam.default.find({worker: true}).exec();
-  bots.forEach(async bot => {
+  const data = new DataApi();
+  const bots = await data.findBots();
+  const workingBots = _.filter(bots, b => b.worker);
+  workingBots.forEach(async bot => {
     await startBot(bot.id);
   });
 }

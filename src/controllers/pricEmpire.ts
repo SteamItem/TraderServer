@@ -1,15 +1,17 @@
 import { PricEmpireApi } from "../api/pricEmpire"
 import { IPricEmpireSearchRequest } from "../interfaces/pricEmpire";
-import db = require("../db");
+import { DataApi } from "../api/data";
 
 function searchItems(pricEmpireSearchRequest: IPricEmpireSearchRequest) {
-  return db.profitSearch(pricEmpireSearchRequest);
+  const data = new DataApi();
+  return data.profitSearch(pricEmpireSearchRequest);
 }
 
 async function refreshItems() {
   const api = new PricEmpireApi();
+  const data = new DataApi();
   const items = await api.getItemsByName();
-  await db.updatePricEmpireItems(items);
+  await data.updatePricEmpireItems(items);
   return "Success";
 }
 
@@ -26,8 +28,9 @@ async function refreshItemDetails(ids: number[]) {
 
 async function refreshItemDetail(id: number) {
   const api = new PricEmpireApi();
+  const data = new DataApi();
   const itemDetail = await api.getItemDetail(id);
-  await db.updatePricEmpireItemPrices(itemDetail.prices);
+  await data.updatePricEmpireItemPrices(itemDetail.prices);
 }
 
 export = {

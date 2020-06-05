@@ -1,18 +1,18 @@
-import db = require('../db');
+import { DataApi } from "../api/data";
 
-async function findAll() {
-  return db.rollbitFavs();
+function findAll() {
+  const data = new DataApi();
+  return data.findRollbitFavs();
 }
 
-async function addToFavorites(name: string) {
-  await removeFromFavorites(name);
-  await db.rollbitFavAdd(name);
-  return;
+function addToFavorites(name: string) {
+  const data = new DataApi();
+  return data.addRollbitFav(name);
 }
 
 async function removeFromFavorites(name: string) {
-  await db.rollbitFavRemove(name);
-  return;
+  const data = new DataApi();
+  return data.deleteRollbitFav(name);
 }
 
 export = {
