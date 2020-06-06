@@ -1,6 +1,6 @@
 import * as mongoose from 'mongoose';
 
-export interface IBotParam extends mongoose.Document {
+export interface IBotParam {
   id: number;
   name: string;
   period: number;
@@ -8,6 +8,8 @@ export interface IBotParam extends mongoose.Document {
   cookie: string;
   code?: string;
 }
+
+interface IBotParamDocument extends IBotParam, mongoose.Document {}
 
 const BotParamSchema: mongoose.Schema = new mongoose.Schema({
   id: { type: Number, required: true },
@@ -18,4 +20,4 @@ const BotParamSchema: mongoose.Schema = new mongoose.Schema({
   code: { type: String, required: false }
 });
 
-export default mongoose.model<IBotParam>('BotParam', BotParamSchema);
+export default mongoose.model<IBotParamDocument>('BotParam', BotParamSchema);

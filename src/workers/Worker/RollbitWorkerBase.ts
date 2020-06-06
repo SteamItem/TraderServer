@@ -11,16 +11,15 @@ export abstract class RollbitWorkerBase extends WorkerBase {
   private syncTimer: NodeJS.Timeout;
   private scheduledTasks: cron.ScheduledTask[] = [];
   private syncReceived = false;
-  initialize() {
+  initialize(): void {
     this.socket = new RollbitSocket();
     this.prepareSocketListeners();
   }
   start(botParam: IBotParam): void {
-    const that = this;
-    that.socket.connect(botParam.cookie);
-    that.syncTimer = setInterval(() => {
+    this.socket.connect(botParam.cookie);
+    this.syncTimer = setInterval(() => {
       console.log("sync sent");
-      that.socket.send('sync', '', botParam.cookie, true);
+      this.socket.send('sync', '', botParam.cookie, true);
     }, 2500);
     const socketRestartScheduler = this.socketRestartScheduler();
     this.scheduledTasks = [socketRestartScheduler]
@@ -65,7 +64,7 @@ export abstract class RollbitWorkerBase extends WorkerBase {
   }
 
   abstract async onSteamMarketItem(item: IRollbitSocketItem): Promise<void>;
-  protected onBalance(_socketBalance: IRollbitSocketBalance): void {}
+  abstract onBalance(_socketBalance: IRollbitSocketBalance): void;
 
   getDatabaseSelector(): DatabaseSelectorTask {
     return new RollbitCsGoDatabaseSelector(this.bot);

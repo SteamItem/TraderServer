@@ -4,6 +4,7 @@ import { IRollbitHistory } from '../../interfaces/rollbit';
 import { RollbitWorkerBase } from './RollbitWorkerBase';
 import _ = require('lodash');
 import { EnumBot } from '../../helpers/enum';
+import { IRollbitSocketBalance } from '../../interfaces/profile';
 export class RollbitCsGoLogger extends RollbitWorkerBase {
   bot = EnumBot.RollbitCsGoLogger;
   async onSteamMarketItem(item: IRollbitSocketItem): Promise<void> {
@@ -14,6 +15,10 @@ export class RollbitCsGoLogger extends RollbitWorkerBase {
     if (item.state === 'gone') {
       await this.saveGoneItem(normalizedItem);
     }
+  }
+
+  onBalance(socketBalance: IRollbitSocketBalance): void {
+    console.log(socketBalance.balance / 100);
   }
 
   private normalizeItem(item: IRollbitSocketItem): IRollbitHistory {
