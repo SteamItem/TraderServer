@@ -1,9 +1,10 @@
 import pm2 = require('pm2');
 import BotParam = require('../models/botParam');
-import { EnumBot } from '../helpers/enum';
+import { EnumBot, getBotText } from '../helpers/enum';
 import { ISteamLogin } from '../interfaces/steam';
 import config = require('../config');
 import helpers from '../helpers';
+import telegramController = require("./telegram");
 import { PuppetApi } from '../api/puppet';
 
 async function findOne(id: EnumBot) {
@@ -14,6 +15,7 @@ async function findOne(id: EnumBot) {
 
 async function update(id: number, worker: boolean, code: string) {
   await manageBot(id, worker);
+  await sendBotMessage(id, worker);
   return await BotParam.default.findOneAndUpdate({ id }, { worker, code }).exec();
 }
 
@@ -23,6 +25,13 @@ function manageBot(id: EnumBot, worker: boolean) {
   } else {
     return stopBot(id);
   }
+}
+
+function sendBotMessage(bot: EnumBot, worker: boolean) {
+  const botText = getBotText(bot);
+  const state = worker ? "Started" : "Stopped";
+  const message = `${botText}: ${state}`;
+  return telegramController.sendMessage(message);
 }
 
 function getBotFileName(id: EnumBot) {

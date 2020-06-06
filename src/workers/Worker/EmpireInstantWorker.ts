@@ -6,6 +6,7 @@ import { EmpireInstantDatabaseSelector } from '../DatabaseSelector/EmpireInstant
 import { InventoryGetterTask } from '../InventoryGetter/InventoryGetterTask';
 import { EmpireInstantInventoryGetterTask } from '../InventoryGetter/EmpireInstantInventoryGetterTask';
 export class EmpireInstantWorker extends EmpireWorkerBase<IEmpireInstantInventoryItem> {
+  bot = EnumBot.EmpireInstant;
   getDatabaseSelector(): DatabaseSelectorTask {
     return new EmpireInstantDatabaseSelector(EnumBot.EmpireInstant);
   }

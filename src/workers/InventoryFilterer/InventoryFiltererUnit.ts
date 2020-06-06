@@ -2,15 +2,13 @@ import _ = require('lodash');
 import { IWishlistItem } from '../../models/wishlistItem';
 import { WorkerUnit } from '../Common/WorkerUnit';
 import helpers from '../../helpers';
-import { ILogger } from '../Logger/LoggerBase';
 export abstract class InventoryFiltererUnit<II> extends WorkerUnit {
   taskName = "Inventory Filterer";
-  constructor(balance: number, inventoryItems: II[], wishlistItems: IWishlistItem[], logger: ILogger) {
+  constructor(balance: number, inventoryItems: II[], wishlistItems: IWishlistItem[]) {
     super();
     this.$balance = balance;
     this.$inventoryItems = inventoryItems;
     this.$wishlistItems = wishlistItems;
-    this.logger = logger;
   }
   private $balance: number;
   private $inventoryItems: II[];
@@ -18,7 +16,6 @@ export abstract class InventoryFiltererUnit<II> extends WorkerUnit {
     return this.$inventoryItems;
   }
   private $wishlistItems: IWishlistItem[];
-  protected logger: ILogger;
   private $wishlistFilteredItems: II[];
   public get wishlistFilteredItems(): II[] {
     return this.$wishlistFilteredItems;
@@ -65,9 +62,6 @@ export abstract class InventoryFiltererUnit<II> extends WorkerUnit {
         }
       }
     });
-    if (itemsToBuy.length > 0) {
-      this.logger.log(`Current Balance: ${this.$balance}, Selected Items Balance: ${selectedBalance}, ${itemsToBuy.length} items`)
-    }
     return itemsToBuy;
   }
 
