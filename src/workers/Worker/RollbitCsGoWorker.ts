@@ -1,9 +1,8 @@
-import { IRollbitSocketItem } from '../../interfaces/storeItem';
 import { RollbitInventoryFilterer } from '../InventoryFilterer/RollbitInventoryFilterer';
 import { RollbitWithdrawMakerTask } from '../WithdrawMaker/RollbitWithdrawMakerTask';
 import { RollbitWorkerBase } from './RollbitWorkerBase';
-import { IRollbitSocketBalance } from '../../interfaces/profile';
 import { EnumBot } from '../../helpers/enum';
+import { IRollbitSocketItem, IRollbitSocketBalance } from '../../interfaces/rollbit';
 export class RollbitCsGoWorker extends RollbitWorkerBase {
   bot = EnumBot.RollbitCsGo;
   private balance: number;

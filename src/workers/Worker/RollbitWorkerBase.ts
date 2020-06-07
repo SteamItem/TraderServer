@@ -1,26 +1,22 @@
 import cron = require('node-cron');
-import { IRollbitSocketItem } from '../../interfaces/storeItem';
 import { WorkerBase } from "./WorkerBase";
 import { DatabaseSelectorTask } from '../DatabaseSelector/DatabaseSelectorTask';
 import { RollbitCsGoDatabaseSelector } from '../DatabaseSelector/RollbitCsGoDatabaseSelector';
 import { RollbitSocket } from '../../api/rollbitSocket';
-import { IRollbitSocketBalance } from '../../interfaces/profile';
 import { IBotParam } from '../../models/botParam';
+import { IRollbitSocketBalance, IRollbitSocketItem } from '../../interfaces/rollbit';
 export abstract class RollbitWorkerBase extends WorkerBase {
   private socket: RollbitSocket;
   private syncTimer: NodeJS.Timeout;
   private scheduledTasks: cron.ScheduledTask[] = [];
   private syncReceived = false;
-  initialize() {
+  start(botParam: IBotParam): void {
     this.socket = new RollbitSocket();
     this.prepareSocketListeners();
-  }
-  start(botParam: IBotParam): void {
-    const that = this;
-    that.socket.connect(botParam.cookie);
-    that.syncTimer = setInterval(() => {
+    this.socket.connect(botParam.cookie);
+    this.syncTimer = setInterval(() => {
       console.log("sync sent");
-      that.socket.send('sync', '', botParam.cookie, true);
+      this.socket.send('sync', '', botParam.cookie, true);
     }, 2500);
     const socketRestartScheduler = this.socketRestartScheduler();
     this.scheduledTasks = [socketRestartScheduler]

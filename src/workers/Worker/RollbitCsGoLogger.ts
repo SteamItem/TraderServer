@@ -1,6 +1,5 @@
-import { IRollbitSocketItem } from '../../interfaces/storeItem';
 import db = require('../../db');
-import { IRollbitHistory } from '../../interfaces/rollbit';
+import { IRollbitHistory, IRollbitSocketItem } from '../../interfaces/rollbit';
 import { RollbitWorkerBase } from './RollbitWorkerBase';
 import _ = require('lodash');
 import { EnumBot } from '../../helpers/enum';

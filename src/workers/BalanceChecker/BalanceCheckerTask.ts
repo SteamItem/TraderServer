@@ -14,7 +14,7 @@ export abstract class BalanceCheckerTask extends WorkerTask {
   public get balance(): number {
     return this.$balance;
   }
-  async work() {
+  async work(): Promise<void> {
     this.$balance = await this.getBalance();
   }
   abstract getBalance(): Promise<number>;

@@ -27,8 +27,7 @@ export class RollbitSocket {
     }
   }
   public async connect(cookie: string) {
-    const that = this;
-    if (that.socket) return;
+    if (this.socket) return;
     const url = 'https://ws.rollbit.com/';
     const options: WebSocket.ClientOptions = {
       origin: 'https://www.rollbit.com',
@@ -46,20 +45,20 @@ export class RollbitSocket {
         'Cookie': cookie
       }
     };
-    that.socket = new WebSocket(url, "optionalProtocol", options);
-    that.socket.onmessage = (ev: WebSocket.MessageEvent) => {
+    this.socket = new WebSocket(url, "optionalProtocol", options);
+    this.socket.onmessage = (ev: WebSocket.MessageEvent) => {
       const [ch, message, id] = JSON.parse(ev.data.toString());
-      const listeners = that.channels.get(ch);
+      const listeners = this.channels.get(ch);
       if (listeners && listeners.length)
         listeners.forEach(l => l(message));
     }
-    that.socket.onopen = () => {
-      while (that.queue.length) {
-        that.socket.send(that.queue.shift());
+    this.socket.onopen = () => {
+      while (this.queue.length) {
+        this.socket.send(this.queue.shift());
       }
     }
   }
-  public disconnect() {
+  public disconnect(): void {
     this.socket.terminate();
     this.socket = null;
   }

@@ -1,9 +1,9 @@
 import mongoose = require('mongoose');
 import config = require('../config');
 
-function connect() {
+function connect(): Promise<void> {
   mongoose.Promise = global.Promise;
-  mongoose.connect(config.DB_URL, {
+  return mongoose.connect(config.DB_URL, {
     useNewUrlParser: true,
     useUnifiedTopology: true
   }).then(() => {

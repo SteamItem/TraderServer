@@ -1,4 +1,4 @@
-import { IEmpireDotaInventoryItem } from '../../interfaces/storeItem';
+import { IEmpireDotaInventoryItem } from '../../interfaces/csgoEmpire';
 import { InventoryGetterTask } from './InventoryGetterTask';
 import { CSGOEmpireApi } from '../../api/csgoempire';
 export class EmpireDotaInventoryGetterTask extends InventoryGetterTask<IEmpireDotaInventoryItem> {
@@ -9,7 +9,5 @@ export class EmpireDotaInventoryGetterTask extends InventoryGetterTask<IEmpireDo
     const p3 = api.dotaInventory(this.botParam.cookie);
     const promises = [p1, p2, p3]
     return Promise.race(promises)
-
-    // return api.dotaInventory(this.botParam.cookie);
   }
 }

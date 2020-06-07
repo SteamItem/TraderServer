@@ -6,13 +6,12 @@ async function findAll() {
 
 async function addToFavorites(name: string) {
   await removeFromFavorites(name);
-  await db.rollbitFavAdd(name);
-  return;
+  const result = await db.rollbitFavAdd(name);
+  return result;
 }
 
-async function removeFromFavorites(name: string) {
-  await db.rollbitFavRemove(name);
-  return;
+function removeFromFavorites(name: string): Promise<number> {
+  return db.rollbitFavRemove(name);
 }
 
 export = {

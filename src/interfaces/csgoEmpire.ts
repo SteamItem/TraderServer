@@ -1,3 +1,5 @@
+import { EnumBot } from "../helpers/enum";
+
 export interface IEmpireProfileLastSession {
   id: number;
   user_id: number;
@@ -77,10 +79,48 @@ export interface IEmpireProfile {
   steam_api_key?: any;
 }
 
-export interface IRollbitSocketBalance {
-  balance: number;
-  spent: number;
-  deposited: number;
-  withdrawn?: number;
-  type?: string;
+export interface IEmpireItemToBuy {
+  botEnum: EnumBot;
+  name: string;
+  price: number;
+  max_price?: number;
+  wishlist_item_id: string;
+  bot_id: number;
+  store_item_id: string;
+}
+
+export interface IEmpireInventoryItem {
+  name: string;
+  bot_id: number;
+  market_value: number;
+  appid: number;
+  id: string;
+}
+
+export interface IEmpireInstantInventoryItem extends IEmpireInventoryItem {
+  assetid: string;
+  bundle_id?: number;
+  color: string;
+  contextid: string;
+  custom_name?: any;
+  custom_price: number;
+  icon_url: string;
+  img: string;
+  market_name: string;
+  name_color: string;
+  paint_index?: number;
+  paint_seed?: number;
+  stickers: string;
+  tradable: boolean;
+  tradelock: boolean;
+  type: string;
+  wear?: number;
+}
+
+export interface IEmpireDotaInventoryItem extends IEmpireInventoryItem {
+  img: string;
+  icon_url: string;
+  wear?: any;
+  tradelock: boolean;
+  created_at: number;
 }

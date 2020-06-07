@@ -1,5 +1,5 @@
 import { IBotParam } from '../../models/botParam';
-import { IEmpireInventoryItem } from '../../interfaces/storeItem';
+import { IEmpireInventoryItem } from '../../interfaces/csgoEmpire';
 import { WithdrawMakerTask } from './WithdrawMakerTask';
 import _ = require('lodash');
 import { CSGOEmpireApi } from '../../api/csgoempire';

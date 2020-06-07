@@ -1,7 +1,7 @@
 import cors = require('cors');
 import config = require('../config');
 
-function getCorsOptions() {
+function getCorsOptions(): cors.CorsOptions {
   const whitelistConfig = config.CORS_WHITELIST;
   const whitelist = whitelistConfig.split(",");
   const corsOptions: cors.CorsOptions = {

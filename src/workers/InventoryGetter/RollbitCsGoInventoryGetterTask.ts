@@ -1,13 +1,13 @@
 import _ = require('lodash');
-import { IRollbitInventoryItem } from '../../interfaces/storeItem';
 import { InventoryGetterTask } from './InventoryGetterTask';
 import { RollbitApi } from '../../api/rollbit';
+import { IRollbitInventoryItem } from '../../interfaces/rollbit';
 export class RollbitCsGoInventoryGetterTask extends InventoryGetterTask<IRollbitInventoryItem> {
   private minPrice = 5;
   private maxPrice = 500;
   private iterationLimit = 1;
 
-  async getStoreItems() {
+  async getStoreItems(): Promise<IRollbitInventoryItem[]> {
     const allItems: IRollbitInventoryItem[] = [];
     const minPrice = this.minPrice;
     let maxPrice = this.maxPrice;
