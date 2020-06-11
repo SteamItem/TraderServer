@@ -1,6 +1,5 @@
 import cron = require('node-cron');
 import { EmpireInventoryFilterer } from '../InventoryFilterer/EmpireInventoryFilterer';
-import { IEmpireInventoryItem } from '../../interfaces/storeItem';
 import { WorkerBase } from "./WorkerBase";
 import { BalanceCheckerTask } from '../BalanceChecker/BalanceCheckerTask';
 import { EmpireBalanceCheckerTask } from '../BalanceChecker/EmpireBalanceCheckerTask';
@@ -10,6 +9,7 @@ import { EmpireTokenGetterTask } from '../TokenGetter/EmpireTokenGetterTask';
 import { WithdrawMakerTask } from '../WithdrawMaker/WithdrawMakerTask';
 import { EmpireWithdrawMakerTask } from '../WithdrawMaker/EmpireWithdrawMakerTask';
 import { InventoryGetterTask } from '../InventoryGetter/InventoryGetterTask';
+import { IEmpireInventoryItem } from '../../interfaces/csgoEmpire';
 export abstract class EmpireWorkerBase<II extends IEmpireInventoryItem> extends WorkerBase {
   protected token: string;
   protected inventoryItems: II[] = [];
@@ -30,17 +30,16 @@ export abstract class EmpireWorkerBase<II extends IEmpireInventoryItem> extends 
   getWithdrawMaker(): WithdrawMakerTask<II> {
     return new EmpireWithdrawMakerTask(this.token, this.botParam, this.itemsToBuy, this.logger);
   }
-  start() {
-    const that = this;
-    const tokenScheduler = that.tokenScheduler();
-    const balanceChecker = that.balanceChecker();
-    that.scheduledTasks = [tokenScheduler, balanceChecker];
-    that.scheduledTasks.forEach(st => { st.start(); });
-    that.inventoryTimer = setInterval(() => {
-      that.inventoryTask();
+  start(): void {
+    const tokenScheduler = this.tokenScheduler();
+    const balanceChecker = this.balanceChecker();
+    this.scheduledTasks = [tokenScheduler, balanceChecker];
+    this.scheduledTasks.forEach(st => { st.start(); });
+    this.inventoryTimer = setInterval(() => {
+      this.inventoryTask();
     }, 250);
   }
-  stop() {
+  stop(): void {
     this.scheduledTasks.forEach(st => { st.stop(); });
     clearInterval(this.inventoryTimer);
   }
@@ -58,7 +57,7 @@ export abstract class EmpireWorkerBase<II extends IEmpireInventoryItem> extends 
     });
   }
 
-  balanceChecker() {
+  balanceChecker(): cron.ScheduledTask {
     return cron.schedule('* * * * * *', async () => {
       let currentTask = "balanceChecker";
       try {

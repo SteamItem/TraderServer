@@ -1,9 +1,10 @@
 import db = require('../db');
+import { IRollbitHistoryView } from '../interfaces/rollbit';
 
-async function findAll() {
+async function findAll(): Promise<IRollbitHistoryView[]> {
   const histories = await db.rollbitHistories();
   const favs = await db.rollbitFavs();
-  const returnItems: any[] = [];
+  const returnItems: IRollbitHistoryView[] = [];
   histories.forEach(history => {
     const isFav = favs.filter(f => f.name === history.name).length > 0;
     returnItems.push({

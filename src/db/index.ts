@@ -199,7 +199,7 @@ RollbitFav.init({
   tableName: "rollbitfavs"
 })
 
-function sync() {
+function sync(): Promise<Sequelize> {
   return sequelize.sync();
 }
 
@@ -210,15 +210,15 @@ async function updatePricEmpireItems(items: IPricEmpireItem[]) {
   });
 }
 
-function updatePricEmpireItemPrices(items: IPricEmpireItemPrice[]) {
+function updatePricEmpireItemPrices(items: IPricEmpireItemPrice[]): Promise<PricEmpireItemPrice[]> {
   return PricEmpireItemPrice.bulkCreate(items, {updateOnDuplicate: ['item_id','price','source','created_at']});
 }
 
-function updateRollbitHistoryListed(item: IRollbitHistory) {
+function updateRollbitHistoryListed(item: IRollbitHistory): Promise<boolean> {
   return RollbitHistory.upsert(item, {fields: ['ref','price','markup','name','weapon','skin','rarity','exterior','baseprice','listed_at']})
 }
 
-function updateRollbitHistoryGone(item: IRollbitHistory) {
+function updateRollbitHistoryGone(item: IRollbitHistory): Promise<boolean> {
   return RollbitHistory.upsert(item, {fields: ['ref','price','markup','name','weapon','skin','rarity','exterior','baseprice','gone_at']})
 }
 
@@ -323,19 +323,19 @@ function profitSearch(pricEmpireSearchRequest: IPricEmpireSearchRequest) {
   });
 }
 
-function rollbitHistories() {
+function rollbitHistories(): Promise<RollbitHistory[]> {
   return RollbitHistory.findAll();
 }
 
-function rollbitFavs() {
+function rollbitFavs(): Promise<RollbitFav[]> {
   return RollbitFav.findAll();
 }
 
-function rollbitFavAdd(name: string) {
+function rollbitFavAdd(name: string): Promise<RollbitFav> {
   return RollbitFav.create({ name: name });
 }
 
-function rollbitFavRemove(name: string) {
+function rollbitFavRemove(name: string): Promise<number> {
   return RollbitFav.destroy({where: { name: name }})
 }
 

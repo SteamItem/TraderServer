@@ -24,7 +24,7 @@ export abstract class InventoryFiltererUnit<II> extends WorkerUnit {
   public get itemsToBuy(): II[] {
     return this.$itemsToBuy;
   }
-  public filter() {
+  public filter(): void {
     let itemsToBuy: II[] = [];
     itemsToBuy = this.filterForWishlist();
     this.$wishlistFilteredItems = itemsToBuy;
@@ -43,14 +43,13 @@ export abstract class InventoryFiltererUnit<II> extends WorkerUnit {
     return itemsToBuy;
   }
 
-  afterFilterAction(inventoryItems: II[]) {
+  afterFilterAction(inventoryItems: II[]): II[] {
     return inventoryItems;
   }
 
   private filterForBalance(inventoryItems: II[]): II[] {
     const itemsToBuy: II[] = [];
     let currentBalance = this.$balance;
-    let selectedBalance = 0;
     inventoryItems.forEach(ii => {
       const itemPrice = this.getItemPrice(ii);
       if (itemPrice <= currentBalance) {
@@ -58,7 +57,6 @@ export abstract class InventoryFiltererUnit<II> extends WorkerUnit {
         if (suitableFilter) {
           itemsToBuy.push(ii);
           currentBalance -= itemPrice;
-          selectedBalance += itemPrice;
         }
       }
     });
@@ -78,7 +76,7 @@ export abstract class InventoryFiltererUnit<II> extends WorkerUnit {
 
   abstract getItemName(inventoryItem: II): string;
   abstract getItemPrice(inventoryItem: II): number;
-  isNewItemSuitable(inventoryItemToAdd: II, currentlySelectedInventoryItems: II[]): boolean {
+  isNewItemSuitable(_inventoryItemToAdd: II, _currentlySelectedInventoryItems: II[]): boolean {
     return true;
   }
 }

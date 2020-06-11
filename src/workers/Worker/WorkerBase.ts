@@ -24,7 +24,7 @@ export abstract class WorkerBase {
   abstract start(botParam: IBotParam): void;
 
   abstract getDatabaseSelector(): DatabaseSelectorTask;
-  async schedule() {
+  async schedule(): Promise<void> {
     const databaseScheduler = this.databaseScheduler();
     databaseScheduler.start();
   }
@@ -45,11 +45,11 @@ export abstract class WorkerBase {
     });
   }
 
-  protected handleMessage(taskName: string, message: string) {
+  protected handleMessage(taskName: string, message: string): void {
     this.logger.handleMessage(this.bot, taskName, message);
   }
 
-  protected handleError(taskName: string, message: string) {
+  protected handleError(taskName: string, message: string): void {
     this.logger.handleError(this.bot, taskName, message);
   }
 }

@@ -1,5 +1,5 @@
 import { IBotParam } from '../../models/botParam';
-import { IRollbitInventoryItem } from '../../interfaces/storeItem';
+import { IRollbitInventoryItem } from '../../interfaces/rollbit';
 import { WithdrawMakerTask } from './WithdrawMakerTask';
 import { RollbitApi } from '../../api/rollbit';
 import _ = require('lodash');

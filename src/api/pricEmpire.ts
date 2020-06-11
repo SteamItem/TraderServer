@@ -4,7 +4,7 @@ import { IPricEmpireItem, IPricEmpireItemDetail } from '../interfaces/pricEmpire
 
 export class PricEmpireApi extends ApiBase {
   private baseUrl = 'https://pricempire.com/api';
-  public async getItemsByName() {
+  public async getItemsByName(): Promise<IPricEmpireItem[]> {
     const data = JSON.stringify({
       "names": "",
       "order": "DESC",
@@ -21,7 +21,7 @@ export class PricEmpireApi extends ApiBase {
     return result.data;
   }
 
-  public async getItemDetail(id: number) {
+  public async getItemDetail(id: number): Promise<IPricEmpireItemDetail> {
     const content = {
       headers: {
         'Content-Type': 'application/json',

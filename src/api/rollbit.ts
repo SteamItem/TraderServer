@@ -1,12 +1,12 @@
 import { AxiosRequestConfig } from 'axios';
-import { IRollbitInventoryItems } from '../interfaces/storeItem';
+import { IRollbitInventoryItems } from '../interfaces/rollbit';
 import { ApiBase } from './apiBase';
 import { Constants } from '../helpers/constant';
 
 export class RollbitApi extends ApiBase {
   private baseUrl = 'https://api.rollbit.com/steam';
 
-  public async csgoInventory(cookie: string, minPrice: number, maxPrice: number) {
+  public async csgoInventory(cookie: string, minPrice: number, maxPrice: number): Promise<IRollbitInventoryItems> {
     const content: AxiosRequestConfig = {
       headers: {
         'Cookie': cookie,

@@ -1,5 +1,5 @@
 import pm2 = require('pm2');
-import BotParam = require('../models/botParam');
+import BotParam, { IBotParam } from '../models/botParam';
 import { EnumBot, getBotText } from '../helpers/enum';
 import { ISteamLogin } from '../interfaces/steam';
 import config = require('../config');
@@ -7,16 +7,15 @@ import helpers from '../helpers';
 import telegramController = require("./telegram");
 import { PuppetApi } from '../api/puppet';
 
-async function findOne(id: EnumBot) {
-  const botParam = await BotParam.default.findOne({ id }).exec();
-  if (!botParam) throw new Error("BotParam not found");
+async function findOne(id: EnumBot): Promise<IBotParam> {
+  const botParam = await BotParam.findOne({ id }).exec();
   return botParam;
 }
 
-async function update(id: number, worker: boolean, code: string) {
+async function update(id: number, worker: boolean, code: string): Promise<IBotParam> {
   await manageBot(id, worker);
   await sendBotMessage(id, worker);
-  return await BotParam.default.findOneAndUpdate({ id }, { worker, code }).exec();
+  return await BotParam.findOneAndUpdate({ id }, { worker, code }).exec();
 }
 
 function manageBot(id: EnumBot, worker: boolean) {
@@ -81,16 +80,16 @@ async function startBot(id: number) {
   });
 }
 
-async function login(id: EnumBot, steamLogin: ISteamLogin) {
+async function login(id: EnumBot, steamLogin: ISteamLogin): Promise<IBotParam> {
   const site = helpers.getSiteOfBot(id);
   const api = new PuppetApi();
   const cookies = await api.login(site, steamLogin);
   const cookie = cookies.map(c => `${c.name}=${c.value}`).join(';');
-  return BotParam.default.findOneAndUpdate({ id }, { cookie });
+  return BotParam.findOneAndUpdate({ id }, { cookie });
 }
 
 async function handleBots() {
-  const bots = await BotParam.default.find({worker: true}).exec();
+  const bots = await BotParam.find({worker: true}).exec();
   bots.forEach(async bot => {
     await startBot(bot.id);
   });

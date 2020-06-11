@@ -1,13 +1,13 @@
-import { IRollbitInventoryItem } from '../../interfaces/storeItem';
+import { IRollbitInventoryItem } from '../../interfaces/rollbit';
 import { InventoryFiltererUnit } from './InventoryFiltererUnit';
 export class RollbitInventoryFilterer extends InventoryFiltererUnit<IRollbitInventoryItem> {
-  getItemName(inventoryItem: IRollbitInventoryItem) {
+  getItemName(inventoryItem: IRollbitInventoryItem): string {
     return inventoryItem.items.map(ii => ii.name).join("#");
   }
-  getItemPrice(inventoryItem: IRollbitInventoryItem) {
+  getItemPrice(inventoryItem: IRollbitInventoryItem): number {
     return inventoryItem.price;
   }
-  isNewItemSuitable(inventoryItemToAdd: IRollbitInventoryItem, currentlySelectedInventoryItems: IRollbitInventoryItem[]): boolean {
+  isNewItemSuitable(inventoryItemToAdd: IRollbitInventoryItem): boolean {
     return inventoryItemToAdd.markup === 0;
   }
 }

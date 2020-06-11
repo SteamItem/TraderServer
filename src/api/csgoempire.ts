@@ -1,6 +1,6 @@
 import { AxiosRequestConfig } from 'axios';
-import { IEmpireProfile } from '../interfaces/profile';
-import { IEmpireInstantInventoryItem, IEmpireDotaInventoryItem } from '../interfaces/storeItem';
+import { IEmpireProfile } from '../interfaces/csgoEmpire';
+import { IEmpireInstantInventoryItem, IEmpireDotaInventoryItem } from '../interfaces/csgoEmpire';
 import { ApiBase } from './apiBase';
 import { Constants } from '../helpers/constant';
 
@@ -23,7 +23,7 @@ export class CSGOEmpireApi extends ApiBase {
     return result.data;
   }
 
-  public async profile(cookie: string) {
+  public async profile(cookie: string): Promise<IEmpireProfile> {
     const content = {
       headers: {
         'Content-Type': 'application/json',
@@ -68,7 +68,7 @@ export class CSGOEmpireApi extends ApiBase {
     return result.data;
   }
 
-  public async instantInventory(cookie: string) {
+  public async instantInventory(cookie: string): Promise<IEmpireInstantInventoryItem[]> {
     const content = {
       headers: {
         'Content-Type': 'application/json',
@@ -80,7 +80,7 @@ export class CSGOEmpireApi extends ApiBase {
     return items.data;
   }
 
-  public async dotaInventory(cookie: string) {
+  public async dotaInventory(cookie: string): Promise<IEmpireDotaInventoryItem[]> {
     const content = {
       headers: {
         'Content-Type': 'application/json',
