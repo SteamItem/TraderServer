@@ -44,7 +44,7 @@ function getBotFileName(id: EnumBot) {
 }
 
 function getWorkerPath(fileName: string) {
-  return `./dist/${fileName}.js`;
+  return `./dist/src/${fileName}.js`;
 }
 
 async function stopBot(id: number) {
