@@ -28,7 +28,7 @@ export abstract class EmpireWorkerBase<II extends IEmpireInventoryItem> extends 
     return new EmpireTokenGetterTask(this.botParam);
   }
   getWithdrawMaker(): WithdrawMakerTask<II> {
-    return new EmpireWithdrawMakerTask(this.token, this.botParam, this.itemsToBuy, this.logger);
+    return new EmpireWithdrawMakerTask(this.token, this.botParam, this.itemsToBuy);
   }
   start(): void {
     const tokenScheduler = this.tokenScheduler();

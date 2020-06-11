@@ -1,11 +1,8 @@
-export interface IWithdrawMakerResult {
-  successWithdrawCount: number;
-  failWithdrawCount: number;
-  successWithdrawItemCount: number;
-  failWithdrawItemCount: number;
+export interface IWithdrawResult {
+  name: string;
+  price: number;
 }
 
-export interface IWithdrawResult {
-  status: boolean;
-  count: number;
+export interface IFailWithdrawResult extends IWithdrawResult {
+  message: string;
 }

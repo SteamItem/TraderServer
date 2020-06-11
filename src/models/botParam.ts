@@ -9,7 +9,9 @@ export interface IBotParam {
   code?: string;
 }
 
-interface IBotParamDocument extends IBotParam, mongoose.Document {}
+export interface IBotParamDocument extends mongoose.Document, IBotParam {
+  id: number;
+}
 
 const BotParamSchema: mongoose.Schema = new mongoose.Schema({
   id: { type: Number, required: true },

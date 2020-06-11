@@ -7,19 +7,19 @@ export abstract class ApiBase {
 
   private setupClient() {
     const axiosInstance = axios.create();
-    // axiosInstance.interceptors.response.use(
-    //   res => res,
-    //   err => {
-    //     if (err.response) {
-    //       let message = `${err.response.statusText}-${err.response.status}`;
-    //       const responseMessage = err.response.data.message;
-    //       if (responseMessage) { message += `: ${responseMessage}`;}
-    //       throw new Error(message);
-    //     } else {
-    //       throw new Error(err.message);
-    //     }
-    //   }
-    // );
+    axiosInstance.interceptors.response.use(
+      res => res,
+      err => {
+        if (err.response) {
+          let message = `${err.response.statusText}-${err.response.status}`;
+          const responseMessage = err.response.data.message;
+          if (responseMessage) { message += `: ${responseMessage}`;}
+          throw new Error(message);
+        } else {
+          throw new Error(err.message);
+        }
+      }
+    );
     return axiosInstance;
   }
 

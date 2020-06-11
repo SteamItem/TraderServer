@@ -1,25 +1,28 @@
 import { WorkerTask } from '../Common/WorkerTask';
-import { IWithdrawMakerResult } from '../../interfaces/withdraw';
-import { LoggerBase } from '../Logger/LoggerBase';
+import { IWithdrawResult, IFailWithdrawResult } from '../../interfaces/withdraw';
 export abstract class WithdrawMakerTask<II> extends WorkerTask {
   taskName = "Withdraw Maker";
-  constructor(inventoryItemsToBuy: II[], logger: LoggerBase) {
+  constructor(inventoryItemsToBuy: II[]) {
     super();
     this.$inventoryItemsToBuy = inventoryItemsToBuy;
-    this.logger = logger;
+    this.$successWithdrawResult = [];
+    this.$failWithdrawResult = [];
   }
   private $inventoryItemsToBuy: II[];
-  private $withdrawResult: IWithdrawMakerResult;
-  protected logger: LoggerBase;
   public get inventoryItemsToBuy(): II[] {
     return this.$inventoryItemsToBuy;
   }
-  public get withdrawResult(): IWithdrawMakerResult {
-    return this.$withdrawResult;
+  private $successWithdrawResult: IWithdrawResult[];
+  public get successWithdrawResult(): IWithdrawResult[] {
+    return this.$successWithdrawResult;
+  }
+  private $failWithdrawResult: IFailWithdrawResult[];
+  public get failWithdrawResult(): IFailWithdrawResult[] {
+    return this.$failWithdrawResult;
   }
   async work(): Promise<void> {
     if (!this.inventoryItemsToBuy) return;
-    this.$withdrawResult = await this.withdrawAll();
+    await this.withdrawAll();
   }
-  abstract withdrawAll(): Promise<IWithdrawMakerResult>;
+  abstract withdrawAll(): Promise<void>;
 }
