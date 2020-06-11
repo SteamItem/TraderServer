@@ -28,19 +28,24 @@ export class RollbitCsGoWorker extends RollbitWorkerBase {
       currentTask = withdrawMaker.taskName;
       await withdrawMaker.work();
 
+      let withdrawn = false;
       withdrawMaker.successWithdrawResult.forEach(r => {
+        withdrawn = true;
         this.handleMessage(currentTask, `${r.name} withdrawn for ${r.price}`);
       });
       withdrawMaker.failWithdrawResult.forEach(r => {
+        withdrawn = true;
         this.handleError(currentTask, `${r.name} withdraw failed ${r.price} - ${r.message}`);
       })
 
       const afterWithdrawDate = new Date();
-      const filterTime = afterFilterDate.getTime() - newItemDate.getTime();
-      const withdrawTime = afterWithdrawDate.getTime() - afterFilterDate.getTime();
-      const totalTime = afterWithdrawDate.getTime() - newItemDate.getTime();
-      const message = `${item.items[0].name} - Filter time: ${filterTime} ms, Withdraw time: ${withdrawTime} ms, Total time: ${totalTime} ms`;
-      this.handleMessage("Inventory Operation", message);
+      if (withdrawn) {
+        const filterTime = afterFilterDate.getTime() - newItemDate.getTime();
+        const withdrawTime = afterWithdrawDate.getTime() - afterFilterDate.getTime();
+        const totalTime = afterWithdrawDate.getTime() - newItemDate.getTime();
+        const message = `${item.items[0].name} - Filter time: ${filterTime} ms, Withdraw time: ${withdrawTime} ms, Total time: ${totalTime} ms`;
+        this.handleMessage("Inventory Operation", message);
+      }
     } catch (e) {
       this.handleError(currentTask, e.message);
     }
