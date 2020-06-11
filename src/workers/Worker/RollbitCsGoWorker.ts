@@ -24,7 +24,7 @@ export class RollbitCsGoWorker extends RollbitWorkerBase {
 
       // const afterFilterDate = new Date();
 
-      await helpers.sleep(100);
+      await helpers.sleep(200);
       const withdrawMaker = new RollbitWithdrawMakerTask(this.botParam, inventoryFilterer.itemsToBuy, this.logger);
       currentTask = withdrawMaker.taskName;
       await withdrawMaker.work();
