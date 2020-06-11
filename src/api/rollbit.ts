@@ -1,4 +1,4 @@
-import { AxiosRequestConfig } from 'axios';
+import axios, { AxiosRequestConfig } from 'axios';
 import { IRollbitInventoryItems } from '../interfaces/rollbit';
 import { ApiBase } from './apiBase';
 import { Constants } from '../helpers/constant';
@@ -44,7 +44,7 @@ export class RollbitApi extends ApiBase {
     const data = JSON.stringify({
       "refs": refs
     });
-    const result = await this.axiosInstance.post(`${this.baseUrl}/withdraw`, data, content);
+    const result = await axios.post(`${this.baseUrl}/withdraw`, data, content);
     return result.data;
   }
 }

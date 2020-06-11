@@ -25,5 +25,5 @@ test('Performance for multiple withdraw', async () => {
   const timeTaken = endtime.getTime() - startTime.getTime();
   const averageTime = timeTaken / 5;
 
-  expect(averageTime).toBeLessThanOrEqual(350);
+  expect(averageTime).toBeLessThanOrEqual(300);
 });
