@@ -23,7 +23,7 @@ export class RollbitWithdrawMakerTask<II extends IRollbitInventoryItem> extends 
       await this.api.withdraw(this.botParam.cookie, [ib.ref]);
       this.$successWithdrawResult.push({name: itemName, price: ib.price});
     } catch (e) {
-      this.$failWithdrawResult.push({name: itemName, price: ib.price, message: JSON.stringify(e)})
+      this.$failWithdrawResult.push({name: itemName, price: ib.price, message: e.message})
     }
   }
 }
