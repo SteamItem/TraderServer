@@ -1,4 +1,5 @@
 import axios, { AxiosRequestConfig } from 'axios';
+import fetch from "node-fetch";
 import { IRollbitInventoryItems } from '../interfaces/rollbit';
 import { ApiBase } from './apiBase';
 import { Constants } from '../helpers/constant';
@@ -52,9 +53,9 @@ export class RollbitApi extends ApiBase {
     const url = `${this.baseUrl}/withdraw`;
     const response = await fetch(url, {
       method: 'POST', // *GET, POST, PUT, DELETE, etc.
-      mode: 'cors', // no-cors, *cors, same-origin
-      cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-      credentials: 'same-origin', // include, *same-origin, omit
+      // mode: 'cors', // no-cors, *cors, same-origin
+      // cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+      // credentials: 'same-origin', // include, *same-origin, omit
       headers: {
         'Accept': 'application/json, text/*',
         'Accept-Language': 'en-US,en;q=0.9,tr;q=0.8',
@@ -70,8 +71,10 @@ export class RollbitApi extends ApiBase {
         'Sec-Fetch-Site': 'same-site',
         'User-Agent': Constants.RollbitUserAgent
       },
-      referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-      body: JSON.stringify({ "refs": refs })
+      // referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+      body: JSON.stringify({ "refs": refs }),
+      timeout: 20000,
+      follow: 4
     });
     return response.json(); // parses JSON response into native JavaScript objects
   }
