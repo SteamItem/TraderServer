@@ -1,4 +1,4 @@
-import axios, { AxiosRequestConfig } from 'axios';
+import { AxiosRequestConfig } from 'axios';
 import fetch from "node-fetch";
 import { IRollbitInventoryItems } from '../interfaces/rollbit';
 import { ApiBase } from './apiBase';
@@ -21,7 +21,7 @@ export class RollbitApi extends ApiBase {
     return items.data;
   }
 
-  public async withdraw(cookie: string, refs: string[]) {
+  public async withdraw(cookie: string, refs: string[]): Promise<Response> {
     const url = `${this.baseUrl}/withdraw`;
     const headers: HeadersInit = {
       'Accept': 'application/json, text/*',
@@ -49,6 +49,12 @@ export class RollbitApi extends ApiBase {
       timeout: 20000,
       follow: 4
     });
-    return response.json();
+    const messageData = await response.json();
+
+    if (!response.ok) {
+      throw messageData;
+    }
+
+    return messageData;
   }
 }

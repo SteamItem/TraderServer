@@ -28,7 +28,7 @@ export class RollbitWithdrawMakerTask<II extends IRollbitInventoryItem> extends 
 
       this.successWithdrawResult.push({name: itemName, price: ib.price});
     } catch (e) {
-      this.failWithdrawResult.push({name: itemName, price: ib.price, message: e.message})
+      this.failWithdrawResult.push({name: itemName, price: ib.price, message: e.error})
     }
   }
 }
