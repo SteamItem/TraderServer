@@ -1,3 +1,4 @@
+// import promiseAny = require('promise-any');
 import { IBotParam } from '../../models/botParam';
 import { IRollbitInventoryItem } from '../../interfaces/rollbit';
 import { WithdrawMakerTask } from './WithdrawMakerTask';
@@ -19,12 +20,13 @@ export class RollbitWithdrawMakerTask<II extends IRollbitInventoryItem> extends 
     const itemName = ib.items.map(ii => ii.name).join("#");
     try {
       const api = new RollbitApi();
-      const p1 = api.withdraw(this.botParam.cookie, [ib.ref]);
-      const p2 = api.withdraw(this.botParam.cookie, [ib.ref]);
-      const p3 = api.withdraw(this.botParam.cookie, [ib.ref]);
+      // const p1 = api.withdraw(this.botParam.cookie, [ib.ref]);
+      // const p2 = api.withdraw(this.botParam.cookie, [ib.ref]);
+      // const p3 = api.withdraw(this.botParam.cookie, [ib.ref]);
 
-      const promises = [p1, p2, p3]
-      await Promise.race(promises)
+      // const promises = [p1, p2, p3]
+      // await promiseAny(promises);
+      await api.withdraw(this.botParam.cookie, [ib.ref]);
 
       this.successWithdrawResult.push({name: itemName, price: ib.price});
     } catch (e) {
