@@ -5,14 +5,20 @@ import { EnumBot } from '../../helpers/enum';
 import { IRollbitSocketItem, IRollbitSocketBalance } from '../../interfaces/rollbit';
 import { IBotParam } from '../../models/botParam';
 import { RollbitApi } from '../../api/rollbit';
+import { LoggerBase } from '../Logger/LoggerBase';
 export class RollbitCsGoWorker extends RollbitWorkerBase {
   bot = EnumBot.RollbitCsGo;
   private balance: number;
+  private api: RollbitApi;
+
+  constructor(api: RollbitApi, logger: LoggerBase) {
+    super(logger);
+    this.api = api;
+  }
 
   start(botParam: IBotParam): void {
     super.start(botParam);
-    const api = new RollbitApi();
-    api.csgoInventory(botParam.cookie);
+    this.api.csgoInventory(botParam.cookie);
   }
 
   async onSteamMarketItem(item: IRollbitSocketItem): Promise<void> {
@@ -29,7 +35,7 @@ export class RollbitCsGoWorker extends RollbitWorkerBase {
       currentTask = inventoryFilterer.taskName;
       inventoryFilterer.filter();
 
-      const withdrawMaker = new RollbitWithdrawMakerTask(this.botParam, inventoryFilterer.itemsToBuy);
+      const withdrawMaker = new RollbitWithdrawMakerTask(this.api, this.botParam, inventoryFilterer.itemsToBuy);
       currentTask = withdrawMaker.taskName;
       await withdrawMaker.work();
 
