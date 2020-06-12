@@ -63,12 +63,13 @@ export class RollbitSocket {
     this.socket = null;
   }
   public send(ch: string, message: string, cookie: string, immediate = false) {
+    const encoder = new TextEncoder();
     if (this.socket == null) this.connect(cookie);
     const id = Math.random().toString(36);
     const payload = JSON.stringify([ch, message, id]);
     const isConnected = this.socket.readyState === 1;
     if (immediate && !isConnected) return;
     if (!isConnected) return this.queue.push(payload);
-    this.socket.send(payload);
+    this.socket.send(encoder.encode(payload));
   }
 }
