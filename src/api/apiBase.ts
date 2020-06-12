@@ -8,8 +8,8 @@ export abstract class ApiBase {
   }
 
   private setupClient() {
-    const httpAgent = new HttpAgent({ keepAlive: true });
-    const httpsAgent = new HttpsAgent({ keepAlive: true });
+    const httpAgent = new HttpAgent({ keepAlive: true, maxSockets: Infinity });
+    const httpsAgent = new HttpsAgent({ keepAlive: true, maxSockets: Infinity });
 
     const options: AxiosRequestConfig = {
       //60 sec timeout
