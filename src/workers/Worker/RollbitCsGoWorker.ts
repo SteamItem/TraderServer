@@ -3,9 +3,17 @@ import { RollbitWithdrawMakerTask } from '../WithdrawMaker/RollbitWithdrawMakerT
 import { RollbitWorkerBase } from './RollbitWorkerBase';
 import { EnumBot } from '../../helpers/enum';
 import { IRollbitSocketItem, IRollbitSocketBalance } from '../../interfaces/rollbit';
+import { IBotParam } from '../../models/botParam';
+import { RollbitApi } from '../../api/rollbit';
 export class RollbitCsGoWorker extends RollbitWorkerBase {
   bot = EnumBot.RollbitCsGo;
   private balance: number;
+
+  start(botParam: IBotParam): void {
+    super.start(botParam);
+    const api = new RollbitApi();
+    api.csgoInventory(botParam.cookie);
+  }
 
   async onSteamMarketItem(item: IRollbitSocketItem): Promise<void> {
     if (item.state === 'listed') {

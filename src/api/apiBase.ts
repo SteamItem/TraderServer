@@ -1,4 +1,5 @@
-import axios, { AxiosInstance } from "axios";
+import axios, { AxiosInstance, AxiosRequestConfig } from "axios";
+import Agent = require('agentkeepalive');
 
 export abstract class ApiBase {
   constructor() {
@@ -6,7 +7,32 @@ export abstract class ApiBase {
   }
 
   private setupClient() {
-    const axiosInstance = axios.create();
+    const keepaliveAgent = new Agent({
+      maxSockets: 100,
+      maxFreeSockets: 10,
+      timeout: 60000, // active socket keepalive for 60 seconds
+      freeSocketTimeout: 30000, // free socket keepalive for 30 seconds
+    });
+    const keepaliveHttpsAgent = new Agent.HttpsAgent({
+      maxSockets: 100,
+      maxFreeSockets: 10,
+      timeout: 60000, // active socket keepalive for 60 seconds
+      freeSocketTimeout: 30000, // free socket keepalive for 30 seconds
+    });
+
+    const options: AxiosRequestConfig = {
+      //60 sec timeout
+      timeout: 60000,
+      //keepAlive pools and reuses TCP connections, so it's faster
+      httpAgent: keepaliveAgent,
+      httpsAgent: keepaliveHttpsAgent,
+      //follow up to 10 HTTP 3xx redirects
+      maxRedirects: 10,
+      //cap the maximum content length we'll accept to 50MBs, just in case
+      maxContentLength: 50 * 1000 * 1000
+    };
+    const axiosInstance = axios.create(options);
+
     axiosInstance.interceptors.response.use(
       res => res,
       err => {
