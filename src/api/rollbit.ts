@@ -45,9 +45,7 @@ export class RollbitApi extends ApiBase {
     const response = await fetch(url, {
       method: 'POST',
       headers,
-      body,
-      timeout: 20000,
-      follow: 4
+      body
     });
     const messageData = await response.json();
 

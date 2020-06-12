@@ -12,11 +12,11 @@ export abstract class WithdrawMakerTask<II> extends WorkerTask {
   public get inventoryItemsToBuy(): II[] {
     return this.$inventoryItemsToBuy;
   }
-  private $successWithdrawResult: IWithdrawResult[];
+  protected $successWithdrawResult: IWithdrawResult[];
   public get successWithdrawResult(): IWithdrawResult[] {
     return this.$successWithdrawResult;
   }
-  private $failWithdrawResult: IFailWithdrawResult[];
+  protected $failWithdrawResult: IFailWithdrawResult[];
   public get failWithdrawResult(): IFailWithdrawResult[] {
     return this.$failWithdrawResult;
   }

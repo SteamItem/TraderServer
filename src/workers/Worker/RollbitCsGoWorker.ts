@@ -3,7 +3,6 @@ import { RollbitWithdrawMakerTask } from '../WithdrawMaker/RollbitWithdrawMakerT
 import { RollbitWorkerBase } from './RollbitWorkerBase';
 import { EnumBot } from '../../helpers/enum';
 import { IRollbitSocketItem, IRollbitSocketBalance } from '../../interfaces/rollbit';
-import helpers from '../../helpers';
 export class RollbitCsGoWorker extends RollbitWorkerBase {
   bot = EnumBot.RollbitCsGo;
   private balance: number;
