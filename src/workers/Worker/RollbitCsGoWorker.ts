@@ -22,30 +22,19 @@ export class RollbitCsGoWorker extends RollbitWorkerBase {
       currentTask = inventoryFilterer.taskName;
       inventoryFilterer.filter();
 
-      const afterFilterDate = new Date();
-
       const withdrawMaker = new RollbitWithdrawMakerTask(this.botParam, inventoryFilterer.itemsToBuy);
       currentTask = withdrawMaker.taskName;
       await withdrawMaker.work();
 
-      let withdrawn = false;
+      const afterWithdrawDate = new Date();
+      const totalTime = afterWithdrawDate.getTime() - newItemDate.getTime();
+
       withdrawMaker.successWithdrawResult.forEach(r => {
-        withdrawn = true;
-        this.handleMessage(currentTask, `${r.name} withdrawn for ${r.price}`);
+        this.handleMessage(currentTask, `${r.name} withdrawn for ${r.price} in ${totalTime} ms`);
       });
       withdrawMaker.failWithdrawResult.forEach(r => {
-        withdrawn = true;
-        this.handleError(currentTask, `${r.name} withdraw failed ${r.price} - ${r.message}`);
-      })
-
-      const afterWithdrawDate = new Date();
-      if (withdrawn) {
-        const filterTime = afterFilterDate.getTime() - newItemDate.getTime();
-        const withdrawTime = afterWithdrawDate.getTime() - afterFilterDate.getTime();
-        const totalTime = afterWithdrawDate.getTime() - newItemDate.getTime();
-        const message = `${item.items[0].name} - Filter time: ${filterTime} ms, Withdraw time: ${withdrawTime} ms, Total time: ${totalTime} ms`;
-        this.handleMessage("Inventory Operation", message);
-      }
+        this.handleError(currentTask, `${r.name} withdraw failed ${r.price} in ${totalTime} ms - ${r.message}`);
+      });
     } catch (e) {
       this.handleError(currentTask, e.message);
     }
