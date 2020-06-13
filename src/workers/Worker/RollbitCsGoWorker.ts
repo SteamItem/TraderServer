@@ -1,3 +1,4 @@
+import cron = require('node-cron');
 import { RollbitInventoryFilterer } from '../InventoryFilterer/RollbitInventoryFilterer';
 import { RollbitWithdrawMakerTask } from '../WithdrawMaker/RollbitWithdrawMakerTask';
 import { RollbitWorkerBase } from './RollbitWorkerBase';
@@ -10,6 +11,7 @@ export class RollbitCsGoWorker extends RollbitWorkerBase {
   bot = EnumBot.RollbitCsGo;
   private balance: number;
   private api: RollbitApi;
+  protected botParam: IBotParam;
 
   constructor(api: RollbitApi, logger: LoggerBase) {
     super(logger);
@@ -18,7 +20,14 @@ export class RollbitCsGoWorker extends RollbitWorkerBase {
 
   start(botParam: IBotParam): void {
     super.start(botParam);
-    this.api.csgoInventory(botParam.cookie);
+    this.botParam = botParam;
+    this.inventoryGetter();
+  }
+
+  private inventoryGetter() {
+    return cron.schedule('*/15 * * * * *', async () => {
+      await this.api.csgoInventory(this.botParam.cookie);
+    });
   }
 
   async onSteamMarketItem(item: IRollbitSocketItem): Promise<void> {
