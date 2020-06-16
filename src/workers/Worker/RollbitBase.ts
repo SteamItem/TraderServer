@@ -5,7 +5,7 @@ import { RollbitCsGoDatabaseSelector } from '../DatabaseSelector/RollbitCsGoData
 import { RollbitSocket } from '../../api/rollbitSocket';
 import { IBotParam } from '../../models/botParam';
 import { IRollbitSocketBalance, IRollbitSocketItem } from '../../interfaces/rollbit';
-export abstract class RollbitWorkerBase extends WorkerBase {
+export abstract class RollbitBase extends WorkerBase {
   private socket: RollbitSocket;
   private syncTimer: NodeJS.Timeout;
   private scheduledTasks: cron.ScheduledTask[] = [];

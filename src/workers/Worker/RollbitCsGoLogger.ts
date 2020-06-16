@@ -1,9 +1,9 @@
 import db = require('../../db');
 import { IRollbitHistory, IRollbitSocketItem, IRollbitSocketBalance } from '../../interfaces/rollbit';
-import { RollbitWorkerBase } from './RollbitWorkerBase';
+import { RollbitBase } from './RollbitBase';
 import _ = require('lodash');
 import { EnumBot } from '../../helpers/enum';
-export class RollbitCsGoLogger extends RollbitWorkerBase {
+export class RollbitCsGoLogger extends RollbitBase {
   bot = EnumBot.RollbitCsGoLogger;
   async onSteamMarketItem(item: IRollbitSocketItem): Promise<void> {
     const normalizedItem = this.normalizeItem(item);

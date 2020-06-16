@@ -1,13 +1,13 @@
 import cron = require('node-cron');
 import { RollbitInventoryFilterer } from '../InventoryFilterer/RollbitInventoryFilterer';
 import { RollbitWithdrawMakerTask } from '../WithdrawMaker/RollbitWithdrawMakerTask';
-import { RollbitWorkerBase } from './RollbitWorkerBase';
+import { RollbitBase } from './RollbitBase';
 import { EnumBot } from '../../helpers/enum';
 import { IRollbitSocketItem, IRollbitSocketBalance } from '../../interfaces/rollbit';
 import { IBotParam } from '../../models/botParam';
 import { RollbitApi } from '../../api/rollbit';
 import { LoggerBase } from '../Logger/LoggerBase';
-export class RollbitCsGoWorker extends RollbitWorkerBase {
+export class RollbitCsGoWorker extends RollbitBase {
   bot = EnumBot.RollbitCsGo;
   private balance: number;
   private api: RollbitApi;
