@@ -11,6 +11,6 @@ export class EmpireInstantWorker extends EmpireWorkerBase<IEmpireInstantInventor
     return new EmpireInstantDatabaseSelector(EnumBot.EmpireInstant);
   }
   getInventoryGetter(): InventoryGetterTask<IEmpireInstantInventoryItem> {
-    return new EmpireInstantInventoryGetterTask(this.botParam);
+    return new EmpireInstantInventoryGetterTask(this.botUser);
   }
 }

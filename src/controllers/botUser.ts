@@ -1,5 +1,5 @@
 import pm2 = require('pm2');
-import BotParam, { IBotParam } from '../models/botParam';
+import BotUser, { IBotUser } from '../models/botUser';
 import { EnumBot, getBotText } from '../helpers/enum';
 import { ISteamLogin } from '../interfaces/steam';
 import config = require('../config');
@@ -7,18 +7,24 @@ import helpers from '../helpers';
 import telegramController = require("./telegram");
 import { PuppetApi } from '../api/puppet';
 
-async function findOne(id: EnumBot): Promise<IBotParam> {
-  const botParam = await BotParam.findOne({ id }).exec();
-  return botParam;
+async function findBots(botid: EnumBot): Promise<IBotUser[]> {
+  const botUsers = await BotUser.find({ botid }).exec();
+  return botUsers;
 }
 
-async function update(id: number, worker: boolean, code: string): Promise<IBotParam> {
+async function findOne(id: string): Promise<IBotUser> {
+  const botUser = await BotUser.findById(id).exec();
+  return botUser;
+}
+
+async function update(id: string, worker: boolean, code: string, wishlist_id: string): Promise<IBotUser> {
+  const botUser = await findOne(id);
   await manageBot(id, worker);
-  await sendBotMessage(id, worker);
-  return await BotParam.findOneAndUpdate({ id }, { worker, code }).exec();
+  await sendBotMessage(botUser.botid, worker);
+  return await BotUser.findByIdAndUpdate(id, { worker, code, wishlist_id }).exec();
 }
 
-function manageBot(id: EnumBot, worker: boolean) {
+function manageBot(id: string, worker: boolean) {
   if (worker) {
     return startBot(id);
   } else {
@@ -33,31 +39,19 @@ function sendBotMessage(bot: EnumBot, worker: boolean) {
   return telegramController.sendMessage(message);
 }
 
-function getBotFileName(id: EnumBot) {
-  switch (id) {
-    case EnumBot.EmpireInstant: return "instantWorker";
-    case EnumBot.EmpireDota: return "dotaWorker";
-    case EnumBot.RollbitCsGo: return "rollbitWorker";
-    case EnumBot.RollbitCsGoLogger: return "rollbitLogger";
-    default: throw new Error("Bot not found");
-  }
+function getWorkerPath() {
+  return `./dist/src/bot.js`;
 }
 
-function getWorkerPath(fileName: string) {
-  return `./dist/src/${fileName}.js`;
-}
-
-async function stopBot(id: number) {
-  const botFileName = getBotFileName(id);
-  pm2.stop(botFileName, function(err) {
+async function stopBot(botUserId: string) {
+  pm2.stop(botUserId, function(err) {
     pm2.disconnect();
     if (err) throw err
   });
 }
 
-async function startBot(id: number) {
-  const botFileName = getBotFileName(id);
-  const workerPath = getWorkerPath(botFileName);
+async function startBot(id: string) {
+  const workerPath = getWorkerPath();
   pm2.connect(err => {
     if (err) {
       console.error(err);
@@ -65,11 +59,12 @@ async function startBot(id: number) {
     }
     pm2.start({
       script: workerPath,
-      name: botFileName,
+      name: id,
       env: {
         NODE_ENV: config.NODE_ENV,
         DB_URL: config.DB_URL,
         RDB_URL: config.RDB_URL,
+        BOTUSER_ID: id,
         TELEGRAM_TOKEN: config.TELEGRAM_TOKEN,
         TELEGRAM_CHAT_ID: config.TELEGRAM_CHAT_ID
       }
@@ -80,22 +75,24 @@ async function startBot(id: number) {
   });
 }
 
-async function login(id: EnumBot, steamLogin: ISteamLogin): Promise<IBotParam> {
-  const site = helpers.getSiteOfBot(id);
+async function login(id: string, steamLogin: ISteamLogin): Promise<IBotUser> {
+  const botUser = await findOne(id);
+  const site = helpers.getSiteOfBot(botUser.botid);
   const api = new PuppetApi();
   const cookies = await api.login(site, steamLogin);
   const cookie = cookies.map(c => `${c.name}=${c.value}`).join(';');
-  return BotParam.findOneAndUpdate({ id }, { cookie });
+  return BotUser.findByIdAndUpdate(id, { cookie, steam_username: steamLogin.username });
 }
 
 async function handleBots() {
-  const bots = await BotParam.find({worker: true}).exec();
+  const bots = await BotUser.find({worker: true}).exec();
   bots.forEach(async bot => {
     await startBot(bot.id);
   });
 }
 
 export = {
+  findBots,
   findOne,
   update,
   login,

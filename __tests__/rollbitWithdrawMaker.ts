@@ -1,9 +1,9 @@
 import { RollbitWithdrawMakerTask } from "../src/workers/WithdrawMaker/RollbitWithdrawMakerTask";
 import { EnumBot } from "../src/helpers/enum";
-import { IBotParam } from "../src/models/botParam";
+import { IBotUser } from "../src/models/botUser";
 import { RollbitApi } from "../src/api/rollbit";
 
-const botParam: IBotParam = { id: EnumBot.RollbitCsGo, name: "Rollbit", worker: true, period: 1, cookie: "TEST" }
+const botParam: IBotUser = { botid: EnumBot.RollbitCsGo, name: "Rollbit", worker: true, cookie: "TEST", steam_username: "steam" }
 const itemToBuy = { price: 3.23, ref: "4e512ec9-d264-4929-b499-587b28d8622a", markup: 0, items: [{name: "SSG 08 | Bloodshot (Field-Tested)", image: "", classid: 3608084161, instanceid: 188530139, weapon: "SSG 08", skin: "Bloodshot", rarity: "Classified", exterior: "Field-Tested", price: 3.23, markup: 0 }]};
 // TODO: Mock
 const api = new RollbitApi();

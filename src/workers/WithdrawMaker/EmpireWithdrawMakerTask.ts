@@ -1,15 +1,15 @@
-import { IBotParam } from '../../models/botParam';
+import { IBotUser } from '../../models/botUser';
 import { IEmpireInventoryItem } from '../../interfaces/csgoEmpire';
 import { WithdrawMakerTask } from './WithdrawMakerTask';
 import _ = require('lodash');
 import { CSGOEmpireApi } from '../../api/csgoempire';
 export class EmpireWithdrawMakerTask<II extends IEmpireInventoryItem> extends WithdrawMakerTask<II> {
-  constructor(token: string, botParam: IBotParam, itemsToBuy: II[]) {
+  constructor(token: string, botUser: IBotUser, itemsToBuy: II[]) {
     super(itemsToBuy);
     this.token = token;
-    this.botParam = botParam;
+    this.botUser = botUser;
   }
-  private botParam: IBotParam;
+  private botUser: IBotUser;
   private token: string;
 
   async withdrawAll(): Promise<void> {
@@ -28,7 +28,7 @@ export class EmpireWithdrawMakerTask<II extends IEmpireInventoryItem> extends Wi
     const itemCount = item_ids.length;
     try {
       const api = new CSGOEmpireApi();
-      await api.withdraw(this.botParam.cookie, this.token, bot_id, item_ids);
+      await api.withdraw(this.botUser.cookie, this.token, bot_id, item_ids);
       this.successWithdrawResult.push({name: `${itemCount} Items`, price: 0})
     } catch (e) {
       this.failWithdrawResult.push({name: `${itemCount} Items`, price: 0, message: e.message});

@@ -11,6 +11,6 @@ export class EmpireDotaWorker extends EmpireWorkerBase<IEmpireDotaInventoryItem>
     return new EmpireDotaDatabaseSelector(EnumBot.EmpireDota);
   }
   getInventoryGetter(): InventoryGetterTask<IEmpireDotaInventoryItem> {
-    return new EmpireDotaInventoryGetterTask(this.botParam);
+    return new EmpireDotaInventoryGetterTask(this.botUser);
   }
 }

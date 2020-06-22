@@ -1,6 +1,6 @@
 import cron = require('node-cron');
 import { IWishlistItem } from '../../models/wishlistItem';
-import { IBotParam } from '../../models/botParam';
+import { IBotUser } from '../../models/botUser';
 import { DatabaseSelectorTask } from '../DatabaseSelector/DatabaseSelectorTask';
 import { LoggerBase } from '../Logger/LoggerBase';
 import { EnumBot } from '../../helpers/enum';
@@ -10,18 +10,18 @@ export abstract class WorkerBase {
   }
 
   protected logger: LoggerBase;
-  protected botParam: IBotParam;
+  protected botUser: IBotUser;
   protected wishlistItems: IWishlistItem[];
   private _working = false;
   private set working(value: boolean) {
     if (this._working === false && value === true) {
-      this.start(this.botParam);
+      this.start(this.botUser);
     }
     this._working = value;
   }
 
   abstract bot: EnumBot;
-  abstract start(botParam: IBotParam): void;
+  abstract start(botUser: IBotUser): void;
 
   abstract getDatabaseSelector(): DatabaseSelectorTask;
   async schedule(): Promise<void> {
@@ -36,9 +36,9 @@ export abstract class WorkerBase {
         const databaseSelector = this.getDatabaseSelector();
         currentTask = databaseSelector.taskName;
         await databaseSelector.work();
-        this.botParam = databaseSelector.botParam;
+        this.botUser = databaseSelector.botUser;
         this.wishlistItems = databaseSelector.wishlistItems;
-        this.working = databaseSelector.botParam.worker;
+        this.working = databaseSelector.botUser.worker;
       } catch (e) {
         this.handleError(currentTask, e.message);
       }

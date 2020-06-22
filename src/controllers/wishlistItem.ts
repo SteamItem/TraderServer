@@ -1,22 +1,17 @@
 import WishlistItem, { IWishlistItem } from '../models/wishlistItem';
 
-async function findOne(itemId: string): Promise<IWishlistItem> {
+async function findOne(wishlist_id: string, itemId: string): Promise<IWishlistItem> {
     return await WishlistItem.findById(itemId).exec();
 }
 
-async function findAll(): Promise<IWishlistItem[]> {
-    return await WishlistItem.find({}).exec();
+async function findAll(wishlist_id: string): Promise<IWishlistItem[]> {
+    return await WishlistItem.find({wishlist_id}).exec();
 }
 
-function create(site_id: number, appid: number, name: string, max_price: number): Promise<IWishlistItem> {
-    return save(site_id, appid, name, max_price);
-}
-
-function update(itemId: string, site_id: number, appid: number, name: string, max_price: number): Promise<IWishlistItem> {
-    return save(site_id, appid, name, max_price);
-}
-
-async function save(site_id: number, appid: number, name: string, max_price: number): Promise<IWishlistItem> {
+async function save(wishlist_id: string, site_id: number, appid: number, name: string, max_price: number): Promise<IWishlistItem> {
+    if(!wishlist_id) {
+        throw new Error("wishlist_id can not be empty");
+    }
     if(!site_id) {
         throw new Error("site_id can not be empty");
     }
@@ -27,20 +22,18 @@ async function save(site_id: number, appid: number, name: string, max_price: num
         throw new Error("name can not be empty");
     }
 
-    await WishlistItem.findOneAndDelete({ site_id, appid, name }).exec();
-    const wishlistItem = new WishlistItem( { site_id, appid, name, max_price });
+    await WishlistItem.findOneAndDelete({ site_id, appid, name, wishlist_id }).exec();
+    const wishlistItem = new WishlistItem( { site_id, appid, name, max_price, wishlist_id });
     return await wishlistItem.save();
 }
 
-
-async function remove(itemId: string): Promise<IWishlistItem> {
+async function remove(wishlist_id: string, itemId: string): Promise<IWishlistItem> {
     return await WishlistItem.findByIdAndRemove(itemId).exec();
 }
 
 export = {
     findOne,
     findAll,
-    create,
-    update,
+    save,
     remove
 }
