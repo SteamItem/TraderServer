@@ -73,7 +73,7 @@ export class RollbitCsGoWorker extends RollbitBase {
         successWithdrawCount: withdrawMaker.successWithdrawResult.length,
         failWithdrawCount: withdrawMaker.failWithdrawResult.length
       }
-      db.addInventoryOperationTiming(timing);
+      await db.addInventoryOperationTiming(timing);
     } catch (e) {
       this.handleError(currentTask, e.message);
     }
