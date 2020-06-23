@@ -21,8 +21,8 @@ export abstract class ApiBase {
     this.axiosInstance = this.setupClient();
   }
 
-  protected httpAgent: Agent;
-  protected httpsAgent: Agent.HttpsAgent;
+  public httpAgent: Agent;
+  public httpsAgent: Agent.HttpsAgent;
   protected axiosInstance: AxiosInstance;
 
   private setupClient() {

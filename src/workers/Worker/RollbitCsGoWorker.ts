@@ -7,6 +7,7 @@ import { IRollbitSocketItem, IRollbitSocketBalance } from '../../interfaces/roll
 import { IBotParam } from '../../models/botParam';
 import { RollbitApi } from '../../api/rollbit';
 import { LoggerBase } from '../Logger/LoggerBase';
+import db = require('../../db');
 export class RollbitCsGoWorker extends RollbitBase {
   bot = EnumBot.RollbitCsGo;
   private balance: number;
@@ -27,6 +28,8 @@ export class RollbitCsGoWorker extends RollbitBase {
   private inventoryGetter() {
     return cron.schedule('*/15 * * * * *', async () => {
       await this.api.csgoInventory(this.botParam.cookie);
+      await db.addAgentStatus('inventoryGetter/httpAgent', this.api.httpAgent.getCurrentStatus());
+      await db.addAgentStatus('inventoryGetter/httpsAgent', this.api.httpsAgent.getCurrentStatus());
     });
   }
 

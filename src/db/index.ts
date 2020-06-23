@@ -3,6 +3,7 @@ import R = require('ramda');
 import config = require('../config');
 import { IPricEmpireSearchRequest, IPricEmpireItem, IPricEmpireItemPrice } from '../interfaces/pricEmpire';
 import { IRollbitHistory } from '../interfaces/rollbit';
+import Agent = require('agentkeepalive');
 
 const sequelize = new Sequelize(config.RDB_URL, {dialect: "postgres"});
 
@@ -199,6 +200,35 @@ RollbitFav.init({
   tableName: "rollbitfavs"
 })
 
+class AgentStatus extends Model {
+  public source: string;
+  public createSocketCount: number;
+  public createSocketErrorCount: number
+  public closeSocketCount: number;
+  public errorSocketCount: number;
+  public timeoutSocketCount: number;
+  public requestCount: number;
+  public freeSockets: string;
+  public sockets: string;
+  public requests: string;
+}
+
+AgentStatus.init({
+  source: DataTypes.STRING(200),
+  createSocketCount: DataTypes.INTEGER,
+  createSocketErrorCount: DataTypes.INTEGER,
+  closeSocketCount: DataTypes.INTEGER,
+  errorSocketCount: DataTypes.INTEGER,
+  timeoutSocketCount: DataTypes.INTEGER,
+  requestCount: DataTypes.INTEGER,
+  freeSockets: DataTypes.STRING(1000),
+  sockets: DataTypes.STRING(1000),
+  requests: DataTypes.STRING(1000),
+}, {
+  sequelize,
+  tableName: "agentstatuses"
+})
+
 function sync(): Promise<Sequelize> {
   return sequelize.sync();
 }
@@ -339,6 +369,21 @@ function rollbitFavRemove(name: string): Promise<number> {
   return RollbitFav.destroy({where: { name: name }})
 }
 
+function addAgentStatus(source: string, agentStatus: Agent.AgentStatus): Promise<AgentStatus> {
+  return AgentStatus.create({
+    source,
+    createSocketCount: agentStatus.createSocketCount,
+    createSocketErrorCount: agentStatus.createSocketErrorCount,
+    closeSocketCount: agentStatus.closeSocketCount,
+    errorSocketCount: agentStatus.errorSocketCount,
+    timeoutSocketCount: agentStatus.timeoutSocketCount,
+    requestCount: agentStatus.requestCount,
+    freeSockets: JSON.stringify(agentStatus.freeSockets),
+    sockets: JSON.stringify(agentStatus.sockets),
+    requests: JSON.stringify(agentStatus.requests)
+  });
+}
+
 export = {
   sync,
   updatePricEmpireItems,
@@ -349,5 +394,6 @@ export = {
   rollbitHistories,
   rollbitFavs,
   rollbitFavAdd,
-  rollbitFavRemove
+  rollbitFavRemove,
+  addAgentStatus
 }
