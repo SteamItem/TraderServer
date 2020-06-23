@@ -203,7 +203,7 @@ RollbitFav.init({
 class AgentStatus extends Model {
   public source: string;
   public createSocketCount: number;
-  public createSocketErrorCount: number
+  public createSocketErrorCount: number;
   public closeSocketCount: number;
   public errorSocketCount: number;
   public timeoutSocketCount: number;
@@ -224,6 +224,29 @@ AgentStatus.init({
   freeSockets: DataTypes.STRING(1000),
   sockets: DataTypes.STRING(1000),
   requests: DataTypes.STRING(1000),
+}, {
+  sequelize,
+  tableName: "agentstatuses"
+})
+
+class InventoryOperationTiming extends Model {
+  public source: string;
+  public name: string;
+  public price: number;
+  public filterTime: number;
+  public withdrawTime: number;
+  public successWithdrawCount: number;
+  public failWithdrawCount: number;
+}
+
+InventoryOperationTiming.init({
+  source: DataTypes.STRING(200),
+  name: DataTypes.STRING(200),
+  price: DataTypes.INTEGER,
+  filterTime: DataTypes.INTEGER,
+  withdrawTime: DataTypes.INTEGER
+  successWithdrawCount: DataTypes.INTEGER
+  failWithdrawCount: DataTypes.INTEGER
 }, {
   sequelize,
   tableName: "agentstatuses"
@@ -384,6 +407,10 @@ function addAgentStatus(source: string, agentStatus: Agent.AgentStatus): Promise
   });
 }
 
+function addInventoryOperationTiming(timing): Promise<InventoryOperationTiming> {
+  return InventoryOperationTiming.create(timing);
+}
+
 export = {
   sync,
   updatePricEmpireItems,
@@ -395,5 +422,7 @@ export = {
   rollbitFavs,
   rollbitFavAdd,
   rollbitFavRemove,
-  addAgentStatus
+  addAgentStatus,
+  InventoryOperationTiming,
+  addInventoryOperationTiming
 }
