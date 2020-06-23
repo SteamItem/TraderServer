@@ -244,8 +244,8 @@ InventoryOperationTiming.init({
   name: DataTypes.STRING(200),
   price: DataTypes.INTEGER,
   filterTime: DataTypes.INTEGER,
-  withdrawTime: DataTypes.INTEGER
-  successWithdrawCount: DataTypes.INTEGER
+  withdrawTime: DataTypes.INTEGER,
+  successWithdrawCount: DataTypes.INTEGER,
   failWithdrawCount: DataTypes.INTEGER
 }, {
   sequelize,
