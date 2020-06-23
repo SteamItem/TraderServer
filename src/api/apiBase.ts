@@ -1,6 +1,5 @@
 import axios, { AxiosInstance, AxiosRequestConfig } from "axios";
-import { Agent as HttpAgent } from 'http';
-import { Agent as HttpsAgent} from 'https';
+import Agent = require('agentkeepalive');
 
 export abstract class ApiBase {
   constructor() {
@@ -8,8 +7,20 @@ export abstract class ApiBase {
   }
 
   private setupClient() {
-    const httpAgent = new HttpAgent({ keepAlive: true, maxSockets: Infinity });
-    const httpsAgent = new HttpsAgent({ keepAlive: true, maxSockets: Infinity });
+    const httpAgent = new Agent({
+      keepAlive: true,
+      maxSockets: 100,
+      maxFreeSockets: 10,
+      timeout: 60000, // active socket keepalive for 60 seconds
+      freeSocketTimeout: 30000, // free socket keepalive for 30 seconds
+    });
+    const httpsAgent = new Agent.HttpsAgent({
+      keepAlive: true,
+      maxSockets: 100,
+      maxFreeSockets: 10,
+      timeout: 60000, // active socket keepalive for 60 seconds
+      freeSocketTimeout: 30000, // free socket keepalive for 30 seconds
+    });
 
     const options: AxiosRequestConfig = {
       //60 sec timeout
