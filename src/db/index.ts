@@ -249,7 +249,7 @@ InventoryOperationTiming.init({
   failWithdrawCount: DataTypes.INTEGER
 }, {
   sequelize,
-  tableName: "agentstatuses"
+  tableName: "InventoryOperationTimings"
 })
 
 function sync(): Promise<Sequelize> {
