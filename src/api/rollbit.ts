@@ -53,6 +53,9 @@ export class RollbitApi extends ApiBase {
     });
 
     const url = `${this.baseUrl}/withdraw`;
+    console.log('httpagent status: %j', this.httpAgent.getCurrentStatus());
+    console.log('httpsagent status: %j', this.httpsAgent.getCurrentStatus());
+    console.log('--------------------');
     const items = await this.axiosInstance.post(url, body, content);
     return items.data;
   }

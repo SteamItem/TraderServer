@@ -3,31 +3,35 @@ import Agent = require('agentkeepalive');
 
 export abstract class ApiBase {
   constructor() {
+    this.httpAgent = new Agent({
+      keepAlive: true,
+      maxSockets: 100,
+      maxFreeSockets: 10,
+      timeout: 60000, // active socket keepalive for 60 seconds
+      freeSocketTimeout: 30000, // free socket keepalive for 30 seconds
+    });
+    this.httpsAgent = new Agent.HttpsAgent({
+      keepAlive: true,
+      maxSockets: 100,
+      maxFreeSockets: 10,
+      timeout: 60000, // active socket keepalive for 60 seconds
+      freeSocketTimeout: 30000, // free socket keepalive for 30 seconds
+    });
+
     this.axiosInstance = this.setupClient();
   }
 
-  private setupClient() {
-    const httpAgent = new Agent({
-      keepAlive: true,
-      maxSockets: 100,
-      maxFreeSockets: 10,
-      timeout: 60000, // active socket keepalive for 60 seconds
-      freeSocketTimeout: 30000, // free socket keepalive for 30 seconds
-    });
-    const httpsAgent = new Agent.HttpsAgent({
-      keepAlive: true,
-      maxSockets: 100,
-      maxFreeSockets: 10,
-      timeout: 60000, // active socket keepalive for 60 seconds
-      freeSocketTimeout: 30000, // free socket keepalive for 30 seconds
-    });
+  protected httpAgent: Agent;
+  protected httpsAgent: Agent.HttpsAgent;
+  protected axiosInstance: AxiosInstance;
 
+  private setupClient() {
     const options: AxiosRequestConfig = {
       //60 sec timeout
       timeout: 60000,
       //keepAlive pools and reuses TCP connections, so it's faster
-      httpAgent: httpAgent,
-      httpsAgent: httpsAgent,
+      httpAgent: this.httpAgent,
+      httpsAgent: this.httpsAgent,
       //follow up to 10 HTTP 3xx redirects
       maxRedirects: 10,
       //cap the maximum content length we'll accept to 50MBs, just in case
@@ -50,6 +54,4 @@ export abstract class ApiBase {
     );
     return axiosInstance;
   }
-
-  protected axiosInstance: AxiosInstance;
 }
