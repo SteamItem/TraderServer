@@ -243,7 +243,7 @@ class InventoryOperationTiming extends Model {
 InventoryOperationTiming.init({
   source: DataTypes.STRING(200),
   name: DataTypes.STRING(200),
-  price: DataTypes.INTEGER,
+  price: DataTypes.DECIMAL(18, 2),
   filterTime: DataTypes.INTEGER,
   withdrawTime: DataTypes.INTEGER,
   successWithdrawCount: DataTypes.INTEGER,

@@ -67,7 +67,7 @@ export class RollbitCsGoWorker extends RollbitBase {
       const timing = {
         source: "Rollbit",
         name: item.items[0].name,
-        price: parseFloat(item.price.toString()),
+        price: item.price,
         filterTime,
         withdrawTime,
         successWithdrawCount: withdrawMaker.successWithdrawResult.length,
