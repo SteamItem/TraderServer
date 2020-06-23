@@ -4,6 +4,7 @@ import config = require('../config');
 import { IPricEmpireSearchRequest, IPricEmpireItem, IPricEmpireItemPrice } from '../interfaces/pricEmpire';
 import { IRollbitHistory } from '../interfaces/rollbit';
 import Agent = require('agentkeepalive');
+import { IInventoryOperationTiming } from '../interfaces/withdraw';
 
 const sequelize = new Sequelize(config.RDB_URL, {dialect: "postgres"});
 
@@ -407,7 +408,7 @@ function addAgentStatus(source: string, agentStatus: Agent.AgentStatus): Promise
   });
 }
 
-function addInventoryOperationTiming(timing): Promise<InventoryOperationTiming> {
+function addInventoryOperationTiming(timing: IInventoryOperationTiming): Promise<InventoryOperationTiming> {
   return InventoryOperationTiming.create(timing);
 }
 
@@ -423,6 +424,5 @@ export = {
   rollbitFavAdd,
   rollbitFavRemove,
   addAgentStatus,
-  InventoryOperationTiming,
   addInventoryOperationTiming
 }
