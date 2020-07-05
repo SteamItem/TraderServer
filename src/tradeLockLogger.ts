@@ -1,9 +1,9 @@
 import mongoHelper = require('./helpers/mongo');
-import { EmpireDotaWorker } from "./workers/Worker/EmpireDotaWorker";
+import { EmpireTradeLockLogger } from "./workers/Worker/EmpireTradeLockLogger";
 import { TelegramLogger } from './workers/Logger/TelegramLogger';
 
 mongoHelper.connect();
 
 const logger = new TelegramLogger();
-const worker = new EmpireDotaWorker(logger);
+const worker = new EmpireTradeLockLogger(logger);
 worker.schedule();

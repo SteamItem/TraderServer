@@ -16,7 +16,7 @@ function compareStrings(s1: string, s2: string): boolean {
 function getSiteOfBot(id: EnumBot): EnumSite {
   switch (id) {
     case EnumBot.EmpireInstant:
-    case EnumBot.EmpireDota:
+    case EnumBot.EmpireTradeLockLogger:
       return EnumSite.CsGoEmpire;
     case EnumBot.RollbitCsGo:
     case EnumBot.RollbitCsGoLogger:

@@ -1,19 +1,19 @@
 import _ = require('lodash');
-import { IEmpireInventoryItem } from '../../interfaces/csgoEmpire';
+import { IEmpireInstantInventoryItem } from '../../interfaces/csgoEmpire';
 import { InventoryFiltererUnit } from './InventoryFiltererUnit';
-export class EmpireInventoryFilterer<II extends IEmpireInventoryItem> extends InventoryFiltererUnit<II> {
-  getItemName(inventoryItem: II): string {
-    return inventoryItem.name;
+export class EmpireInstantInventoryFilterer extends InventoryFiltererUnit<IEmpireInstantInventoryItem> {
+  getItemName(inventoryItem: IEmpireInstantInventoryItem): string {
+    return inventoryItem.market_name;
   }
-  getItemPrice(inventoryItem: II): number {
+  getItemPrice(inventoryItem: IEmpireInstantInventoryItem): number {
     return inventoryItem.market_value / 100;
   }
-  isNewItemSuitable(inventoryItemToAdd: II, currentlySelectedInventoryItems: II[]): boolean {
+  isNewItemSuitable(inventoryItemToAdd: IEmpireInstantInventoryItem, currentlySelectedInventoryItems: IEmpireInstantInventoryItem[]): boolean {
     const maxItemPerBot = 20;
     const currentBotItems = _.filter(currentlySelectedInventoryItems, ii => ii.bot_id === inventoryItemToAdd.bot_id);
     return currentBotItems.length < maxItemPerBot;
   }
-  afterFilterAction(inventoryItems: II[]): II[] {
+  afterFilterAction(inventoryItems: IEmpireInstantInventoryItem[]): IEmpireInstantInventoryItem[] {
     return _.shuffle(inventoryItems);
   }
 }

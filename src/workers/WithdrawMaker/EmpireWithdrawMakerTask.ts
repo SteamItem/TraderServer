@@ -1,10 +1,10 @@
 import { IBotParam } from '../../models/botParam';
-import { IEmpireInventoryItem } from '../../interfaces/csgoEmpire';
+import { IEmpireInstantInventoryItem } from '../../interfaces/csgoEmpire';
 import { WithdrawMakerTask } from './WithdrawMakerTask';
 import _ = require('lodash');
 import { CSGOEmpireApi } from '../../api/csgoempire';
-export class EmpireWithdrawMakerTask<II extends IEmpireInventoryItem> extends WithdrawMakerTask<II> {
-  constructor(token: string, botParam: IBotParam, itemsToBuy: II[]) {
+export class EmpireWithdrawMakerTask extends WithdrawMakerTask<IEmpireInstantInventoryItem> {
+  constructor(token: string, botParam: IBotParam, itemsToBuy: IEmpireInstantInventoryItem[]) {
     super(itemsToBuy);
     this.token = token;
     this.botParam = botParam;

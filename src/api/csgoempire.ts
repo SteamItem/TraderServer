@@ -1,6 +1,6 @@
 import { AxiosRequestConfig } from 'axios';
-import { IEmpireProfile } from '../interfaces/csgoEmpire';
-import { IEmpireInstantInventoryItem, IEmpireDotaInventoryItem } from '../interfaces/csgoEmpire';
+import { IEmpireProfile, IEmpireTradeLockInventoryItem } from '../interfaces/csgoEmpire';
+import { IEmpireInstantInventoryItem } from '../interfaces/csgoEmpire';
 import { ApiBase } from './apiBase';
 import { Constants } from '../helpers/constant';
 
@@ -80,7 +80,7 @@ export class CSGOEmpireApi extends ApiBase {
     return items.data;
   }
 
-  public async dotaInventory(cookie: string): Promise<IEmpireDotaInventoryItem[]> {
+  public async tradelockInventory(cookie: string): Promise<IEmpireTradeLockInventoryItem[]> {
     const content = {
       headers: {
         'Content-Type': 'application/json',
@@ -88,7 +88,7 @@ export class CSGOEmpireApi extends ApiBase {
         'Host': 'csgoempire.gg'
       }
     };
-    const items = await this.axiosInstance.get<IEmpireDotaInventoryItem[]>(`${this.baseUrl}/inventory/site/10`, content);
+    const items = await this.axiosInstance.get<IEmpireTradeLockInventoryItem[]>(`${this.baseUrl}/hermes/inventory/10`, content);
     return items.data;
   }
 }

@@ -89,27 +89,25 @@ export interface IEmpireItemToBuy {
   store_item_id: string;
 }
 
-export interface IEmpireInventoryItem {
-  name: string;
-  bot_id: number;
+export interface IEmpireInstantInventoryItem {
+  id: string;
+  market_name: string;
   market_value: number;
   appid: number;
-  id: string;
-}
-
-export interface IEmpireInstantInventoryItem extends IEmpireInventoryItem {
   assetid: string;
+  bot_id: number;
   bundle_id?: number;
   color: string;
   contextid: string;
-  custom_name?: any;
+  custom_name?: string;
   custom_price: number;
   icon_url: string;
   img: string;
-  market_name: string;
+  name: string;
   name_color: string;
   paint_index?: number;
   paint_seed?: number;
+  price_is_unreliable: boolean;
   stickers: string;
   tradable: boolean;
   tradelock: boolean;
@@ -117,10 +115,33 @@ export interface IEmpireInstantInventoryItem extends IEmpireInventoryItem {
   wear?: number;
 }
 
-export interface IEmpireDotaInventoryItem extends IEmpireInventoryItem {
+export interface IEmpireTradeLockInventoryItem {
+  id: string;
+  market_name: string;
+  market_value: number;
   img: string;
-  icon_url: string;
-  wear?: any;
-  tradelock: boolean;
-  created_at: number;
+  status: number;
+  appid: number;
+  tradelock: IEmpireTradeLock;
+  tradable: boolean;
+  user_sends_trade: boolean;
+  trade_url?: string;
+  fee: number;
+}
+
+export interface IEmpireTradeLockLastPrice {
+  market_name: string;
+  market_value: number;
+}
+
+export interface IEmpireTradeLockPriceChange {
+  name: string;
+  current_value: number;
+  previous_value: number;
+}
+
+export interface IEmpireTradeLock {
+  time_left_days: number;
+  time_left_hours: number;
+  timestamp?: number;
 }

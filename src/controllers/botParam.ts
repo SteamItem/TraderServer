@@ -36,7 +36,7 @@ function sendBotMessage(bot: EnumBot, worker: boolean) {
 function getBotFileName(id: EnumBot) {
   switch (id) {
     case EnumBot.EmpireInstant: return "instantWorker";
-    case EnumBot.EmpireDota: return "dotaWorker";
+    case EnumBot.EmpireTradeLockLogger: return "tradeLockLogger";
     case EnumBot.RollbitCsGo: return "rollbitWorker";
     case EnumBot.RollbitCsGoLogger: return "rollbitLogger";
     default: throw new Error("Bot not found");
