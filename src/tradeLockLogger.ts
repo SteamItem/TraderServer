@@ -1,8 +1,10 @@
 import mongoHelper = require('./helpers/mongo');
-import { EmpireTradeLockLogger } from "./workers/Worker/EmpireTradeLockLogger";
 import { TelegramLogger } from './workers/Logger/TelegramLogger';
+import { EmpireTradeLockLogger } from './workers/Worker/EmpireTradeLockLogger';
+import db = require('./db');
 
 mongoHelper.connect();
+db.sync();
 
 const logger = new TelegramLogger();
 const worker = new EmpireTradeLockLogger(logger);

@@ -23,7 +23,7 @@ export class EmpireTradeLockLogger extends WorkerBase {
 
   bot = EnumBot.EmpireTradeLockLogger;
   getDatabaseSelector(): DatabaseSelectorTask {
-    return new EmpireInstantDatabaseSelector(EnumBot.EmpireInstant);
+    return new EmpireInstantDatabaseSelector(EnumBot.EmpireTradeLockLogger);
   }
   getInventoryGetter(): InventoryGetterTask<IEmpireTradeLockInventoryItem> {
     return new EmpireTradeLockInventoryGetterTask(this.botParam);
@@ -42,7 +42,7 @@ export class EmpireTradeLockLogger extends WorkerBase {
     clearInterval(this.inventoryTimer);
   }
   private tokenScheduler() {
-    return cron.schedule('* * * * *', async () => {
+    return cron.schedule('* * * * * *', async () => {
       let currentTask = "tokenScheduler";
       try {
         const tokenGetter = this.getTokenGetter();
@@ -56,7 +56,7 @@ export class EmpireTradeLockLogger extends WorkerBase {
   }
 
   private inventoryScheduler() {
-    return cron.schedule('* * * * *', async () => {
+    return cron.schedule('* * * * * *', async () => {
       let currentTask = "inventoryTask";
       try {
         this.lastPrices = await this.getLastPrices();

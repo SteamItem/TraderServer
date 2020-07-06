@@ -9,7 +9,7 @@ export class CSGOEmpireApi extends ApiBase {
   public async getToken(code: string, cookie: string) {
     const data = JSON.stringify({
       "code": code,
-      "uuid": "1"
+      "uuid": "00000000-0000-0000-0000-000000000000"
     });
 
     const content: AxiosRequestConfig = {
