@@ -434,7 +434,7 @@ function empireTradeLockLastPrices(): Promise<EmpireTradeLockLastPrice[]> {
 }
 
 function updateEmpireTradeLockLastPrices(items: IEmpireTradeLockPrice[]): Promise<EmpireTradeLockLastPrice[]> {
-  return EmpireTradeLockLastPrice.bulkCreate(items, {updateOnDuplicate: ['market_name']});
+  return EmpireTradeLockLastPrice.bulkCreate(items, {updateOnDuplicate: ['market_value']});
 }
 
 export = {
