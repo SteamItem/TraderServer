@@ -43,7 +43,7 @@ export class EmpireTradeLockLogger extends WorkerBase {
     clearInterval(this.inventoryTimer);
   }
   private tokenScheduler() {
-    return cron.schedule('* * * * * *', async () => {
+    return cron.schedule('*/10 * * * * *', async () => {
       let currentTask = "tokenScheduler";
       try {
         const tokenGetter = this.getTokenGetter();
@@ -57,7 +57,7 @@ export class EmpireTradeLockLogger extends WorkerBase {
   }
 
   private inventoryScheduler() {
-    return cron.schedule('* * * * * *', async () => {
+    return cron.schedule('*/10 * * * * *', async () => {
       let currentTask = "inventoryTask";
       try {
         this.lastPrices = await this.getLastPrices();
