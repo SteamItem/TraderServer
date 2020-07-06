@@ -5,7 +5,7 @@ import { IPricEmpireSearchRequest, IPricEmpireItem, IPricEmpireItemPrice } from 
 import { IRollbitHistory } from '../interfaces/rollbit';
 import Agent = require('agentkeepalive');
 import { IInventoryOperationTiming } from '../interfaces/withdraw';
-import { IEmpireTradeLockInventoryItem, IEmpireTradeLockLastPrice } from '../interfaces/csgoEmpire';
+import { IEmpireTradeLockPrice } from '../interfaces/csgoEmpire';
 
 const sequelize = new Sequelize(config.RDB_URL, {dialect: "postgres"});
 
@@ -259,8 +259,11 @@ class EmpireTradeLockLastPrice extends Model {
   public market_value: number;
 }
 
-InventoryOperationTiming.init({
-  market_name: DataTypes.STRING(200),
+EmpireTradeLockLastPrice.init({
+  market_name: {
+    type: DataTypes.STRING(100),
+    primaryKey: true
+  },
   market_value: DataTypes.DECIMAL(18, 2),
 }, {
   sequelize,
@@ -426,11 +429,11 @@ function addInventoryOperationTiming(timing: IInventoryOperationTiming): Promise
   return InventoryOperationTiming.create(timing);
 }
 
-function empireTradeLockLastPrices(): Promise<IEmpireTradeLockLastPrice[]> {
+function empireTradeLockLastPrices(): Promise<EmpireTradeLockLastPrice[]> {
   return EmpireTradeLockLastPrice.findAll();
 }
 
-function updateEmpireTradeLockLastPrices(items: IEmpireTradeLockLastPrice[]): Promise<IEmpireTradeLockLastPrice[]> {
+function updateEmpireTradeLockLastPrices(items: IEmpireTradeLockPrice[]): Promise<EmpireTradeLockLastPrice[]> {
   return EmpireTradeLockLastPrice.bulkCreate(items, {updateOnDuplicate: ['market_name']});
 }
 

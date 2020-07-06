@@ -13,7 +13,7 @@ import { IEmpireInstantInventoryItem } from '../../interfaces/csgoEmpire';
 import { EnumBot } from '../../helpers/enum';
 import { DatabaseSelectorTask } from '../DatabaseSelector/DatabaseSelectorTask';
 import { EmpireInstantInventoryGetterTask } from '../InventoryGetter/EmpireInstantInventoryGetterTask';
-import { EmpireInstantDatabaseSelector } from '../DatabaseSelector/EmpireInstantDatabaseSelector';
+import { EmpireDatabaseSelector } from '../DatabaseSelector/EmpireInstantDatabaseSelector';
 export class EmpireInstantWorker extends WorkerBase {
   protected token: string;
   protected inventoryItems: IEmpireInstantInventoryItem[] = [];
@@ -24,7 +24,7 @@ export class EmpireInstantWorker extends WorkerBase {
 
   bot = EnumBot.EmpireInstant;
   getDatabaseSelector(): DatabaseSelectorTask {
-    return new EmpireInstantDatabaseSelector(EnumBot.EmpireInstant);
+    return new EmpireDatabaseSelector(EnumBot.EmpireInstant);
   }
   getInventoryGetter(): InventoryGetterTask<IEmpireInstantInventoryItem> {
     return new EmpireInstantInventoryGetterTask(this.botParam);

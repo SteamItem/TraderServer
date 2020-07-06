@@ -129,7 +129,7 @@ export interface IEmpireTradeLockInventoryItem {
   fee: number;
 }
 
-export interface IEmpireTradeLockLastPrice {
+export interface IEmpireTradeLockPrice {
   market_name: string;
   market_value: number;
 }
