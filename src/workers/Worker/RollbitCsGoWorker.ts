@@ -7,7 +7,6 @@ import { IRollbitSocketItem, IRollbitSocketBalance } from '../../interfaces/roll
 import { IBotParam } from '../../models/botParam';
 import { RollbitApi } from '../../api/rollbit';
 import { LoggerBase } from '../Logger/LoggerBase';
-import db = require('../../db');
 export class RollbitCsGoWorker extends RollbitBase {
   bot = EnumBot.RollbitCsGo;
   private balance: number;
@@ -28,8 +27,6 @@ export class RollbitCsGoWorker extends RollbitBase {
   private inventoryGetter() {
     return cron.schedule('*/15 * * * * *', async () => {
       await this.api.csgoInventory(this.botParam.cookie);
-      await db.addAgentStatus('inventoryGetter/httpAgent', this.api.httpAgent.getCurrentStatus());
-      await db.addAgentStatus('inventoryGetter/httpsAgent', this.api.httpsAgent.getCurrentStatus());
     });
   }
 
@@ -47,15 +44,11 @@ export class RollbitCsGoWorker extends RollbitBase {
       currentTask = inventoryFilterer.taskName;
       inventoryFilterer.filter();
 
-      const afterFilterDate = new Date();
-
       const withdrawMaker = new RollbitWithdrawMakerTask(this.api, this.botParam, inventoryFilterer.itemsToBuy);
       currentTask = withdrawMaker.taskName;
       await withdrawMaker.work();
 
       const afterWithdrawDate = new Date();
-      const filterTime = afterFilterDate.getTime() - newItemDate.getTime();
-      const withdrawTime = afterWithdrawDate.getTime() - afterFilterDate.getTime();
       const totalTime = afterWithdrawDate.getTime() - newItemDate.getTime();
 
       withdrawMaker.successWithdrawResult.forEach(r => {
@@ -64,16 +57,6 @@ export class RollbitCsGoWorker extends RollbitBase {
       withdrawMaker.failWithdrawResult.forEach(r => {
         this.handleError(currentTask, `${r.name} withdraw failed ${r.price} in ${totalTime} ms - ${r.message}`);
       });
-      const timing = {
-        source: "Rollbit",
-        name: item.items[0].name,
-        price: item.price,
-        filterTime,
-        withdrawTime,
-        successWithdrawCount: withdrawMaker.successWithdrawResult.length,
-        failWithdrawCount: withdrawMaker.failWithdrawResult.length
-      }
-      await db.addInventoryOperationTiming(timing);
     } catch (e) {
       this.handleError(currentTask, e.message);
     }

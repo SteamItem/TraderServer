@@ -2,7 +2,6 @@ import { IBotParam } from '../../models/botParam';
 import { IRollbitInventoryItem } from '../../interfaces/rollbit';
 import { WithdrawMakerTask } from './WithdrawMakerTask';
 import { RollbitApi } from '../../api/rollbit';
-import db = require('../../db');
 export class RollbitWithdrawMakerTask<II extends IRollbitInventoryItem> extends WithdrawMakerTask<II> {
   constructor(api: RollbitApi, botParam: IBotParam, itemsToBuy: II[]) {
     super(itemsToBuy);
@@ -25,9 +24,6 @@ export class RollbitWithdrawMakerTask<II extends IRollbitInventoryItem> extends 
       this.$successWithdrawResult.push({name: itemName, price: ib.price});
     } catch (e) {
       this.$failWithdrawResult.push({name: itemName, price: ib.price, message: e.message})
-    } finally {
-      await db.addAgentStatus('withdraw/httpAgent', this.api.httpAgent.getCurrentStatus());
-      await db.addAgentStatus('withdraw/httpsAgent', this.api.httpsAgent.getCurrentStatus());
     }
   }
 }

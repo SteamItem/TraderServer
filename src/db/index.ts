@@ -448,8 +448,8 @@ export = {
   rollbitFavs,
   rollbitFavAdd,
   rollbitFavRemove,
-  addAgentStatus,
-  addInventoryOperationTiming,
+  // addAgentStatus,
+  // addInventoryOperationTiming,
   empireTradeLockLastPrices,
   updateEmpireTradeLockLastPrices
 }
