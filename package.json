@@ -5,7 +5,6 @@
   "scripts": {
     "build-ts": "tsc",
     "watch-ts": "tsc -w",
-    "deploy": "caprover deploy -a api -b master -u https://captain.server.trader-bot.pw",
     "lint": "npx eslint .",
     "test": "jest --maxWorkers=1",
     "test-watch": "jest --maxWorkers=1 --watch",
