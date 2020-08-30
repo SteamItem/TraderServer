@@ -58,7 +58,7 @@ export class CSGOEmpireApi extends ApiBase {
         'Sec-Fetch-Site': 'same-origin',
         'Sec-Fetch-Mode': 'cors',
         'Sec-Fetch-Dest': 'empty',
-        'User-Agent': Constants.EmpireUserAgent
+        'User-Agent': Constants.UserAgent
       },
       withCredentials: true,
       timeout: 20000,

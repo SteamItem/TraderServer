@@ -36,7 +36,7 @@ export class RollbitSocket {
         'Connection': 'Upgrade',
         'Pragma': 'no-cache',
         'Cache-Control': 'no-cache',
-        'User-Agent': Constants.RollbitUserAgent,
+        'User-Agent': Constants.UserAgent,
         'Upgrade': 'websocket',
         'Origin': 'https://www.rollbit.com',
         'Sec-WebSocket-Version': '13',

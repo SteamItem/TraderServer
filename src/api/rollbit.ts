@@ -12,7 +12,7 @@ export class RollbitApi extends ApiBase {
         'Host': 'api.rollbit.com',
         'Connection': 'keep-alive',
         'Accept': 'application/json, text/*',
-        'User-Agent': Constants.RollbitUserAgent,
+        'User-Agent': Constants.UserAgent,
         'Origin': 'https://www.rollbit.com',
         'Sec-Fetch-Site': 'same-site',
         'Sec-Fetch-Mode': 'cors',
@@ -44,7 +44,7 @@ export class RollbitApi extends ApiBase {
         'Sec-Fetch-Dest': 'empty',
         'Sec-Fetch-Mode': 'cors',
         'Sec-Fetch-Site': 'same-site',
-        'User-Agent': Constants.RollbitUserAgent
+        'User-Agent': Constants.UserAgent
       }
     };
 
