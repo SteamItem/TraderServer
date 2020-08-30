@@ -10,17 +10,8 @@ export class RollbitApi extends ApiBase {
     const content: AxiosRequestConfig = {
       headers: {
         'Host': 'api.rollbit.com',
-        'Connection': 'keep-alive',
-        'Accept': 'application/json, text/*',
         'User-Agent': Constants.UserAgent,
-        'Origin': 'https://www.rollbit.com',
-        'Sec-Fetch-Site': 'same-site',
-        'Sec-Fetch-Mode': 'cors',
-        'Sec-Fetch-Dest': 'empty',
-        'Referer': 'https://www.rollbit.com/',
-        'Accept-Encoding': 'gzip, deflate, br',
-        'Accept-Language': 'en-US,en;q=0.9',
-        'Cookie': cookie,
+        'Cookie': cookie
       }
     };
 
