@@ -8,8 +8,7 @@
     "lint": "npx eslint .",
     "test": "jest --maxWorkers=1",
     "test-watch": "jest --maxWorkers=1 --watch",
-    "start": "tsc && pm2 start ecosystem.config.js --only server",
-    "start:rollbitWorker": "tsc && pm2 start ecosystem.config.js --only rollbitWorker"
+    "start": "tsc && pm2-runtime start ecosystem.config.js"
   },
   "author": "suphero",
   "license": "ISC",
