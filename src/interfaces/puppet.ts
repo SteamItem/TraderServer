@@ -12,3 +12,11 @@ export interface ICookie {
 }
 
 export type ISameSite = "Strict" | "Lax";
+
+export interface IDuelbitsResponse {
+  token: string;
+  refresh: string;
+  signed: boolean;
+  loading: boolean;
+  error?: any;
+}

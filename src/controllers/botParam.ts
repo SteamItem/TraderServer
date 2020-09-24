@@ -1,11 +1,12 @@
 import pm2 = require('pm2');
 import BotParam, { IBotParam } from '../models/botParam';
-import { EnumBot, getBotText } from '../helpers/enum';
+import { EnumBot, getBotText, EnumSite } from '../helpers/enum';
 import { ISteamLogin } from '../interfaces/steam';
 import config = require('../config');
 import helpers from '../helpers';
 import telegramController = require("./telegram");
 import { PuppetApi } from '../api/puppet';
+import { ICookie } from '../interfaces/puppet';
 
 async function findOne(id: EnumBot): Promise<IBotParam> {
   const botParam = await BotParam.findOne({ id }).exec();
@@ -39,6 +40,7 @@ function getBotFileName(id: EnumBot) {
     case EnumBot.EmpireTradeLockLogger: return "tradeLockLogger";
     case EnumBot.RollbitCsGo: return "rollbitWorker";
     case EnumBot.RollbitCsGoLogger: return "rollbitLogger";
+    case EnumBot.DuelbitsCsGoWorker: return "duelbitsWorker";
     default: throw new Error("Bot not found");
   }
 }
@@ -82,10 +84,40 @@ async function startBot(id: number) {
 
 async function login(id: EnumBot, steamLogin: ISteamLogin): Promise<IBotParam> {
   const site = helpers.getSiteOfBot(id);
-  const api = new PuppetApi();
-  const cookies = await api.login(site, steamLogin);
-  const cookie = cookies.map(c => `${c.name}=${c.value}`).join(';');
+  const cookie = await getCookie(site, steamLogin);
   return BotParam.findOneAndUpdate({ id }, { cookie });
+}
+
+async function getCookie(site: EnumSite, steamLogin: ISteamLogin) {
+  switch (site){
+    case EnumSite.CsGoEmpire: return empireLoginCookie(steamLogin);
+    case EnumSite.Rollbit: return rollbitLoginCookie(steamLogin);
+    case EnumSite.Duelbits: return duelbitsLoginCookie(steamLogin);
+  }
+}
+
+async function empireLoginCookie(steamLogin: ISteamLogin): Promise<string> {
+  const api = new PuppetApi();
+  const cookies = await api.empireLogin(steamLogin);
+  const cookie = stringifyCookies(cookies);
+  return cookie;
+}
+
+async function rollbitLoginCookie(steamLogin: ISteamLogin): Promise<string> {
+  const api = new PuppetApi();
+  const cookies = await api.rollbitLogin(steamLogin);
+  const cookie = stringifyCookies(cookies);
+  return cookie;
+}
+
+function stringifyCookies(cookies: ICookie[]): string {
+  return cookies.map(c => `${c.name}=${c.value}`).join(';');
+}
+
+async function duelbitsLoginCookie(steamLogin: ISteamLogin): Promise<string> {
+  const api = new PuppetApi();
+  const response = await api.duelbitsLogin(steamLogin);
+  return response.token;
 }
 
 async function handleBots() {
