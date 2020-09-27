@@ -22,75 +22,66 @@
       "request": "launch",
       "name": "Server",
       "program": "${workspaceFolder}/src/server.ts",
-      "env": {
-        "CORS_WHITELIST": "http://localhost:8080",
-        "DB_URL": "mongodb+srv://admin:1234qwer@mlab.cifvs.mongodb.net/dota?retryWrites=true&w=majority",
-        "RDB_URL": "postgres://postgres:42786765@192.168.1.8:5432/Trader",
-        "PUPPET_API": "http://localhost:3001",
-        "TELEGRAM_TOKEN": "1271936615:AAH-ZQajPguxAMBp2j6vvLZfe0vN7xeoo1E",
-        "TELEGRAM_CHAT_ID": "-367623724"
-      },
-      "outFiles": [
-        "${workspaceFolder}/dist/**/*.js"
-      ]
+      "envFile": "${workspaceFolder}/.env",
+      "runtimeExecutable": "nodemon",
+      "restart": true,
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen"
     },
     {
       "type": "node",
       "request": "launch",
       "name": "Instant Worker",
       "program": "${workspaceFolder}/src/instantWorker.ts",
-      "env": {
-        "DB_URL": "mongodb+srv://admin:1234qwer@mlab.cifvs.mongodb.net/dota?retryWrites=true&w=majority",
-        "TELEGRAM_TOKEN": "1271936615:AAH-ZQajPguxAMBp2j6vvLZfe0vN7xeoo1E",
-        "TELEGRAM_CHAT_ID": "-367623724"
-      },
-      "outFiles": [
-        "${workspaceFolder}/dist/**/*.js"
-      ]
+      "envFile": "${workspaceFolder}/.env",
+      "runtimeExecutable": "nodemon",
+      "restart": true,
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen"
     },
     {
       "type": "node",
       "request": "launch",
       "name": "TradeLock Logger",
       "program": "${workspaceFolder}/src/tradeLockLogger.ts",
-      "env": {
-        "DB_URL": "mongodb+srv://admin:1234qwer@mlab.cifvs.mongodb.net/dota?retryWrites=true&w=majority",
-        "RDB_URL": "postgres://postgres:42786765@localhost:32772/Trader",
-        "TELEGRAM_TOKEN": "1271936615:AAH-ZQajPguxAMBp2j6vvLZfe0vN7xeoo1E",
-        "TELEGRAM_CHAT_ID": "-367623724"
-      },
-      "outFiles": [
-        "${workspaceFolder}/dist/**/*.js"
-      ]
+      "envFile": "${workspaceFolder}/.env",
+      "runtimeExecutable": "nodemon",
+      "restart": true,
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen"
     },
     {
       "type": "node",
       "request": "launch",
       "name": "Rollbit Worker",
       "program": "${workspaceFolder}/src/rollbitWorker.ts",
-      "env": {
-        "DB_URL": "mongodb+srv://admin:1234qwer@mlab.cifvs.mongodb.net/dota?retryWrites=true&w=majority",
-        "TELEGRAM_TOKEN": "1271936615:AAH-ZQajPguxAMBp2j6vvLZfe0vN7xeoo1E",
-        "TELEGRAM_CHAT_ID": "-367623724"
-      },
-      "outFiles": [
-        "${workspaceFolder}/dist/**/*.js"
-      ]
+      "envFile": "${workspaceFolder}/.env",
+      "runtimeExecutable": "nodemon",
+      "restart": true,
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen"
     },
     {
       "type": "node",
       "request": "launch",
       "name": "Rollbit Logger",
       "program": "${workspaceFolder}/src/rollbitLogger.ts",
-      "env": {
-        "DB_URL": "mongodb+srv://admin:1234qwer@mlab.cifvs.mongodb.net/dota?retryWrites=true&w=majority",
-        "RDB_URL": "postgres://postgres:42786765@192.168.1.8:5432/Trader",
-        "TELEGRAM_TOKEN": "1271936615:AAH-ZQajPguxAMBp2j6vvLZfe0vN7xeoo1E",
-        "TELEGRAM_CHAT_ID": "-367623724"
-      },
-      "outFiles": [
-        "${workspaceFolder}/dist/**/*.js"
-      ]
+      "envFile": "${workspaceFolder}/.env",
+      "runtimeExecutable": "nodemon",
+      "restart": true,
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Duelbits Worker",
+      "program": "${workspaceFolder}/src/duelbitsWorker.ts",
+      "envFile": "${workspaceFolder}/.env",
+      "runtimeExecutable": "nodemon",
+      "restart": true,
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen"
     }
   ]
 }

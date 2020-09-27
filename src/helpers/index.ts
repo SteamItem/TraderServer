@@ -21,6 +21,8 @@ function getSiteOfBot(id: EnumBot): EnumSite {
     case EnumBot.RollbitCsGo:
     case EnumBot.RollbitCsGoLogger:
       return EnumSite.Rollbit;
+    case EnumBot.DuelbitsCsGoWorker:
+      return EnumSite.Duelbits;
     default: throw new Error("Unknown bot id");
   }
 }
