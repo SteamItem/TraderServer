@@ -26,10 +26,15 @@ export class DuelbitsCsGoWorker extends WorkerBase {
   private scheduledTasks: cron.ScheduledTask[] = [];
   start(botParam: IBotParam): void {
     this.botParam = botParam;
-    this.socket = new DuelbitsSocket(botParam.cookie);
-    this.socket.connect();
-    this.socket.onAuth.bind(this.onAuth);
-    this.socket.onUserUpdate.bind(this.onUserUpdate);
+    this.socket = new DuelbitsSocket();
+    this.socket.connect().then(socket => {
+      socket.emit('authenticate', botParam.cookie, (data: IDuelbitsOnAuth) => {
+        this.onAuth(data);
+      });
+      socket.on('user:update', (data: IDuelbitsOnUserUpdate) => {
+        this.onUserUpdate(data);
+      });
+    })
     const inventoryScheduler = this.inventoryScheduler();
     this.scheduledTasks = [inventoryScheduler];
   }
@@ -45,7 +50,7 @@ export class DuelbitsCsGoWorker extends WorkerBase {
 
   private inventoryScheduler() {
     return cron.schedule('* * * * * *', async () => {
-      let currentTask = "inventoryOperation";
+      let currentTask = "Inventory Operation";
       try {
         const inventoryResponse = await this.api.csgoInventory();
 
