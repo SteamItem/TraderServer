@@ -1,5 +1,4 @@
 import cron = require('node-cron');
-import io from 'socket.io-client';
 import { EnumBot } from '../../helpers/enum';
 import { IBotParam } from '../../models/botParam';
 import { DatabaseSelectorTask } from '../DatabaseSelector/DatabaseSelectorTask';
@@ -14,6 +13,7 @@ import { DuelbitsWithdrawMakerTask } from '../WithdrawMaker/DuelbitsWithdrawMake
 export class DuelbitsCsGoWorker extends WorkerBase {
   bot = EnumBot.DuelbitsCsGoWorker;
   private balance: number;
+  private tradeUrl: string;
   private api: DuelbitsApi;
   protected botParam: IBotParam;
 
@@ -58,7 +58,7 @@ export class DuelbitsCsGoWorker extends WorkerBase {
         currentTask = inventoryFilterer.taskName;
         inventoryFilterer.filter();
 
-        const withdrawMaker = new DuelbitsWithdrawMakerTask(this.socket, inventoryFilterer.itemsToBuy);
+        const withdrawMaker = new DuelbitsWithdrawMakerTask(this.socket, this.tradeUrl, inventoryFilterer.itemsToBuy);
         currentTask = withdrawMaker.taskName;
         await withdrawMaker.work();
       } catch (e) {
@@ -69,12 +69,14 @@ export class DuelbitsCsGoWorker extends WorkerBase {
 
   private onAuth(data: IDuelbitsOnAuth) {
     this.balance = data.balance / 100;
+    this.tradeUrl = data.tradeUrl;
     const message = `Initial Balance: ${this.balance}`;
     this.handleMessage("Auth", message);
   }
 
   private onUserUpdate(data: IDuelbitsOnUserUpdate) {
     this.balance = data.balance / 100;
+    this.tradeUrl = data.tradeUrl;
     const message = `Balance: ${this.balance}`;
     this.handleMessage("User Update", message);
   }
