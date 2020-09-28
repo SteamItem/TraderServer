@@ -4,7 +4,6 @@ WORKDIR /usr/src/app
 COPY ./package*.json /usr/src/app/
 RUN npm ci
 COPY ./ /usr/src/app
-ENV NODE_ENV production
-ENV PORT 80
+RUN npm run tsc
 EXPOSE 80
 CMD [ "npm", "start" ]
