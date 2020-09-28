@@ -14,7 +14,8 @@ export class DuelbitsInventoryFilterer extends InventoryFiltererUnit<IDuelbitsLi
   }
 
   isNewItemSuitable(inventoryItemToAdd: IDuelbitsListing): boolean {
-    const diffPrice =  this.getItemPrice(inventoryItemToAdd) - this.getItemSuggestedPrice(inventoryItemToAdd);
-    return diffPrice < 1e-2;
+    // const diffPrice =  this.getItemPrice(inventoryItemToAdd) - this.getItemSuggestedPrice(inventoryItemToAdd);
+    // return diffPrice < 1e-2;
+    return true;
   }
 }
