@@ -27,61 +27,6 @@
       "restart": true,
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen"
-    },
-    {
-      "type": "node",
-      "request": "launch",
-      "name": "Instant Worker",
-      "program": "${workspaceFolder}/src/instantWorker.ts",
-      "envFile": "${workspaceFolder}/.env",
-      "runtimeExecutable": "nodemon",
-      "restart": true,
-      "console": "integratedTerminal",
-      "internalConsoleOptions": "neverOpen"
-    },
-    {
-      "type": "node",
-      "request": "launch",
-      "name": "TradeLock Logger",
-      "program": "${workspaceFolder}/src/tradeLockLogger.ts",
-      "envFile": "${workspaceFolder}/.env",
-      "runtimeExecutable": "nodemon",
-      "restart": true,
-      "console": "integratedTerminal",
-      "internalConsoleOptions": "neverOpen"
-    },
-    {
-      "type": "node",
-      "request": "launch",
-      "name": "Rollbit Worker",
-      "program": "${workspaceFolder}/src/rollbitWorker.ts",
-      "envFile": "${workspaceFolder}/.env",
-      "runtimeExecutable": "nodemon",
-      "restart": true,
-      "console": "integratedTerminal",
-      "internalConsoleOptions": "neverOpen"
-    },
-    {
-      "type": "node",
-      "request": "launch",
-      "name": "Rollbit Logger",
-      "program": "${workspaceFolder}/src/rollbitLogger.ts",
-      "envFile": "${workspaceFolder}/.env",
-      "runtimeExecutable": "nodemon",
-      "restart": true,
-      "console": "integratedTerminal",
-      "internalConsoleOptions": "neverOpen"
-    },
-    {
-      "type": "node",
-      "request": "launch",
-      "name": "Duelbits Worker",
-      "program": "${workspaceFolder}/src/duelbitsWorker.ts",
-      "envFile": "${workspaceFolder}/.env",
-      "runtimeExecutable": "nodemon",
-      "restart": true,
-      "console": "integratedTerminal",
-      "internalConsoleOptions": "neverOpen"
     }
   ]
 }

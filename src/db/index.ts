@@ -5,7 +5,6 @@ import { IPricEmpireSearchRequest, IPricEmpireItem, IPricEmpireItemPrice } from 
 import { IRollbitHistory } from '../interfaces/rollbit';
 import Agent = require('agentkeepalive');
 import { IInventoryOperationTiming } from '../interfaces/withdraw';
-import { IEmpireTradeLockPrice } from '../interfaces/csgoEmpire';
 
 const sequelize = new Sequelize(config.RDB_URL, {dialect: "postgres"});
 
@@ -433,10 +432,6 @@ function empireTradeLockLastPrices(): Promise<EmpireTradeLockLastPrice[]> {
   return EmpireTradeLockLastPrice.findAll();
 }
 
-function updateEmpireTradeLockLastPrices(items: IEmpireTradeLockPrice[]): Promise<EmpireTradeLockLastPrice[]> {
-  return EmpireTradeLockLastPrice.bulkCreate(items, {updateOnDuplicate: ['market_value']});
-}
-
 export = {
   sync,
   updatePricEmpireItems,
@@ -448,8 +443,5 @@ export = {
   rollbitFavs,
   rollbitFavAdd,
   rollbitFavRemove,
-  // addAgentStatus,
-  // addInventoryOperationTiming,
-  empireTradeLockLastPrices,
-  updateEmpireTradeLockLastPrices
+  empireTradeLockLastPrices
 }
