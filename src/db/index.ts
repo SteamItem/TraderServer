@@ -187,20 +187,6 @@ RollbitHistory.init({
   tableName: "rollbithistories"
 })
 
-class RollbitFav extends Model {
-  public name!: string;
-}
-
-RollbitFav.init({
-  name: {
-    type: DataTypes.STRING(200),
-    allowNull: false
-  }
-}, {
-  sequelize,
-  tableName: "rollbitfavs"
-})
-
 class AgentStatus extends Model {
   public source: string;
   public createSocketCount: number;
@@ -397,37 +383,6 @@ function rollbitHistories(): Promise<RollbitHistory[]> {
   return RollbitHistory.findAll();
 }
 
-function rollbitFavs(): Promise<RollbitFav[]> {
-  return RollbitFav.findAll();
-}
-
-function rollbitFavAdd(name: string): Promise<RollbitFav> {
-  return RollbitFav.create({ name: name });
-}
-
-function rollbitFavRemove(name: string): Promise<number> {
-  return RollbitFav.destroy({where: { name: name }})
-}
-
-function addAgentStatus(source: string, agentStatus: Agent.AgentStatus): Promise<AgentStatus> {
-  return AgentStatus.create({
-    source,
-    createSocketCount: agentStatus.createSocketCount,
-    createSocketErrorCount: agentStatus.createSocketErrorCount,
-    closeSocketCount: agentStatus.closeSocketCount,
-    errorSocketCount: agentStatus.errorSocketCount,
-    timeoutSocketCount: agentStatus.timeoutSocketCount,
-    requestCount: agentStatus.requestCount,
-    freeSockets: JSON.stringify(agentStatus.freeSockets),
-    sockets: JSON.stringify(agentStatus.sockets),
-    requests: JSON.stringify(agentStatus.requests)
-  });
-}
-
-function addInventoryOperationTiming(timing: IInventoryOperationTiming): Promise<InventoryOperationTiming> {
-  return InventoryOperationTiming.create(timing);
-}
-
 function empireTradeLockLastPrices(): Promise<EmpireTradeLockLastPrice[]> {
   return EmpireTradeLockLastPrice.findAll();
 }
@@ -440,8 +395,5 @@ export = {
   updateRollbitHistoryGone,
   profitSearch,
   rollbitHistories,
-  rollbitFavs,
-  rollbitFavAdd,
-  rollbitFavRemove,
   empireTradeLockLastPrices
 }

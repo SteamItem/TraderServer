@@ -19,5 +19,4 @@ export interface IRollbitHistoryView {
   baseprice: number;
   listed_at?: Date;
   gone_at?: Date;
-  fav: boolean
 }
