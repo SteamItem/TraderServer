@@ -3,8 +3,6 @@ import R = require('ramda');
 import config = require('../config');
 import { IPricEmpireSearchRequest, IPricEmpireItem, IPricEmpireItemPrice } from '../interfaces/pricEmpire';
 import { IRollbitHistory } from '../interfaces/rollbit';
-import Agent = require('agentkeepalive');
-import { IInventoryOperationTiming } from '../interfaces/withdraw';
 
 const sequelize = new Sequelize(config.RDB_URL, {dialect: "postgres"});
 
