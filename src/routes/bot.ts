@@ -22,7 +22,7 @@ export = (app: express.Express) => {
   });
   app.put('/bot/:botId', cors(corsOptions), async (req, res) => {
     const botId = req.params.botId;
-    controller.update(botId, req.body.worker, req.body.code)
+    controller.update(botId, req.body.type, req.body.name, req.body.worker, req.body.code)
       .then(result => res.send(result))
       .catch(error => res.status(500).send(error));
   });

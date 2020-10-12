@@ -28,9 +28,11 @@ export class BotController {
     return this._repository.create(entity);
   }
 
-  public async update(botId: string, worker: boolean, code: string): Promise<IBotDocument> {
+  public async update(botId: string, type: EnumBot, name: string, worker: boolean, code: string): Promise<IBotDocument> {
     const bot = await this._repository.findOne(botId);
     await this.manageBot(bot, worker);
+    bot.type = type;
+    bot.name = name;
     bot.worker = worker;
     bot.code = code;
     return await this._repository.update(botId, bot);
