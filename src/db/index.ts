@@ -79,7 +79,7 @@ PricEmpireItem.init({
   }
 }, {
   sequelize,
-  tableName: "pricempire_items"
+  tableName: "PricEmpireItem"
 });
 
 class PricEmpireItemPrice extends Model {
@@ -113,7 +113,7 @@ PricEmpireItemPrice.init({
   }
 }, {
   sequelize,
-  tableName: "pricempire_itemprices"
+  tableName: "PricEmpireItemPrice"
 })
 
 PricEmpireItem.hasMany(PricEmpireItemPrice, {
@@ -184,36 +184,7 @@ RollbitHistory.init({
   }
 }, {
   sequelize,
-  tableName: "rollbithistories"
-})
-
-class AgentStatus extends Model {
-  public source: string;
-  public createSocketCount: number;
-  public createSocketErrorCount: number;
-  public closeSocketCount: number;
-  public errorSocketCount: number;
-  public timeoutSocketCount: number;
-  public requestCount: number;
-  public freeSockets: string;
-  public sockets: string;
-  public requests: string;
-}
-
-AgentStatus.init({
-  source: DataTypes.STRING(200),
-  createSocketCount: DataTypes.INTEGER,
-  createSocketErrorCount: DataTypes.INTEGER,
-  closeSocketCount: DataTypes.INTEGER,
-  errorSocketCount: DataTypes.INTEGER,
-  timeoutSocketCount: DataTypes.INTEGER,
-  requestCount: DataTypes.INTEGER,
-  freeSockets: DataTypes.STRING(1000),
-  sockets: DataTypes.STRING(1000),
-  requests: DataTypes.STRING(1000),
-}, {
-  sequelize,
-  tableName: "agentstatuses"
+  tableName: "RollbitHistory"
 })
 
 class InventoryOperationTiming extends Model {
@@ -236,7 +207,7 @@ InventoryOperationTiming.init({
   failWithdrawCount: DataTypes.INTEGER
 }, {
   sequelize,
-  tableName: "InventoryOperationTimings"
+  tableName: "InventoryOperationTiming"
 })
 
 class EmpireTradeLockLastPrice extends Model {
@@ -252,7 +223,7 @@ EmpireTradeLockLastPrice.init({
   market_value: DataTypes.DECIMAL(18, 2),
 }, {
   sequelize,
-  tableName: "EmpireTradeLockLastPrices"
+  tableName: "EmpireTradeLockLastPrice"
 })
 
 function sync(): Promise<Sequelize> {
