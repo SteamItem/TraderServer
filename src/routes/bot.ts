@@ -1,5 +1,4 @@
 import express = require('express');
-import cors = require('cors');
 import { BotController } from '../controllers/BotController';
 import BotRepository = require('../repositories/BotRepository');
 
