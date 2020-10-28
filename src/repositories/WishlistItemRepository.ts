@@ -6,6 +6,10 @@ class WishlistItemRepository extends RepositoryBase<IWishlistItemDocument> {
   constructor () {
     super(WishlistItemSchema);
   }
+
+  findByBot(botId: string): Promise<IWishlistItemDocument[]> {
+    return this._model.find({botId}).exec();
+  }
 }
 
 Object.seal(WishlistItemRepository);

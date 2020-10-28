@@ -208,22 +208,6 @@ InventoryOperationTiming.init({
   tableName: "InventoryOperationTiming"
 })
 
-class EmpireTradeLockLastPrice extends Model {
-  public market_name: string;
-  public market_value: number;
-}
-
-EmpireTradeLockLastPrice.init({
-  market_name: {
-    type: DataTypes.STRING(100),
-    primaryKey: true
-  },
-  market_value: DataTypes.DECIMAL(18, 2),
-}, {
-  sequelize,
-  tableName: "EmpireTradeLockLastPrice"
-})
-
 function sync(): Promise<Sequelize> {
   return sequelize.sync();
 }
@@ -352,10 +336,6 @@ function rollbitHistories(): Promise<RollbitHistory[]> {
   return RollbitHistory.findAll();
 }
 
-function empireTradeLockLastPrices(): Promise<EmpireTradeLockLastPrice[]> {
-  return EmpireTradeLockLastPrice.findAll();
-}
-
 export = {
   sync,
   updatePricEmpireItems,
@@ -363,6 +343,5 @@ export = {
   updateRollbitHistoryListed,
   updateRollbitHistoryGone,
   profitSearch,
-  rollbitHistories,
-  empireTradeLockLastPrices
+  rollbitHistories
 }

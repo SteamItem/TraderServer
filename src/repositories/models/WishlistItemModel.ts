@@ -6,12 +6,8 @@ class WishlistItemModel {
     this._model = model;
   }
 
-  get site_id(): number {
-    return this._model.site_id;
-  }
-
-  get appid(): number {
-    return this._model.appid;
+  get botId(): string {
+    return this._model.botId;
   }
 
   get name(): string {

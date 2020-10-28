@@ -1,8 +1,7 @@
 import mongoose = require("mongoose");
 
 export interface IWishlistItemDocument extends mongoose.Document {
-  site_id: number;
-  appid: number;
+  botId: string;
   name: string;
   max_price?: number;
 }

@@ -4,8 +4,10 @@ import wishlistItem = require('./wishlistItem');
 import bot = require('./bot');
 import rollbitHistory = require('./rollbitHistory');
 import pricEmpire = require('./pricEmpire');
+import helpers from '../helpers';
 
 function registerRoutes(app: express.Express) {
+  app.use(helpers.setUserId);
   common(app);
   wishlistItem(app);
   bot(app);

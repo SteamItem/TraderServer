@@ -17,15 +17,17 @@ export class WishlistItemController {
         return this._repository.findAll();
     }
 
-    public create(site_id: number, appid: number, name: string, max_price: number): Promise<IWishlistItemDocument> {
-        const entity = new WishlistItemSchema({ site_id, appid, name, max_price })
+    public findByBot(botId: string): Promise<IWishlistItemDocument[]> {
+        return this._repository.findByBot(botId);
+    }
+
+    public create(botId: string, name: string, max_price: number): Promise<IWishlistItemDocument> {
+        const entity = new WishlistItemSchema({ botId, name, max_price })
         return this._repository.create(entity);
     }
 
-    public async update(itemId: string, site_id: number, appid: number, name: string, max_price: number): Promise<IWishlistItemDocument> {
+    public async update(botId: string, itemId: string, name: string, max_price: number): Promise<IWishlistItemDocument> {
         const entity = await this._repository.findOne(itemId);
-        entity.site_id = site_id;
-        entity.appid = appid;
         entity.name = name;
         entity.max_price = max_price;
         return await this._repository.update(itemId, entity);

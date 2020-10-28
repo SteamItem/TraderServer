@@ -6,24 +6,84 @@ export = (app: express.Express) => {
   const repository = new WishlistItemRepository();
   const controller = new WishlistItemController(repository);
 
-  app.post('/wishlistItems', async (req, res) => {
-    const items = await controller.create(req.body.site_id, req.body.appid, req.body.name, req.body.max_price);
-    res.send(items);
+  app.get('/wishlistItems/csgoEmpire/:botId', (req, res) => {
+    const botId = req.params.botId;
+    controller.findByBot(botId)
+      .then(result => res.send(result))
+      .catch(error => res.status(500).send(error));
   });
-  app.get('/wishlistItems', async (_req, res) => {
-    const items = await controller.findAll();
-    res.send(items);
+  app.post('/wishlistItems/csgoEmpire/:botId', (req, res) => {
+    const botId = req.params.botId;
+    controller.create(botId, req.body.name, req.body.max_price)
+      .then(result => res.send(result))
+      .catch(error => res.status(500).send(error));
   });
-  app.get('/wishlistItems/:_id', async (req, res) => {
-    const item = await controller.findOne(req.params._id);
-    res.send(item);
+  app.put('/wishlistItems/csgoEmpire/:botId/:itemId', (req, res) => {
+    const botId = req.params.botId;
+    const itemId = req.params.itemId;
+    controller.update(botId, itemId, req.body.name, req.body.max_price)
+      .then(result => res.send(result))
+      .catch(error => res.status(500).send(error));
   });
-  app.put('/wishlistItems/:_id', async (req, res) => {
-    const item = await controller.update(req.params._id, req.body.site_id, req.body.appid, req.body.name, req.body.max_price);
-    res.send(item);
+  app.delete('/wishlistItems/csgoEmpire/:botId/:itemId', (req, res) => {
+    const botId = req.params.botId;
+    const itemId = req.params.itemId;
+    controller.remove(itemId)
+      .then(result => res.send(result))
+      .catch(error => res.status(500).send(error));
   });
-  app.delete('/wishlistItems/:_id', async (req, res) => {
-    await controller.remove(req.params._id);
-    res.send({message: "Deleted successfully!"})
+
+  app.get('/wishlistItems/rollbit/:botId', (req, res) => {
+    const botId = req.params.botId;
+    controller.findByBot(botId)
+      .then(result => res.send(result))
+      .catch(error => res.status(500).send(error));
+  });
+  app.post('/wishlistItems/rollbit/:botId', (req, res) => {
+    const botId = req.params.botId;
+    controller.create(botId, req.body.name, req.body.max_price)
+      .then(result => res.send(result))
+      .catch(error => res.status(500).send(error));
+  });
+  app.put('/wishlistItems/rollbit/:botId/:itemId', (req, res) => {
+    const botId = req.params.botId;
+    const itemId = req.params.itemId;
+    controller.update(botId, itemId, req.body.name, req.body.max_price)
+      .then(result => res.send(result))
+      .catch(error => res.status(500).send(error));
+  });
+  app.delete('/wishlistItems/rollbit/:botId/:itemId', (req, res) => {
+    const botId = req.params.botId;
+    const itemId = req.params.itemId;
+    controller.remove(itemId)
+      .then(result => res.send(result))
+      .catch(error => res.status(500).send(error));
+  });
+
+  app.get('/wishlistItems/duelbits/:botId', (req, res) => {
+    const botId = req.params.botId;
+    controller.findByBot(botId)
+      .then(result => res.send(result))
+      .catch(error => res.status(500).send(error));
+  });
+  app.post('/wishlistItems/duelbits/:botId', (req, res) => {
+    const botId = req.params.botId;
+    controller.create(botId, req.body.name, req.body.max_price)
+      .then(result => res.send(result))
+      .catch(error => res.status(500).send(error));
+  });
+  app.put('/wishlistItems/duelbits/:botId/:itemId', (req, res) => {
+    const botId = req.params.botId;
+    const itemId = req.params.itemId;
+    controller.update(botId, itemId, req.body.name, req.body.max_price)
+      .then(result => res.send(result))
+      .catch(error => res.status(500).send(error));
+  });
+  app.delete('/wishlistItems/duelbits/:botId/:itemId', (req, res) => {
+    const botId = req.params.botId;
+    const itemId = req.params.itemId;
+    controller.remove(itemId)
+      .then(result => res.send(result))
+      .catch(error => res.status(500).send(error));
   });
 }
